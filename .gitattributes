@@ -1,0 +1,9 @@
+# Textdateien überall mit LF, sonst unterscheiden sich Builds zwischen Windows und Linux
+* text=auto eol=lf
+*.glb binary
+*.mp3 binary
+*.jpg binary
+*.woff2 binary
+# Fremde, minifizierte Bibliotheken nicht in Diffs und Sprachstatistik
+public/vendor/** linguist-vendored
+public/vendor/*.js -diff

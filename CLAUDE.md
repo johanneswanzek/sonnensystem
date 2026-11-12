@@ -1,0 +1,103 @@
+# Projektnotizen
+
+Animierte 3D-Reise durch das Sonnensystem mit Sprecher und Musik. Sprache der Oberfläche, der Kommentare und
+der Doku ist Deutsch. Live: https://sonnensystem.johannes-wanzek.de/ (GitHub Pages, Repo
+`johanneswanzek/sonnensystem`, Deploy per Action bei Push auf `main`).
+
+## Grundsätze
+
+- **Eine Quelle:** Die ganze Seite steht in `src/sonnensystem.html` (Stil, Markup, Programm). Kein Framework,
+  kein Bundler, keine Module. three.js r128 als klassisches Skript (`THREE` global).
+- **Zwei Auslieferungen aus derselben Datei:**
+  1. Website: `tools/build.py` macht daraus ein vollständiges Dokument und stellt Bibliotheken, Schriften und
+     Modelle auf lokale Dateien um. Die Website lädt nichts von fremden Servern; `build.py` bricht ab, wenn
+     im Ergebnis noch eine fremde Adresse steht.
+  2. claude.ai-Artefakt: Die Datei wird unverändert veröffentlicht. Deshalb hat sie kein `<html>`, `<head>`
+     oder `<body>`, lädt three.js von cdnjs/jsdelivr und die Schriften von Google Fonts, und die Modelle
+     heißen dort `models/<name>.json` (glTF mit eingebetteten Daten, weil Artefakte kein `.glb` ausliefern;
+     `tools/models/embed.mjs` erzeugt sie). `build.py` ersetzt genau diese Stellen; wer sie ändert, muss
+     `build.py` anpassen.
+- Alle Größen der Oberfläche hängen an der CSS-Variable `--u` (1px auf dem Handy, bis etwa 2px auf großen
+  Monitoren), die Messmarken auf dem Overlay-Canvas am selben Faktor `ui`.
+- Nach jeder Änderung prüfen: `node tools/test/run.js ...` im Handyformat (390×760) und im Querformat
+  (1920×1080), bei Änderungen am Build zusätzlich `--dist`.
+
+## Befehle
+
+```
+python tools/serve.py                      # http://localhost:8080, baut index.html bei jedem Aufruf neu
+python tools/build.py [--apache]           # dist/
+node tools/test/run.js 390 760 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:landung
+node tools/test/run.js --dist 1280 720 go wait:6000 shot:start
+```
+
+Für `run.js` einmalig `cd tools/test && npm install && npx playwright install chromium`. Ohne Grafikkarte
+`SOFTWARE_GL=1` setzen; dann ist jedes Bild langsam (im Querformat `pr:.5` als ersten Schritt nehmen) und
+Wartezeiten sind unzuverlässig. Für die Marsbasis deshalb mit `mbt:S` eine feste Erzählzeit setzen statt mit
+`seek` und `wait` zu arbeiten.
+
+## Gliederung von `src/sonnensystem.html`
+
+Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
+
+| Abschnitt | Inhalt |
+| --- | --- |
+| Daten | `BODIES` (Index 0 Übersicht, 1 Sonne, 2 Merkur, 3 Venus, 4 Erde, 5 Mars, 6 Asteroidengürtel/Vesta, 7 Jupiter, 8 Saturn, 9 Uranus, 10 Neptun), `VOICE` (Dauer und Zeitmarken je Clip) |
+| DOM | Elemente, Leiste, Dialog „Quellen“ (`window.SITE` liefert Impressum und Datenschutz) |
+| Ton | `AU`: Web Audio, ein Musikstück als Schleife (`MUSIC`), Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme |
+| Oberflächen | `SURF`: prozedurale Texturen, auf der Grafikkarte gebacken |
+| Bahnmechanik | Kepler-Bahnen aus Bahnelementen für das angezeigte Datum |
+| Shader, Szene | Planeten, Ringe, Sterne, Bahnen, Erde mit Wolken und Schnitt |
+| Mars-Basis | `MB`: eigene Szene auf der Oberfläche, Einheit Meter |
+| Zustand | Auflösungsregler `PR`/`govern`, `measure`, `desired`, `focus`, `setStage`, `narrate` |
+| Eingaben | Zeiger, Tastatur (Leertaste, Pfeile, F, M) |
+| Messmarken | 2D-Overlay: `planetHUD`, `sunHUD`, `coreHUD`, `beltHUD`, `baseHUD`, `drawHUD` |
+| Schleife | `frame`: Kamera, Szenenwechsel mit Staubschleier, Rendern |
+| Start | `loadModels`, `boot` |
+
+## Wichtige Zusammenhänge
+
+- **Abschnitte je Körper:** Erde hat 0 Planet, 1 Nahansicht mit Ozeanen und Kontinenten, 2 Aufbau im Schnitt.
+  Mars hat 0 Planet, 1 Basis. `setStage(n)` wechselt, die Tour läuft sie der Reihe nach durch.
+- **Bild folgt Ton:** `narT()` ist die Sprecherzeit des laufenden Clips, `cue(k)` die Zeitmarke eines
+  Stichworts aus `VOICE`. Einblendungen und die Kamerafahrt über die Marsbasis hängen an diesen Marken. Die
+  Werte in `VOICE` schreibt `tools/audio/finalize.py`; von Hand nur ändern, wenn auch der Clip dazu passt.
+- **Layout:** `measure()` setzt `ui` (Maßstab), `wide` (Querformat: Uhr und Titel in den Ecken, der Körper
+  nutzt die volle Höhe; die Übersicht bleibt über dem Titel), `topH`/`botH` (freie Fläche) und `guard`
+  (Flächen von Uhr und Titel, denen Beschriftungen ausweichen). `drawHUD` rechnet in Einheiten von `ui` und
+  stellt `W`, `H`, `topH`, `botH` nach dem Zeichnen zurück.
+- **Auflösung:** `PR.v[0]` Weltraum, `PR.v[1]` Marsoberfläche, in Bildpunkten je CSS-Pixel. `govern()` misst
+  einmal je Sekunde die Bilddauer, senkt bei Rucklern, prüft, ob die Absenkung geholfen hat (sonst nimmt es
+  sie zurück), und versucht bei flüssigem Lauf einen Schritt nach oben. `DESKTOP` (Maus, große Texturen)
+  schaltet größere Schattenkarte, mehr Steine und Überabtastung auf Monitoren mit einfacher Pixeldichte frei.
+- **Marsbasis (`MB`):** Gelände über `hgt(x,z)`, Stationen in Metern um die Zentralkuppel bei (0,0):
+  Wohnmodule ringsum, Gewächshäuser (42,12) und (42,22), Solarfeld (−10,95), Reaktoren (300,−250) hinter
+  einem Wall, Treibstoffanlage (275,−85), Landeplatz (430,−40), Antenne (62,−72), Hauptpiste bei z = 38.
+  Die Kamera fährt über Stützpunkte `knots` (Ankunft und Abfahrt je Station, relativ zu den Stichworten),
+  Gier- und Nickwinkel werden getrennt interpoliert, `OBST` hält sie von Bauten fern. Bewegte Dinge hängen
+  als Funktionen `(t, dt, clk)` in `anim[]`: Landefähre (zum Stichwort `pad`), Tankwagen, zwei Rover,
+  Hubschrauber, laufende Astronauten, Bagger, Staubteufel. Staub und Dampf sind zustandslose Teilchen
+  (`Puffs`, `puffs.put(...)`), ihre Zahl ist begrenzt.
+- **Tonemapping:** ACES und sRGB-Ausgabe gelten nur für die Marsszene; `MB.render` setzt sie und stellt sie
+  zurück. Die Weltraumszene rechnet ohne.
+
+## Fallstricke
+
+- three.js definiert in seinen Shader-Bausteinen Makros wie `r0`, `r1`, `m0` (`cube_uv_reflection_fragment`).
+  Eigene Variablen in `onBeforeCompile` dürfen nicht so heißen, sonst gibt es rätselhafte Syntaxfehler.
+- Ton startet nur nach einer Nutzereingabe; deshalb beginnt alles mit dem Knopf „Reise starten“.
+- `loadModels` blendet `createImageBitmap` während des Parsens aus, damit der `GLTFLoader` r128 Texturen über
+  gewöhnliche Bildelemente lädt; das verhält sich in allen Browsern gleich.
+- Beschriftungen der Stationen erscheinen erst, wenn die Station im Bild ist (`baseHUD`).
+- Git für Windows: `.gitattributes` hält Textdateien auf LF, sonst ändern sich Prüfsummen und Diffs.
+
+## Medien neu erzeugen
+
+Siehe `docs/produktion.md`: Stimme und Modell bei ElevenLabs, Aufbereitung mit `tools/audio/`, Musikschleife,
+Herkunft der Modelle und Karten. Das Erzeugen bei ElevenLabs kostet Credits; nie ohne Auftrag wiederholen.
+
+## Fassung als claude.ai-Artefakt
+
+Adresse: https://claude.ai/artifact/KuNTVJioeEebKquH2AEGuk. Veröffentlicht wird `src/sonnensystem.html`,
+dazu als Begleitdateien `voice/`, `audio/`, `img/` aus `public/` und `models/*.json` aus `.artifact/models/`
+(`cd tools/models && npm install && node embed.mjs`).

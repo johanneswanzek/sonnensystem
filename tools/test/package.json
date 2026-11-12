@@ -1,0 +1,8 @@
+{
+  "name": "sonnensystem-tests",
+  "private": true,
+  "description": "Browsertests ohne Fenster. Einrichten: npm install && npx playwright install chromium",
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}
