@@ -569,18 +569,28 @@ const AU = (function(){
     const p = tr.g.gain; p.cancelScheduledValues(now); p.setValueAtTime(a*gn,now);
     if (a !== b) { const c = new Float32Array(48); for (let i = 0; i < 48; i++) c[i] = gn*Math.sqrt(a*a+(b*b-a*a)*ease(i/47)); p.setValueCurveAtTime(c,T,dur); }
   }
+  // Zusatzstücke liegen als komprimierte Bytes bereit (raw) und werden erst beim Anflug dekodiert (buf); höchstens eines ist dekodiert
   function sweep(){
     clearTimeout(sweepT); if (!ctx) return;
     let pend = false;
-    ['earth','mars'].forEach(k => { const m = tk[k]; if (!m.src) return;
-      if (m.lv.b === 0) { if (ctx.currentTime >= m.lv.t0+m.lv.dur+.1) { try { m.src.stop(); m.src.disconnect(); } catch (e) {} m.src = null; } else pend = true; } });
+    ['earth','mars'].forEach(k => { const m = tk[k];
+      if (m.src && m.lv.b === 0) { if (ctx.currentTime >= m.lv.t0+m.lv.dur+.1) { try { m.src.stop(); m.src.disconnect(); } catch (e) {} m.src = null; } else pend = true; }
+      if (!m.src && m.buf && want !== k) m.buf = null; });      // zurückgeblendet: dekodierten Puffer freigeben
+    if (want !== 'main') ensureDecoded(want);
     if (pend) sweepT = setTimeout(sweep,800);
+  }
+  function ensureDecoded(k){
+    const m = tk[k]; if (m.buf || m.dec || !m.raw) return;
+    if (tk[k === 'earth' ? 'mars' : 'earth'].buf) return;     // das andere Stück zuerst freigeben (sweep ruft erneut auf)
+    m.dec = true;
+    new Promise((res,rej) => ctx.decodeAudioData(m.raw.slice(0),res,rej)).then(b => { m.dec = false; m.buf = b; applyPlace(); }).catch(() => { m.dec = false; m.raw = null; });
   }
   // Überblendung zum Stück des Ortes, auf der nächsten Zählzeit des Hauptstücks (alle Stücke 122 BPM, das Hauptstück läuft stumm weiter und gibt das Raster)
   function applyPlace(){
     if (!ctx || !playing || !started) return;
+    if (want !== 'main') ensureDecoded(want);
     const target = want !== 'main' && tk[want].buf ? want : 'main';
-    if (target === shown) return;
+    if (target === shown) { sweep(); return; }
     shown = target;
     const now = ctx.currentTime, tg = t0+MUSIC.grid0, T = tg+Math.ceil((now+.08-tg)/BEAT)*BEAT, D = 8*BEAT;
     if (target !== 'main' && !tk[target].src) {
@@ -591,8 +601,8 @@ const AU = (function(){
     sweep();
   }
   function loadTracks(){
-    ['earth','mars'].forEach(k => { if (tk[k].buf !== undefined) return; tk[k].buf = null;
-      decode(TRACKS[k].file).then(b => { tk[k].buf = b; applyPlace(); }).catch(() => { tk[k].buf = null; }); });
+    ['earth','mars'].forEach(k => { if (tk[k].rawReq) return; tk[k].rawReq = true;
+      fetch(TRACKS[k].file).then(r => { if (!r.ok) throw new Error(k); return r.arrayBuffer(); }).then(b => { tk[k].raw = b; applyPlace(); }).catch(() => {}); });
   }
   // Das Stück beginnt mit seinem Auftakt und bleibt dann in der Schleife
   function play(){

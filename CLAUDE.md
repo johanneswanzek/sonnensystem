@@ -88,7 +88,7 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
 - **Ton (`AU`):** Hauptstück `audio/music.mp3` für alle Halte, `music-earth.mp3` für die Erde, `music-mars.mp3` für den
   Mars (beide Abschnitte). `AU.place(i)` (aus `focus`) blendet auf der nächsten Zählzeit des Hauptstücks mit gleicher
   Leistung über (8 Schläge); das Hauptstück läuft stumm weiter und gibt das Raster, die Zusatzstücke starten auf einem
-  Schlag und werden nach der Überblendung gestoppt. Zusatzstücke und Effekte laden erst im Hintergrund nach dem Hauptstück;
+  Schlag und werden nach der Überblendung gestoppt. Effekte laden im Hintergrund nach dem Hauptstück, die Zusatzstücke nur als komprimierte Bytes (`raw`); dekodiert wird erst beim Anflug (`AU.place`), nach dem Zurückblenden wird der Puffer freigegeben (höchstens ein Zusatzstück dekodiert);
   fehlt etwas, läuft das Hauptstück weiter bzw. der alte synthetische Effekt. Effekte (`audio/sfx/*.mp3`, `tools/audio/sfx.py`):
   `playS(name,{group,delay,...})` blendet laufende Effekte derselben Gruppe aus. Flug: whoosh (Höhepunkt in der Flugmitte),
   `AU.flight(dur,'stage'|'dive')` für Kapitelwechsel und Sturzflug, Ankunft: arrive (dazu belt, rings), `AU.boom` = Erdschnitt,
