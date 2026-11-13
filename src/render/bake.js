@@ -1,9 +1,10 @@
 // render/bake – Backen auf der Grafikkarte: Shader in eine Textur rechnen (bake, bakeFlat).
 // Exporte: bake, bakeFlat, nextFrame; initBake
-// Hängt ab von: render/renderer.js, render/scene.js, render/shaders/bake.js
+// Hängt ab von: core/device.js, render/renderer.js, render/scene.js, render/shaders/bake.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
+import { DESKTOP } from '../core/device.js';
 import { renderer } from './renderer.js';
 import { blackTex } from './scene.js';
 import { BAKE_LIB, BAKE_MAIN, BAKE_VS } from './shaders/bake.js';
@@ -14,7 +15,7 @@ let bakeScene, bakeCam, bakeQuad;
 const nextFrame = () => new Promise(r => requestAnimationFrame(r));
 // Rendert eine Oberfläche in eine Textur (Farbe in RGB, Höhe oder Maske in A), in Streifen, damit die Seite bedienbar bleibt
 async function bake(w,body,src){
-  const h = w/2;
+  w = Math.min(w,renderer.capabilities.maxTextureSize,DESKTOP ? 4096 : 2048); const h = w/2;
   const rt = new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.LinearMipmapLinearFilter, magFilter:THREE.LinearFilter, format:THREE.RGBAFormat,
     depthBuffer:false, stencilBuffer:false, generateMipmaps:true, wrapS:THREE.RepeatWrapping});
   rt.texture.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy());
@@ -33,6 +34,7 @@ async function bake(w,body,src){
 }
 // Kachelbare Bodentextur (gespiegelt wiederholt, damit keine Naht entsteht)
 async function bakeFlat(size,body){
+  size = Math.min(size,renderer.capabilities.maxTextureSize);
   const rt = new THREE.WebGLRenderTarget(size,size,{minFilter:THREE.LinearMipmapLinearFilter, magFilter:THREE.LinearFilter, format:THREE.RGBAFormat,
     depthBuffer:false, stencilBuffer:false, generateMipmaps:true, wrapS:THREE.MirroredRepeatWrapping, wrapT:THREE.MirroredRepeatWrapping});
   rt.texture.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy()); rt.texture.encoding = THREE.sRGBEncoding;

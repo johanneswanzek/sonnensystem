@@ -11,28 +11,53 @@ let SURF;
 export function initSurfaces(){
 SURF = {
   mercury: `vec4 surf(vec3 p,float lat,float lon){
-    float n=fbm(p*2.5+3.0,7);
-    float cr=craters(p,4.0,0.55)*0.5+craters(p,9.0,0.65)*0.3+craters(p,19.0,0.7)*0.16+craters(p,41.0,0.7)*0.08;
-    float m=fbm(p*1.3+9.0,4);
-    vec3 col=mix(vec3(0.34,0.32,0.31),vec3(0.66,0.63,0.60),smoothstep(0.3,0.7,n));
-    col=mix(col,vec3(0.27,0.26,0.26),smoothstep(0.52,0.66,m)*0.6);
-    col*=0.9+0.5*cr;
-    col+=0.10*smoothstep(0.62,0.78,fbm(p*14.0,4));
-    return vec4(clamp(col,0.0,1.0),clamp(0.55+0.3*(n-0.5)+0.5*cr+grain(p),0.0,1.0)); }`,
+    float n=fbm(p*2.5+3.0,7); float m=fbm(p*1.3+9.0,4);
+    float cr=craters(p,3.0,0.5)*0.45+craters(p,7.0,0.62)*0.32+craters(p,16.0,0.68)*0.18+craters(p,37.0,0.7)*0.1+craters(p,85.0,0.72)*0.05;
+    // glatte Ebenen (dunkler, weniger Krater) und helle Strahlen junger Krater
+    float pl=smoothstep(0.55,0.68,m);
+    vec3 col=mix(vec3(0.36,0.34,0.32),vec3(0.62,0.59,0.55),smoothstep(0.3,0.7,n));
+    col=mix(col,vec3(0.30,0.29,0.28),pl*0.55);
+    col*=0.88+0.45*cr*(1.0-pl*0.5);
+    for(int k=0;k<3;k++){ vec3 rc=normalize(h33(vec3(float(k)*7.1,3.0,1.0))*2.0-1.0); float rd=acos(clamp(dot(p,rc),-1.0,1.0));
+      float ry=fbm(normalize(p-rc*dot(p,rc)+vec3(1e-4))*16.0+float(k),4); col+=0.16*exp(-rd*4.0)*smoothstep(0.56,0.76,ry)+0.18*(1.0-smoothstep(0.015,0.04,rd)); }
+    return vec4(clamp(col,0.0,1.0),clamp(0.55+0.25*(n-0.5)+0.5*cr*(1.0-pl*0.4)-0.05*pl+grain(p),0.0,1.0)); }`,
   moon: `vec4 surf(vec3 p,float lat,float lon){
-    float n=fbm(p*2.0+5.0,6);
-    float cr=craters(p,3.5,0.6)*0.5+craters(p,8.0,0.7)*0.3+craters(p,18.0,0.7)*0.15;
-    float mare=smoothstep(0.52,0.62,fbm(p*1.2+2.0,4));
-    vec3 col=mix(vec3(0.62,0.61,0.58),vec3(0.84,0.83,0.80),n);
-    col=mix(col,vec3(0.36,0.36,0.38),mare*0.8); col*=0.85+0.6*cr*(1.0-mare*0.5);
-    return vec4(clamp(col,0.0,1.0),1.0); }`,
+    float n=fbm(p*2.0+5.0,7); float w=fbm(p*0.9+1.0,4);
+    float cr=craters(p,3.0,0.55)*0.5+craters(p,7.0,0.65)*0.32+craters(p,16.0,0.7)*0.18+craters(p,37.0,0.72)*0.1+craters(p,80.0,0.75)*0.05;
+    float mare=smoothstep(0.50,0.60,fbm(p*1.1+vec3(2.0,w,1.0),5))*smoothstep(-0.2,0.6,p.z+0.3);
+    vec3 col=mix(vec3(0.56,0.55,0.53),vec3(0.80,0.79,0.76),n);
+    col=mix(col,vec3(0.30,0.30,0.32)+0.06*(fbm(p*9.0,4)-0.5),mare*0.85);
+    col*=0.86+0.42*cr*(1.0-mare*0.6);
+    // helle Strahlen junger Krater
+    vec3 rc=normalize(vec3(0.35,-0.75,0.55)); float rd=acos(clamp(dot(p,rc),-1.0,1.0));
+    float ry=fbm(normalize(p-rc*dot(p,rc)+vec3(1e-4))*18.0,4); col+=0.22*exp(-rd*3.0)*smoothstep(0.55,0.75,ry)+0.25*(1.0-smoothstep(0.02,0.05,rd));
+    float h=0.5+0.18*(n-0.5)+0.45*cr-0.06*mare;
+    return vec4(clamp(col,0.0,1.0),clamp(h+grain(p),0.0,1.0)); }`,
+  // Kleine Monde und Mars-Monde nach NASA-Karte (Graustufen): Farbe aus der Karte, Höhe aus Helligkeit und zusätzlichen Kratern
+  rockReal: `vec4 surf(vec3 p,float lat,float lon){
+    vec3 real=texture2D(src,vUv).rgb; float lum=dot(real,vec3(0.333));
+    float cr=craters(p,22.0,0.55)*0.3+craters(p,50.0,0.6)*0.15;
+    float n=fbm(p*14.0,5);
+    vec3 col=real*(0.92+0.2*cr)*(0.94+0.12*(n-0.5)*2.0);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.6*(lum-0.5)+0.35*cr+0.08*(n-0.5)+grain(p),0.0,1.0)); }`,
+  // Venus im sichtbaren Licht fast strukturlos; die großen Y-Muster der Wolkenoberseite (aus UV-Aufnahmen) zart angedeutet:
+  // am Äquator eilen die Wolken voraus, zu den Polen hin bleiben sie zurück, dadurch liegen die dunklen Bänder als Winkel
   venus: `vec4 surf(vec3 p,float lat,float lon){
-    float w=fbm(p*1.6,5); float sh=lon+lat*lat*1.8; float cl=cos(lat);
-    vec3 q=vec3(cos(sh)*cl,sin(lat)*4.5,sin(sh)*cl)*1.6;
-    float n=fbm(q+w*1.6,8); float f=fbm(p*vec3(6.0,22.0,6.0)+w*2.0,5);
-    vec3 col=mix(vec3(0.64,0.47,0.25),vec3(0.96,0.88,0.68),smoothstep(0.28,0.72,n*0.75+f*0.25));
-    col=mix(col,vec3(0.98,0.93,0.80),smoothstep(0.9,1.4,abs(lat))*0.5);
-    return vec4(col,0.5); }`,
+    float cl=cos(lat); float sl=sin(lat);
+    float w=fbm(p*1.4+3.0,5);
+    float sh=lon+1.25*abs(sl)+0.35*sl*sl+(w-0.5)*0.6;
+    vec3 q=vec3(cos(sh)*cl,sl*2.2,sin(sh)*cl);
+    float big=fbm(q*0.85+vec3(4.0,0.0,1.0),5);
+    float str=fbm(vec3(q.x*2.0,q.y*9.0,q.z*2.0)+w*1.5,7);
+    float fine=fbm(p*vec3(9.0,20.0,9.0)+w*2.0,5);
+    float y=smoothstep(0.34,0.70,big*0.88+str*0.12);
+    vec3 col=mix(vec3(0.80,0.67,0.44),vec3(0.98,0.93,0.80),y);
+    col*=0.975+0.05*(fine-0.5)*2.0;
+    // helle Polarkragen, dunkler Saum davor
+    float al=abs(lat);
+    col=mix(col,col*vec3(0.88,0.84,0.78),smoothstep(0.95,1.1,al)*(1.0-smoothstep(1.15,1.3,al))*0.6);
+    col=mix(col,vec3(1.0,0.97,0.88),smoothstep(1.2,1.45,al)*0.6);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.25*(y-0.5)+0.1*(fine-0.5),0.0,1.0)); }`,
   earth: EARTH_GEO + `vec4 surf(vec3 p,float lat,float lon){
     float n,e,land,m,ice,dry; geo(p,lat,n,e,land,m,ice,dry); float al=abs(lat);
     vec3 sea=mix(vec3(0.012,0.06,0.20),vec3(0.05,0.27,0.50),smoothstep(0.40,0.515,n));
@@ -87,13 +112,28 @@ SURF = {
   jupiterReal: `vec4 surf(vec3 p,float lat,float lon){
     float t=fbm(p*2.0,5);
     float wv=fbm(vec3(p.x*3.0,p.y*11.0,p.z*3.0)+t*1.5,6)-0.5;
+    // Großer Roter Fleck (in der Karte bei u 0,20, v 0,33): Abtastung im Wirbel gedreht, innen stärker
+    vec2 gc=vec2(0.200,0.330); vec2 gd=(vUv-gc)*vec2(2.0,1.0); float gr=length(gd/vec2(0.07,0.042));
+    float ga=2.2*exp(-gr*gr*0.9)*(1.0-smoothstep(1.4,2.2,gr)); float ca=cos(ga); float sa=sin(ga);
+    vec2 uv=gc+vec2(ca*gd.x-sa*gd.y,sa*gd.x+ca*gd.y)/vec2(2.0,1.0);
     float st=fbm(vec3(p.x*5.0,p.y*52.0,p.z*5.0)+wv*3.0,6);
     float ed=fbm(vec3(p.x*14.0,p.y*30.0,p.z*14.0)+t*4.0,6);
-    vec3 real=texture2D(src,vUv+vec2(wv*0.006,wv*0.003)).rgb;
-    vec3 col=real*1.12*(0.82+0.36*st)*(0.93+0.14*ed);
-    col=mix(col,vec3(dot(col,vec3(0.33))),0.18);
+    vec3 real=texture2D(src,uv+vec2(wv*0.006,wv*0.003)*(1.0-smoothstep(0.8,1.6,gr))).rgb;
+    vec3 col=real*1.12*(0.84+0.32*st)*(0.93+0.14*ed);
+    col=mix(col,vec3(dot(col,vec3(0.33))),0.15);
     col=mix(col,vec3(0.46,0.40,0.36),smoothstep(1.05,1.45,abs(lat))*0.8);
-    return vec4(clamp(col,0.0,1.0),0.5); }`,
+    float lum=dot(col,vec3(0.3,0.5,0.2));
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.5*(lum-0.5)+0.1*(st-0.5)+0.12*exp(-gr*gr),0.0,1.0)); }`,
+  // Saturn: NASA-Karte (720×360) als Grundlage, feine Bänder und Turbulenz dazu, Hexagon am Nordpol nur angedeutet
+  saturnReal: `vec4 surf(vec3 p,float lat,float lon){
+    float t=fbm(p*2.0,4); float wv=fbm(vec3(p.x*2.5,p.y*9.0,p.z*2.5)+t,5)-0.5;
+    vec3 real=texture2D(src,vec2(vUv.x,vUv.y+wv*0.004)).rgb;
+    float st=fbm(vec3(p.x*4.0,p.y*70.0,p.z*4.0)+wv*2.0,6); float ed=fbm(vec3(p.x*10.0,p.y*30.0,p.z*10.0)+t*3.0,5);
+    vec3 col=real*(0.88+0.24*st)*(0.96+0.08*ed);
+    float lu=dot(col,vec3(0.3,0.55,0.15)); col=mix(col,lu*vec3(1.08,0.98,0.78),0.6)*0.95;
+    float hb=1.40+0.012*cos(lon*6.0); col=mix(col,col*vec3(0.80,0.84,0.86),smoothstep(hb-0.012,hb+0.012,lat)*0.45);
+    col=mix(col,vec3(0.66,0.64,0.57)*(0.9+0.2*st),smoothstep(1.25,1.5,abs(lat))*0.75);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.4*(dot(col,vec3(0.33))-0.6)+0.08*(st-0.5),0.0,1.0)); }`,
   // Milchstraße als Himmelshintergrund (Breite 0 = galaktische Ebene): diffuses Band, helleres Zentrum, dunkle Staubbahnen
   milky: `vec4 surf(vec3 p,float lat,float lon){
     float w=fbm(p*3.0+1.0,5);
@@ -141,24 +181,37 @@ SURF = {
     col=mix(col,vec3(0.60,0.56,0.44),smoothstep(1.0,1.4,abs(lat))*0.6);
     float hb=1.43+0.014*cos(lon*6.0); col=mix(col,vec3(0.50,0.50,0.42),smoothstep(hb-0.01,hb+0.01,lat)*0.4);
     return vec4(col,0.5); }`,
+  // Uranus: fast strukturlose Dunstkugel, zarte Bänder, hellere Polkappe (Südpol zeigt zur Sonne), wenige helle Flecken
   uranus: `vec4 surf(vec3 p,float lat,float lon){
-    float t=fbm(p*2.0,4); float b=sin((lat+(t-0.5)*0.1)*9.0)*0.5+0.5;
-    vec3 col=mix(vec3(0.52,0.80,0.84),vec3(0.72,0.92,0.93),clamp(b*0.45+(t-0.5)*0.3+0.3,0.0,1.0));
-    col=mix(col,vec3(0.86,0.97,0.97),smoothstep(0.7,1.3,lat)*0.6);
-    col*=0.96+0.08*fbm(vec3(p.x*4.0,p.y*40.0,p.z*4.0),4);
+    float t=fbm(p*1.6,4); float y=lat+(t-0.5)*0.06;
+    float b=sin(y*7.0)*0.5+0.5; float b2=sin(y*19.0+0.8)*0.5+0.5;
+    vec3 col=mix(vec3(0.55,0.78,0.80),vec3(0.66,0.86,0.87),b*0.6+b2*0.15+(t-0.5)*0.25);
+    col=mix(col,vec3(0.80,0.92,0.92),smoothstep(-0.6,-1.25,lat)*0.7);
+    col*=0.985+0.03*fbm(vec3(p.x*4.0,p.y*36.0,p.z*4.0),4);
+    float sp=smoothstep(0.80,0.88,fbm(vec3(p.x*6.0,p.y*22.0,p.z*6.0)+5.0,5))*(1.0-smoothstep(0.2,0.7,abs(lat-0.55)));
+    col=mix(col,vec3(0.93,0.98,0.98),sp*0.5);
     return vec4(col,0.5); }`,
-  neptune: `vec4 surf(vec3 p,float lat,float lon){
-    float t=fbm(p*2.0,5); float wv=fbm(vec3(p.x*3.0,p.y*9.0,p.z*3.0)+t,5)-0.5; float y=lat+wv*0.08;
-    float b=sin(y*9.0)*0.5+0.5;
-    vec3 col=mix(vec3(0.10,0.22,0.66),vec3(0.28,0.47,0.90),b);
-    col=mix(col,vec3(0.16,0.32,0.78),fbm(vec3(p.x*5.0,p.y*40.0,p.z*5.0),5)*0.5);
-    vec2 q=vec2((lon-2.0)*cos(lat),lat+0.36)/vec2(0.22,0.10); float r=length(q);
-    col=mix(col,vec3(0.05,0.11,0.40),1.0-smoothstep(0.7,1.05,r));
-    float ci=fbm(vec3(p.x*5.0,p.y*30.0,p.z*5.0)+wv*4.0,6);
-    col=mix(col,vec3(0.92,0.95,1.0),smoothstep(0.70,0.84,ci)*0.65*max(1.0-smoothstep(0.9,2.6,r),0.25*smoothstep(0.75,0.95,sin(lat*7.0+1.0))));
-    col=mix(col,vec3(0.07,0.14,0.45),smoothstep(1.0,1.45,abs(lat))*0.5);
-    return vec4(col,0.5); }`
+  // Neptun: NASA-Karte (stark geglättet) nur als Farbschwankung, darüber Bänder, Großer Dunkler Fleck mit hellem Begleiter, Zirren
+  neptuneReal: `vec4 surf(vec3 p,float lat,float lon){
+    float t=fbm(p*2.0,5); float wv=fbm(vec3(p.x*3.0,p.y*9.0,p.z*3.0)+t,5)-0.5; float y=lat+wv*0.06;
+    vec3 real=(texture2D(src,vUv).rgb+texture2D(src,vUv+vec2(0.01,0.006)).rgb+texture2D(src,vUv-vec2(0.01,0.006)).rgb)/3.0;
+    float rl=dot(real,vec3(0.2,0.4,0.4));
+    float b=sin(y*8.0)*0.5+0.5;
+    vec3 col=mix(vec3(0.13,0.27,0.70),vec3(0.27,0.47,0.88),b*0.55+(rl-0.4)*0.9);
+    col=mix(col,vec3(0.20,0.36,0.82),fbm(vec3(p.x*4.0,p.y*34.0,p.z*4.0),5)*0.35);
+    col=mix(col,vec3(0.10,0.19,0.55),smoothstep(-0.95,-1.35,lat)*0.5);
+    col=mix(col,vec3(0.17,0.33,0.80),smoothstep(-1.35,-1.5,lat)*0.6);
+    vec2 q=vec2((lon-2.0)*cos(lat),lat+0.38)/vec2(0.20,0.085); float r=length(q);
+    col=mix(col,vec3(0.05,0.11,0.38),(1.0-smoothstep(0.55,1.0,r+(t-0.5)*0.4))*0.9);
+    vec2 q2=vec2((lon-2.06)*cos(lat),lat+0.47)/vec2(0.10,0.025);
+    float ci=fbm(vec3(p.x*5.0,p.y*34.0,p.z*5.0)+wv*4.0,6);
+    float zone=max(1.0-smoothstep(0.6,1.4,length(q2)),0.55*smoothstep(0.7,0.95,sin(lat*6.0+1.2)));
+    col=mix(col,vec3(0.94,0.97,1.0),smoothstep(0.66,0.82,ci)*0.8*zone);
+    col=mix(col,vec3(0.94,0.97,1.0),(1.0-smoothstep(0.5,1.0,length(q2)))*0.7);
+    return vec4(col,0.5); }`,
 };
+// ohne Karte: dieselbe Oberfläche mit gleichmäßiger Grundfarbe
+SURF.neptune = SURF.neptuneReal.replace('float rl=dot(real,vec3(0.2,0.4,0.4));','float rl=0.4;');
 }
 
 export { SURF };

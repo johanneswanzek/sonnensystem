@@ -8,7 +8,7 @@ import { S } from '../../core/state.js';
 import { DEG, TAU } from '../../core/util.js';
 import { basis } from '../../orbit/kepler.js';
 import { hash, ringTex } from '../canvas-textures.js';
-import { blackTex, halo, marker, orbitLine, points, scene } from '../scene.js';
+import { blackTex, halo, marker, orbitLine, planetTime, points, rockMat, scene } from '../scene.js';
 import { CLOUD_FS, LAYER_FS, PLANET_FS, RING_FS, VS } from '../shaders/space.js';
 
 function buildPlanet(b){
@@ -25,8 +25,10 @@ function buildPlanet(b){
   b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,128,80), new THREE.ShaderMaterial({defines:defs,
     uniforms:{map:{value:b.map}, nmap:{value:b.ntex || blackTex}, aux:{value:b.aux || blackTex}, nightK:{value:b.ntex ? 1 : 0}, specK:{value:b.spec || 0}, bumpK:{value:b.bump || 0}, gas:{value:b.gas || 0},
       texel:{value:b.map.texelStep}, atmo:{value:new THREE.Vector4(at[0],at[1],at[2],at[3])}, cut:{value:b.cut}, cloud:{value:new THREE.Vector2(0,0)},
-      center:{value:b.pos}, ringN:{value:b.axis}, ringR:{value:new THREE.Vector3(b.R*1.22,b.R*2.3,b.id === 'saturn' ? 1 : 0)}},
+      center:{value:b.pos}, ringN:{value:b.axis}, ringR:{value:new THREE.Vector3(b.R*1.22,b.R*2.3,b.id === 'saturn' ? 1 : 0)},
+      tint:{value:new THREE.Color(1,1,1)}, haze:{value:new THREE.Vector4(...(b.haze || [0,0,0,0]))}, time:planetTime, flow:{value:b.flow || 0}, detail:{value:b.detail || 0}},
     vertexShader:VS, fragmentShader:PLANET_FS}));
+  if (b.flow) b.mesh.onBeforeRender = () => { planetTime.value = S.sunMat.uniforms.time.value; };
   b.tiltG.add(b.mesh);
   if (b.ctex) {
     b.clouds = new THREE.Mesh(new THREE.SphereGeometry(b.R*1.015,96,64), new THREE.ShaderMaterial({defines:defs,
@@ -52,12 +54,15 @@ function buildPlanet(b){
     ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
   }
   if (b.id === 'uranus') {
-    const ring = new THREE.Mesh(new THREE.RingGeometry(b.R*1.94,b.R*1.965,160,1), new THREE.MeshBasicMaterial({color:0x9fb7bd, transparent:true, opacity:.32, side:THREE.DoubleSide, depthWrite:false}));
-    ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
+    // dünne, dunkle Ringe; der äußere (Epsilon) ist der breiteste
+    [[1.64,1.648,.22],[1.71,1.716,.2],[1.80,1.808,.24],[1.94,1.968,.42]].forEach(([r0_,r1_,op]) => {
+      const ring = new THREE.Mesh(new THREE.RingGeometry(b.R*r0_,b.R*r1_,192,1), new THREE.MeshBasicMaterial({color:0x7d8a8e, transparent:true, opacity:op, side:THREE.DoubleSide, depthWrite:false}));
+      ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
+    });
   }
   (b.sats || []).forEach((s,k) => {
     const parent = s.ecl ? b.pivot : b.tiltG;
-    s.mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r,32,20), new THREE.MeshLambertMaterial({color:s.c, map:S.moonTex}));
+    s.mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r,48,32), rockMat(s.map || S.moonTex,s.map ? 0xffffff : s.c,s.map ? 6 : 5));
     s.world = new THREE.Vector3(); s.ph = hash(k,3,b.diam)*TAU; s.vis = 0;
     s.rgb = (s.c >> 16 & 255) + ',' + (s.c >> 8 & 255) + ',' + (s.c & 255);
     parent.add(s.mesh);

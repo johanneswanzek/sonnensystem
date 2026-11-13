@@ -1,5 +1,5 @@
 // render/scene – Weltraumszene: Szene, Kamera, gemeinsame Hilfen (Punktwolken, Halo, Bahnlinien, Marker), geteilte Texturen.
-// Exporte: add, blackTex, camera, halo, marker, orbitLine, points, rays, scene; initScene
+// Exporte: add, blackTex, camera, halo, marker, orbitLine, planetTime, points, rays, rockMat, scene; initScene
 // Hängt ab von: core/util.js, orbit/kepler.js, render/canvas-textures.js, render/renderer.js, render/shaders/space.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
@@ -8,7 +8,7 @@ import { TAU } from '../core/util.js';
 import { place } from '../orbit/kepler.js';
 import { radialTex } from './canvas-textures.js';
 import { renderer } from './renderer.js';
-import { HALO_FS, ORBIT_FS, ORBIT_VS, VS } from './shaders/space.js';
+import { HALO_FS, ORBIT_FS, ORBIT_VS, PLANET_FS, VS } from './shaders/space.js';
 
 // Belegt in initScene() (Reihenfolge des Starts, siehe main.js)
 let scene, camera, blackTex, dotTex;
@@ -25,6 +25,17 @@ function points(n,fn,size,color,opacity){
   const m = new THREE.Points(g, new THREE.PointsMaterial({size, sizeAttenuation:false, vertexColors:true, color:color || 0xffffff, transparent:true, opacity:opacity == null ? 1 : opacity, depthWrite:false}));
   m.frustumCulled = false;
   return m;
+}
+// Gemeinsame Uhr der Planetenshader (Turbulenz der Gasriesen)
+const planetTime = {value:0};
+// Monde und kleine Körper: derselbe Shader wie die Planeten (Relief aus der Höhe in A, weicher Terminator), getönt, ohne Atmosphäre
+function rockMat(map,color,bump){
+  const z = new THREE.Vector4(0,0,0,0);
+  return new THREE.ShaderMaterial({uniforms:{map:{value:map}, nmap:{value:blackTex}, aux:{value:blackTex}, nightK:{value:0}, specK:{value:0}, bumpK:{value:bump}, gas:{value:0},
+    texel:{value:map.texelStep || new THREE.Vector2(1/512,1/256)}, atmo:{value:z}, cut:{value:new THREE.Vector2(0,0)}, cloud:{value:new THREE.Vector2(0,0)},
+    center:{value:new THREE.Vector3()}, ringN:{value:new THREE.Vector3(0,1,0)}, ringR:{value:new THREE.Vector3(0,0,0)},
+    tint:{value:new THREE.Color(color).multiplyScalar(1.15)}, haze:{value:z}, time:planetTime, flow:{value:0}, detail:{value:0}},
+    vertexShader:VS, fragmentShader:PLANET_FS});
 }
 function halo(radius,inner,color,k,self){
   const s = radius/inner;
@@ -62,4 +73,4 @@ blackTex = new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1,THREE.RGBAForma
 dotTex = radialTex([[0,'rgba(255,255,255,1)'],[.25,'rgba(255,255,255,.55)'],[.6,'rgba(255,255,255,.1)'],[1,'rgba(255,255,255,0)']]);
 }
 
-export { add, blackTex, camera, halo, marker, orbitLine, points, rays, scene };
+export { add, blackTex, camera, halo, marker, orbitLine, planetTime, points, rays, rockMat, scene };

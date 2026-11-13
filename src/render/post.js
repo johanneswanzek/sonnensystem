@@ -70,10 +70,10 @@ POST = (() => {
     w = nw; h = nh;
     if (main) main.dispose(); bd.forEach(t => t.dispose()); bu.forEach(t => t.dispose()); bd = []; bu = [];
     const o = Object.assign({}, opt, {depthBuffer:true});
-    if (wgl2 && THREE.WebGLMultisampleRenderTarget) { main = new THREE.WebGLMultisampleRenderTarget(w,h,o); main.samples = 4; }
+    if (wgl2 && THREE.WebGLMultisampleRenderTarget) { main = new THREE.WebGLMultisampleRenderTarget(w,h,o); main.samples = DESKTOP ? 4 : 2; }
     else main = new THREE.WebGLRenderTarget(w,h,o);
     // Bloom ab halber Auflösung, Stufen bis etwa 16 Bildpunkte
-    const n = DESKTOP ? 6 : 5;
+    const n = DESKTOP ? 6 : 4;                                 // Handy: eine Stufe weniger
     let lw = w, lh = h;
     for (let i = 0; i < n; i++) { lw = Math.max(1,lw >> 1); lh = Math.max(1,lh >> 1); if (i > 2 && Math.min(lw,lh) < 12) break; bd.push(new THREE.WebGLRenderTarget(lw,lh,opt)); bu.push(new THREE.WebGLRenderTarget(lw,lh,opt)); }
   }

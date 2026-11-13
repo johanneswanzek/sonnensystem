@@ -11,7 +11,7 @@ import { DEG, TAU } from '../../core/util.js';
 import { BODIES } from '../../data/bodies.js';
 import { basis } from '../../orbit/kepler.js';
 import { hash, vnoise } from '../canvas-textures.js';
-import { marker, orbitLine, scene } from '../scene.js';
+import { marker, orbitLine, rockMat, scene } from '../scene.js';
 
 // Felsbrocken: verformte Kugel mit glatten Normalen
 function rockGeo(seed,detail){
@@ -32,7 +32,7 @@ function buildMinor(b){
   b.m = basis(b.el); b.period = 36525*360/b.el.dL; b.fitR = b.R; b.fill = .42; b.rMean = 10*Math.pow(b.el.a,.45);
   b.axis = new THREE.Vector3(-Math.sin(b.tilt*DEG),Math.cos(b.tilt*DEG),0);
   b.pivot = new THREE.Group(); b.tiltG = new THREE.Group(); b.tiltG.rotation.z = b.tilt*DEG; b.pivot.add(b.tiltG); scene.add(b.pivot);
-  b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,48,32), new THREE.MeshLambertMaterial({color:0xb5aea4, map:S.moonTex})); b.tiltG.add(b.mesh);
+  b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,48,32), rockMat(S.moonTex,0xb5aea4,6)); b.tiltG.add(b.mesh);
   const n = 44, rm = new THREE.InstancedMesh(rockGeo(3,1), new THREE.MeshLambertMaterial({color:0x9a9288}), n);
   for (let i = 0; i < n; i++) {
     const a = hash(i,1,61)*TAU, r = b.R*(2.6+9*hash(i,2,61)), sz = b.R*(.03+.1*Math.pow(hash(i,3,61),2));

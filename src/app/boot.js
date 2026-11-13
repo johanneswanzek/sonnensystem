@@ -50,12 +50,13 @@ async function boot(){
   elSr.textContent = BODIES[0].sr;
   measure();
   await nextFrame();
-  // Karten der NASA: Erde (Blue Marble, Nachtlichter; Höhe, Wasser und Wolken in einer Hilfstextur), Mars und Jupiter. Fehlt eine, wird der Planet wie die übrigen berechnet.
+  // Karten der NASA: Erde (Blue Marble, Nachtlichter; Höhe, Wasser und Wolken in einer Hilfstextur), Mars, Jupiter, Saturn, Neptun,
+  // Phobos und Deimos. Fehlt eine, wird der Körper wie die übrigen berechnet.
   const loadTex = url => new Promise((res,rej) => new THREE.TextureLoader().load(url, t => { t.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy()); t.wrapS = THREE.RepeatWrapping; res(t); }, undefined, rej));
-  const maps = await Promise.all(['img/earth-day.jpg','img/earth-night.jpg','img/earth-aux.jpg','img/mars.jpg','img/jupiter.jpg'].map(u => loadTex(u).catch(() => null)));
+  const maps = await Promise.all(['img/earth-day.jpg','img/earth-night.jpg','img/earth-aux.jpg','img/mars.jpg','img/jupiter.jpg','img/saturn.jpg','img/neptune.jpg','img/phobos.jpg','img/deimos.jpg'].map(u => loadTex(u).catch(() => null)));
   const real = maps[0] && maps[1] && maps[2] ? maps : null;
   loader.textContent = tr('Oberflächen werden berechnet …');
-  S.moonTex = await bake(512,SURF.moon);
+  S.moonTex = await bake(1024,SURF.moon);
   try { S.milkyTex = await bake(DESKTOP ? 2048 : 1024,SURF.milky); } catch (e) { S.milkyTex = null; }
   for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
@@ -63,7 +64,10 @@ async function boot(){
     if (b.id === 'earth' && real) { b.map = real[0]; b.map.texelStep = new THREE.Vector2(1.5/2048,1.5/1024); b.ntex = real[1]; b.aux = real[2]; b.ctex = real[2]; b.bump = 10; continue; }
     if (b.id === 'mars' && maps[3]) b.map = await bake(2048,SURF.marsReal,maps[3]);
     else if (b.id === 'jupiter' && maps[4]) b.map = await bake(2048,SURF.jupiterReal,maps[4]);
+    else if (b.id === 'saturn' && maps[5]) b.map = await bake(2048,SURF.saturnReal,maps[5]);
+    else if (b.id === 'neptune' && maps[6]) b.map = await bake(b.tex,SURF.neptuneReal,maps[6]);
     else b.map = await bake(b.tex,SURF[b.id]);
+    for (const s of b.sats || []) { const m = s.img === 'phobos' ? maps[7] : s.img === 'deimos' ? maps[8] : null; if (m) s.map = await bake(1024,SURF.rockReal,m); }
     if (b.id === 'earth') { b.ntex = await bake(1024,SURF.earthNight); b.ctex = await bake(2048,SURF.earthClouds); }
   }
   buildBackdrop(); buildSun(BODIES[1]);
