@@ -24,7 +24,8 @@ test.describe.serial('Dialog Quellen', () => {
 
   test('Tastenkürzel sind bei offenem Dialog aus', async () => {
     const before = await L.state(page);
-    for (const k of ['ArrowRight', 'ArrowLeft', ' ', 'f', 'm']) await page.keyboard.press(k);
+    // (Leertaste und Eingabe betätigen den fokussierten Schließen-Knopf und gehören nicht zu den Tastenkürzeln der Seite)
+    for (const k of ['ArrowRight', 'ArrowLeft', 'f', 'F', 'm', 'M']) await page.keyboard.press(k);
     await page.waitForTimeout(400);
     const after = await L.state(page);
     for (const k of ['cur', 'tour', 'cine', 'soundMode']) expect(after[k], k).toBe(before[k]);

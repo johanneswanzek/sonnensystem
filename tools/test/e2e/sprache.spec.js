@@ -94,13 +94,6 @@ test.describe.serial('Sprachmenü', () => {
     await open(false);
   });
 
-  test('Escape schließt und gibt dem Knopf den Fokus zurück', async () => {
-    await page.click('#lang'); await open(true);
-    await page.keyboard.press('Escape');
-    await open(false);
-    await expect(page.locator('#lang')).toBeFocused();
-  });
-
   test('Klick auf die aktuelle Sprache lädt nicht neu', async () => {
     await page.click('#lang');
     await page.evaluate(() => { window.__marker = 1; });

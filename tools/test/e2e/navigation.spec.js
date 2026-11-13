@@ -92,5 +92,15 @@ test.describe.serial('Navigation', () => {
     await page.keyboard.press('ArrowRight'); await expectBody(0);
   });
 
+  test('Sprachmenü: Escape schließt und gibt dem Knopf den Fokus zurück', async () => {
+    await page.click('#lang');
+    await expect(page.locator('#langMenu')).toBeVisible();
+    await expect(page.locator('#lang')).toHaveAttribute('aria-expanded', 'true');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#langMenu')).toBeHidden();
+    await expect(page.locator('#lang')).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#lang')).toBeFocused();
+  });
+
   test('keine Fehler', async () => { expect(L.problems(s.log)).toEqual([]); });
 });

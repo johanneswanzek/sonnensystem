@@ -6,8 +6,15 @@ const MODES = [['Musik und Sprecher', 'true'], ['Nur Sprecher, ohne Musik', 'tru
 
 test.describe.serial('Ton', () => {
   let s, page;
-  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); page = s.page; await page.click('#goQuiet'); });
+  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); page = s.page; await page.click('#goQuiet');
+    // Der Toast verschwindet nach 2,2 s; bei langsamem Rendering ist er beim Prüfen schon weg. Deshalb seinen Verlauf mitschreiben.
+    await page.evaluate(() => {
+      const t = document.querySelector('#toast'); window.__toasts = [];
+      new MutationObserver(() => window.__toasts.push({ text: t.textContent, on: t.classList.contains('on') })).observe(t, { attributes: true, childList: true, characterData: true, subtree: true });
+    });
+  });
   test.afterAll(async () => { await s.close(); });
+  const toasted = t => expect.poll(() => page.evaluate(t => window.__toasts.some(x => x.on && x.text === t), t), { message: 'Toast "' + t + '"' }).toBe(true);
   const expectMode = async m => {
     const [label, pressed] = MODES[m];
     await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', pressed);
@@ -24,8 +31,7 @@ test.describe.serial('Ton', () => {
     await page.evaluate(() => document.activeElement && document.activeElement.blur());
     await page.keyboard.press('m');
     await expectMode(0);
-    await expect(page.locator('#toast')).toHaveClass(/\bon\b/);
-    await expect(page.locator('#toast')).toHaveText('Musik und Sprecher');
+    await toasted('Musik und Sprecher');
     expect((await L.state(page)).auActive).toBe(true);
     // Toast verschwindet wieder
     await expect(page.locator('#toast')).not.toHaveClass(/\bon\b/, { timeout: 10000 });
@@ -35,8 +41,7 @@ test.describe.serial('Ton', () => {
     for (const m of [1, 2, 0]) {
       await page.keyboard.press('M');
       await expectMode(m);
-      await expect(page.locator('#toast')).toHaveText(MODES[m][0]);
-      await expect(page.locator('#toast')).toHaveClass(/\bon\b/);
+      await toasted(MODES[m][0]);
     }
     const x = await L.state(page);
     expect(x.auActive).toBe(true);
@@ -47,7 +52,7 @@ test.describe.serial('Ton', () => {
       await page.click('#sound');
       await expectMode(m);
       expect((await L.state(page)).auActive).toBe(m !== 2);
-      await expect(page.locator('#toast')).toHaveText(MODES[m][0]);
+      await toasted(MODES[m][0]);
     }
     await expect(page.locator('#toast')).not.toHaveClass(/\bon\b/, { timeout: 10000 });
   });

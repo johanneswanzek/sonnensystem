@@ -26,7 +26,8 @@ test.describe.serial('Zeitraffer', () => {
   });
 
   test('bei Pause steht das Datum still', async () => {
-    await page.waitForTimeout(1500);                 // Auslaufen der Geschwindigkeit
+    // Die Geschwindigkeit läuft weich aus: warten, bis sich die Zeit nicht mehr bewegt
+    await expect.poll(async () => { const a = await days(); await page.waitForTimeout(700); return (await days()) - a; }, { timeout: 60000 }).toBe(0);
     const a = await days(), d = await page.locator('#date').textContent();
     await page.waitForTimeout(2500);
     expect(await days()).toBe(a);
