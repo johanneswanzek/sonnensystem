@@ -2,6 +2,8 @@
 const { test, expect } = require('playwright/test');
 const L = require('./lib');
 
+const soft = !!process.env.SOFTWARE_GL;
+
 test.describe.serial('Zeitraffer', () => {
   let s, page;
   test.beforeAll(async ({ browser }, info) => {
@@ -37,17 +39,27 @@ test.describe.serial('Zeitraffer', () => {
   });
 
   test('bei Pause steht das Datum still', async () => {
-    // Die Geschwindigkeit läuft weich aus: warten, bis sich die Zeit nicht mehr bewegt
+    // Das Tempo läuft weich aus, bei niedriger Bildrate (Software-Rendering) beliebig lange: keine feste Annahme über
+    // die Dauer, sondern warten, bis simDays in drei aufeinanderfolgenden Abfragen (~400 ms Abstand) unverändert ist.
+    // Jede Abfrage wartet vorher auf zwei fertige Bilder, damit ein stockendes Bild keinen Stillstand vortäuscht.
+    const frameDays = () =>
+      page.evaluate(
+        () => new Promise(res => requestAnimationFrame(() => requestAnimationFrame(() => res(window.__t.ex.simDays)))),
+      );
+    let last = NaN,
+      same = 0;
     await expect
       .poll(
         async () => {
-          const a = await days();
-          await page.waitForTimeout(700);
-          return (await days()) - a;
+          const v = await frameDays();
+          same = v === last ? same + 1 : 0;
+          last = v;
+          await page.waitForTimeout(400);
+          return same;
         },
-        { timeout: 60000 },
+        { timeout: soft ? 120000 : 30000, intervals: [0] },
       )
-      .toBe(0);
+      .toBeGreaterThanOrEqual(3);
     const a = await days(),
       d = await page.locator('#date').textContent();
     await page.waitForTimeout(2500);
