@@ -85,6 +85,13 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   als Funktionen `(t, dt, clk)` in `anim[]`: Landefähre (zum Stichwort `pad`), Tankwagen, zwei Rover,
   Hubschrauber, laufende Astronauten, Bagger, Staubteufel. Staub und Dampf sind zustandslose Teilchen
   (`Puffs`, `puffs.put(...)`), ihre Zahl ist begrenzt.
+  Bild der Marsszene: `haze(m,dust)` hängt an jedes Material (nach `build` per `traverse`, in `addModel` für die Modelle)
+  die Luftperspektive `mbAir` aus `MB_GLSL` (Dunst mit Höhenabfall, zur Sonne heller, Werte in `HZ`; vor dem Tonemapping,
+  ersetzt den `Fog` der Szene) und optional hellen Staub auf nach oben weisenden Flächen. Der Himmel geht am Horizont in
+  dieselbe Dunstfarbe über. Der Boden (`soilDetail`) legt Muster in Weltkoordinaten über die Textur (dunkle Sandfelder mit
+  Rippeln, Kies, großflächige Helligkeit) und leitet daraus das Relief ab. Der Schattenbereich folgt der Kamera
+  (`fitShadow`, texelgerastert, PCF mit Radius), weiche Flecken (`blob`) verdunkeln den Boden unter Bauten und Fahrzeugen.
+  Lichter, Triebwerksstrahl und Sonnenscheibe sind HDR-Werte über 1.
 - **Ton (`AU`):** Hauptstück `audio/music.mp3` für alle Halte, `music-earth.mp3` für die Erde, `music-mars.mp3` für den
   Mars (beide Abschnitte). `AU.place(i)` (aus `focus`) blendet auf der nächsten Zählzeit des Hauptstücks mit gleicher
   Leistung über (8 Schläge); das Hauptstück läuft stumm weiter und gibt das Raster, die Zusatzstücke starten auf einem
