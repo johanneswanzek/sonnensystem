@@ -29,6 +29,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - name: Modulkarte aktuell?
+        run: node tools/docs/modulkarte.mjs --check
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm run test:unit

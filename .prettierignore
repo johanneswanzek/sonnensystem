@@ -8,11 +8,9 @@ public/
 node_modules/
 work/
 package-lock.json
-# Daten, die tools/audio/finalize.py und tools/refactor/split.mjs in eigener Form schreiben
+# Daten, die tools/audio/finalize.py in eigener Form schreibt
 src/data/*.json
 src/i18n/*.json
-# Altbestand bis zum Löschen in Teil 2b
-src/sonnensystem.html
 tools/
 # Stil bleibt, wie er ist: Prettier würde Werte eigener CSS-Variablen umschreiben (--u: 1px), die der Minifier wörtlich
 # übernimmt; ohne CSS bleibt das gebaute Programm nach der Formatierung Byte für Byte gleich.
