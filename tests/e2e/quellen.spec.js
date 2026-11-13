@@ -4,8 +4,14 @@ const L = require('./lib');
 
 test.describe.serial('Dialog Quellen', () => {
   let s, page;
-  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); page = s.page; await page.click('#goQuiet'); });
-  test.afterAll(async () => { await s.close(); });
+  test.beforeAll(async ({ browser }, info) => {
+    s = await L.open(browser, info);
+    page = s.page;
+    await page.click('#goQuiet');
+  });
+  test.afterAll(async () => {
+    await s.close();
+  });
   const dlg = () => page.locator('#credits');
   const modal = () => page.evaluate(() => document.querySelector('#credits').matches(':modal'));
 
@@ -53,5 +59,7 @@ test.describe.serial('Dialog Quellen', () => {
     await expect(page.locator('#legal')).toBeHidden();
   });
 
-  test('keine Fehler', async () => { expect(L.problems(s.log)).toEqual([]); });
+  test('keine Fehler', async () => {
+    expect(L.problems(s.log)).toEqual([]);
+  });
 });

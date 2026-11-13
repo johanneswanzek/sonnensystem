@@ -36,7 +36,7 @@ import { initEarth } from './hud/earth.js';
 import { initLoop } from './app/loop.js';
 import { initBoot } from './app/boot.js';
 
-function start(){
+function start() {
   initUtil();
   initI18n();
   initVoice();

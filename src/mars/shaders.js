@@ -15,7 +15,9 @@ vec3 mbAir(vec3 c,vec3 wp){
   return mix(c,mbHaze(dir),1.0-exp(-od));
 }
 `;
-const SKY_FS = MB_GLSL + `
+const SKY_FS =
+  MB_GLSL +
+  `
 uniform vec3 sun; uniform vec3 hor; uniform vec3 zen; uniform float time; varying vec3 vD;
 void main(){
   vec3 d=normalize(vD); float h=max(d.y,0.0);

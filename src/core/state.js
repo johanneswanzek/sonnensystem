@@ -36,6 +36,6 @@ export const S = {
   pulseHit: null,
   pulseHitT: 9,
   soundMode: 2,
-  plate: .36,
+  plate: 0.36,
   last: 0,
 };

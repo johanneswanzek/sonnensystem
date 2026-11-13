@@ -4,8 +4,12 @@ const L = require('./lib');
 
 test.describe.serial('Start ohne Ton', () => {
   let s;
-  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); });
-  test.afterAll(async () => { await s.close(); });
+  test.beforeAll(async ({ browser }, info) => {
+    s = await L.open(browser, info);
+  });
+  test.afterAll(async () => {
+    await s.close();
+  });
 
   test('Startfläche verschwindet, Tour läuft, Ton bleibt aus', async () => {
     const { page } = s;
@@ -27,8 +31,12 @@ test.describe.serial('Start ohne Ton', () => {
 
 test.describe.serial('Start mit Ton', () => {
   let s;
-  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); });
-  test.afterAll(async () => { await s.close(); });
+  test.beforeAll(async ({ browser }, info) => {
+    s = await L.open(browser, info);
+  });
+  test.afterAll(async () => {
+    await s.close();
+  });
 
   test('Startfläche verschwindet, Tour läuft, Ton ist an', async () => {
     const { page } = s;
@@ -37,7 +45,10 @@ test.describe.serial('Start mit Ton', () => {
     await expect(page.locator('#tour')).toHaveAttribute('aria-pressed', 'true');
     // Der Ton schaltet sich ein, sobald die Clips geladen und dekodiert sind
     await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('#sound')).toHaveAttribute('aria-label', /^Musik und Sprecher\. Antippen für: Nur Sprecher, ohne Musik$/);
+    await expect(page.locator('#sound')).toHaveAttribute(
+      'aria-label',
+      /^Musik und Sprecher\. Antippen für: Nur Sprecher, ohne Musik$/,
+    );
   });
 
   test('alle 15 Sprecher-Clips der Sprache und die Musik werden geladen', async () => {
@@ -48,5 +59,7 @@ test.describe.serial('Start mit Ton', () => {
     expect([...got].filter(u => /^\/voice\/(en|pl)\//.test(u))).toEqual([]);
   });
 
-  test('keine Fehler', async () => { expect(L.problems(s.log)).toEqual([]); });
+  test('keine Fehler', async () => {
+    expect(L.problems(s.log)).toEqual([]);
+  });
 });

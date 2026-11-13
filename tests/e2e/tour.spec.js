@@ -4,8 +4,14 @@ const L = require('./lib');
 
 test.describe.serial('Tour', () => {
   let s, page;
-  test.beforeAll(async ({ browser }, info) => { s = await L.open(browser, info); page = s.page; await page.click('#goQuiet'); });
-  test.afterAll(async () => { await s.close(); });
+  test.beforeAll(async ({ browser }, info) => {
+    s = await L.open(browser, info);
+    page = s.page;
+    await page.click('#goQuiet');
+  });
+  test.afterAll(async () => {
+    await s.close();
+  });
 
   test('Tour-Knopf hält an und setzt fort, aria-label wechselt', async () => {
     const t = page.locator('#tour');
@@ -28,7 +34,7 @@ test.describe.serial('Tour', () => {
     await page.keyboard.press(' ');
     await expect(t).toHaveAttribute('aria-pressed', 'true');
     await t.focus();
-    await page.keyboard.press(' ');              // Knopf: der Browser löst den Klick aus, die Taste selbst wird übergangen
+    await page.keyboard.press(' '); // Knopf: der Browser löst den Klick aus, die Taste selbst wird übergangen
     await expect(t).toHaveAttribute('aria-pressed', 'false');
     await page.waitForTimeout(300);
     await expect(t).toHaveAttribute('aria-pressed', 'false');
@@ -57,12 +63,33 @@ test.describe.serial('Tour', () => {
 
   test('Tour durchläuft alle Halte und Abschnitte von Erde und Mars der Reihe nach', async () => {
     test.setTimeout(900000);
-    await page.evaluate('window.__t.focus(3, false)');        // Venus, Tour bleibt an
+    await page.evaluate('window.__t.focus(3, false)'); // Venus, Tour bleibt an
     expect((await L.state(page)).tour).toBe(true);
-    const seq = [[4, 0], [4, 1], [4, 2], [5, 0], [5, 1], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [0, 0], [1, 0]];
+    const seq = [
+      [4, 0],
+      [4, 1],
+      [4, 2],
+      [5, 0],
+      [5, 1],
+      [6, 0],
+      [7, 0],
+      [8, 0],
+      [9, 0],
+      [10, 0],
+      [0, 0],
+      [1, 0],
+    ];
     for (const [c, st] of seq) {
       await page.evaluate('window.__t.tourEnd()');
-      await expect.poll(async () => { const x = await L.state(page); return [x.cur, x.stage]; }, { message: 'Halt ' + c + '/' + st, timeout: 120000 }).toEqual([c, st]);
+      await expect
+        .poll(
+          async () => {
+            const x = await L.state(page);
+            return [x.cur, x.stage];
+          },
+          { message: 'Halt ' + c + '/' + st, timeout: 120000 },
+        )
+        .toEqual([c, st]);
       if (c === 4 && st === 1) await expect(page.locator('#kind')).toHaveText('Erde · Kontinente und Ozeane');
       if (c === 4 && st === 2) await expect(page.locator('#kind')).toHaveText('Erde · Aufbau');
       if (c === 5 && st === 1) {
@@ -70,12 +97,17 @@ test.describe.serial('Tour', () => {
         await expect.poll(async () => (await L.state(page)).surfOn, { timeout: 240000 }).toBe(true);
         await expect(page.locator('#app')).toHaveClass(/\bsurf\b/);
       }
-      if (c === 6) { await expect.poll(async () => (await L.state(page)).surfOn, { timeout: 120000 }).toBe(false); await expect(page.locator('#app')).not.toHaveClass(/\bsurf\b/); }
+      if (c === 6) {
+        await expect.poll(async () => (await L.state(page)).surfOn, { timeout: 120000 }).toBe(false);
+        await expect(page.locator('#app')).not.toHaveClass(/\bsurf\b/);
+      }
     }
     const x = await L.state(page);
     expect(x.loops).toBe(1);
     expect(x.tour).toBe(true);
   });
 
-  test('keine Fehler', async () => { expect(L.problems(s.log)).toEqual([]); });
+  test('keine Fehler', async () => {
+    expect(L.problems(s.log)).toEqual([]);
+  });
 });

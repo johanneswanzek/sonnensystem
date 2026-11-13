@@ -8,7 +8,8 @@ void main(){ vUv=uv; vP=position; vN=normalize(mat3(modelMatrix)*normal); vec4 w
 // Planetenoberfläche: Relief aus der Höhenkarte, weicher Terminator, Meeresglanz, Atmosphärensaum, Stadtlichter, Ringschatten.
 // EARTH: echte Karten (Höhe, Wasser und Wolken in einer Hilfstextur); cut = Mittelwinkel und halbe Öffnung des Keils für den Querschnitt
 const CUT_GLSL = `if(cut.y>0.001){ float ca=atan(vP.z,vP.x); if(abs(mod(ca-cut.x+3.14159265,6.2831853)-3.14159265)<cut.y) discard; }`;
-const PLANET_FS = `
+const PLANET_FS =
+  `
 uniform sampler2D map; uniform sampler2D nmap; uniform sampler2D aux; uniform float nightK; uniform float specK; uniform float bumpK; uniform float gas; uniform vec2 texel;
 uniform vec4 atmo; uniform vec3 center; uniform vec3 ringN; uniform vec3 ringR; uniform vec2 cut; uniform vec2 cloud;
 uniform vec3 tint; uniform vec4 haze; uniform float time; uniform float flow; uniform float detail;
@@ -23,7 +24,9 @@ float pn(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
 #define HGT(c) texture2D(map,c).a
 #endif
 void main(){
-  ` + CUT_GLSL + `
+  ` +
+  CUT_GLSL +
+  `
   vec3 N=normalize(vN); vec3 L=normalize(-vW); vec3 V=normalize(cameraPosition-vW);
   vec4 tx=texture2D(map,vUv);
   float d0=dot(N,L); float relief=1.0;
@@ -80,10 +83,13 @@ void main(){
   col+=night*nightK*(1.0-smoothstep(-0.14,0.06,d0));
   gl_FragColor=vec4(col,1.0);
 }`;
-const CLOUD_FS = `
+const CLOUD_FS =
+  `
 uniform sampler2D map; uniform float op; uniform vec2 cut; varying vec2 vUv; varying vec3 vN; varying vec3 vW; varying vec3 vP;
 void main(){
-  ` + CUT_GLSL + `
+  ` +
+  CUT_GLSL +
+  `
   vec3 N=normalize(vN); vec3 L=normalize(-vW); float d=dot(N,L); float day=smoothstep(-0.1,0.45,d);
   vec3 c=mix(vec3(1.0,0.55,0.32),vec3(1.0),smoothstep(0.0,0.3,d));
 #ifdef EARTH
@@ -142,9 +148,12 @@ float n3(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
   return mix(mix(mix(h(i),h(i+vec3(1.0,0.0,0.0)),f.x),mix(h(i+vec3(0.0,1.0,0.0)),h(i+vec3(1.0,1.0,0.0)),f.x),f.y),
              mix(mix(h(i+vec3(0.0,0.0,1.0)),h(i+vec3(1.0,0.0,1.0)),f.x),mix(h(i+vec3(0.0,1.0,1.0)),h(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z); }
 float fbm(vec3 p){ float a=0.5; float s=0.0; for(int i=0;i<5;i++){ s+=a*n3(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s/0.97; }`;
-const SUN_FS = `
+const SUN_FS =
+  `
 uniform float time; varying vec3 vP; varying vec3 vN; varying vec3 vW;
-` + SUN_NOISE + `
+` +
+  SUN_NOISE +
+  `
 // Abstand zum nächsten und zweitnächsten Zellmittelpunkt; die Mittelpunkte wandern langsam
 vec2 cells(vec3 p,float t){ vec3 i=floor(p); vec3 f=fract(p); float d1=8.0; float d2=8.0;
   for(int x=-1;x<=1;x++) for(int y=-1;y<=1;y++) for(int z=-1;z<=1;z++){
@@ -176,9 +185,12 @@ void main(){
 }`;
 // Korona, Chromosphäre und Protuberanzen: eine Fläche um die Sonne, die stets zur Kamera zeigt (additiv, HDR)
 const CORONA_VS = `varying vec2 vQ; varying float vD; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); vD=length(c.xyz); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
-const CORONA_FS = `
+const CORONA_FS =
+  `
 uniform float time; uniform float R; uniform float k; varying vec2 vQ; varying float vD;
-` + SUN_NOISE + `
+` +
+  SUN_NOISE +
+  `
 void main(){
   float r=length(vQ)/R; if(r<0.985 || r>6.0) discard;
   vec2 d=vQ/(r*R); float hgt=r-1.0; float t=time;

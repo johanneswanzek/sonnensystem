@@ -12,8 +12,67 @@ import { cine } from '../ui/fullscreen.js';
 import { ui, wide } from '../ui/layout.js';
 
 // Prüfhaken für die Tests (window.__t), nur im Testmodus aufgerufen
-function installTestHooks(){
-  window.__t = {focus, setStage, step, seek: x => { S.narStart = performance.now()-x*1000; }, tourEnd: () => { S.tourT = dwell; }, pr: x => { PR.v = [x,x]; PR.hi = [x,x]; PR.lo = x; PR.fix = true; setPR(); }, get st(){ return {cur,stage,trans: S.trans,surfOn: S.surfOn,veil: S.veil,grp: S.grp,mbT: S.mbT,pr:PR.v[S.surfOn ? 1 : 0],ui,wide,topH: S.topH,botH: S.botH,dwell,durCur}; }, get PR(){ return PR; }, get ex(){ return {tour,begun: S.begun,soundMode: S.soundMode,speedIdx,cine,LANG,narId,loops: S.loops,simDays: S.simDays,dwell,tourT: S.tourT,clock: S.clock,auStarted:AU.started,auActive:AU.active,speeds:SPEEDS,nBodies:BODIES.length,ids:BODIES.map(b => b.id)}; }};
+function installTestHooks() {
+  window.__t = {
+    focus,
+    setStage,
+    step,
+    seek: x => {
+      S.narStart = performance.now() - x * 1000;
+    },
+    tourEnd: () => {
+      S.tourT = dwell;
+    },
+    pr: x => {
+      PR.v = [x, x];
+      PR.hi = [x, x];
+      PR.lo = x;
+      PR.fix = true;
+      setPR();
+    },
+    get st() {
+      return {
+        cur,
+        stage,
+        trans: S.trans,
+        surfOn: S.surfOn,
+        veil: S.veil,
+        grp: S.grp,
+        mbT: S.mbT,
+        pr: PR.v[S.surfOn ? 1 : 0],
+        ui,
+        wide,
+        topH: S.topH,
+        botH: S.botH,
+        dwell,
+        durCur,
+      };
+    },
+    get PR() {
+      return PR;
+    },
+    get ex() {
+      return {
+        tour,
+        begun: S.begun,
+        soundMode: S.soundMode,
+        speedIdx,
+        cine,
+        LANG,
+        narId,
+        loops: S.loops,
+        simDays: S.simDays,
+        dwell,
+        tourT: S.tourT,
+        clock: S.clock,
+        auStarted: AU.started,
+        auActive: AU.active,
+        speeds: SPEEDS,
+        nBodies: BODIES.length,
+        ids: BODIES.map(b => b.id),
+      };
+    },
+  };
 }
 
 export { installTestHooks };

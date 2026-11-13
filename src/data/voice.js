@@ -15,8 +15,8 @@ const VOICE_DE = voiceDe.clips;
 const VOICE_EN = voiceEn.clips;
 const VOICE_PL = voicePl.clips;
 
-export function initVoice(){
-VOICE = {de:VOICE_DE, en:VOICE_EN, pl:VOICE_PL}[LANG];
+export function initVoice() {
+  VOICE = { de: VOICE_DE, en: VOICE_EN, pl: VOICE_PL }[LANG];
 }
 
 export { VOICE };
