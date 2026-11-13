@@ -2,10 +2,10 @@
 // "// ordner/name – Zweck"), Exporte und Abhängigkeiten (aus den import-Zeilen), dazu eine Abhängigkeitskarte der
 // Ordner als Mermaid-Diagramm.
 //
-//   node tools/docs/modulkarte.mjs          schreibt docs/modulkarte.md
+//   npm run docs:map                        schreibt docs/modulkarte.md (dasselbe: node tools/docs/modulkarte.mjs)
 //   node tools/docs/modulkarte.mjs --check  Exit 1, wenn docs/modulkarte.md nicht dem Quelltext entspricht
 //
-// Läuft ohne Abhängigkeiten (nur Node). Ein Eintrag in package.json (docs:map) steht noch aus; bis dahin per node aufrufen.
+// Läuft ohne Abhängigkeiten (nur Node).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,7 @@ const files = walk(SRC).filter(f => /\.(js|json|css)$/.test(f)).map(rel).sort();
 
 function head(src) {
   for (const line of src.split('\n').slice(0, 12)) {
-    const m = line.match(/^\/\/ ([\w/.\-]+) [–-] (.+)$/);
+    const m = line.match(/^\/\/ ([\w/.-]+) [–-] (.+)$/);
     if (m) return m[2].replace(/\.$/, '').trim();
   }
   return '';
@@ -58,7 +58,7 @@ for (const m of mods) for (const i of m.imp) {
 
 const L = [];
 L.push('# Modulkarte von `src/`', '');
-L.push('Diese Datei wird von `tools/docs/modulkarte.mjs` aus dem Quelltext erzeugt (`node tools/docs/modulkarte.mjs`); nicht von Hand ändern.');
+L.push('Diese Datei wird von `tools/docs/modulkarte.mjs` aus dem Quelltext erzeugt (`npm run docs:map`); nicht von Hand ändern.');
 L.push('Zweck = erste Kopfkommentarzeile jedes Moduls, Exporte und Abhängigkeiten stammen aus den `export`- und `import`-Zeilen.');
 L.push('Die Erklärung der Schichten und des Datenflusses steht in `docs/architecture.md`, Begriffe in `docs/glossar.md`.', '');
 L.push(`Stand: ${mods.length} Module, ${mods.reduce((s, m) => s + m.lines, 0)} Zeilen JavaScript.`, '');

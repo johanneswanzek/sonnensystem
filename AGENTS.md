@@ -28,9 +28,9 @@ npm run dev                                  # http://localhost:8080
 | `npm run lint` / `typecheck` | ESLint (flat config, `no-undef` hart) / `tsc` über JSDoc-Typen |
 | `npm run format` / `format:check` | Prettier für `src` und `tests` |
 | `npm run test:unit` (`test`) | Vitest, `tests/unit/` |
-| `npm run test:e2e` | Playwright, `tests/e2e/`; `test:e2e:file <name>` eine Datei, `test:e2e:dist` nur `dist/` |
+| `npm run test:e2e` | Playwright, `tests/e2e/`; `test:e2e:file <name>` eine Datei, `-- --project=dist` nur `dist/` |
 | `npm run shots -- 390 760 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:landung` | Bildschirmfotos nach `.shots/`; Schritte im Kopf von `tools/shots/run.js` |
-| `node tools/docs/modulkarte.mjs` | erzeugt `docs/modulkarte.md` neu (`--check` prüft; npm-Eintrag steht noch aus) |
+| `npm run docs:map` | erzeugt `docs/modulkarte.md` aus dem Quelltext neu (`node tools/docs/modulkarte.mjs --check` prüft, ob sie aktuell ist) |
 
 Python nur für `tools/audio/`. Ohne Grafikkarte `SOFTWARE_GL=1` setzen: jedes Bild ist dann langsam (im Querformat `pr:.5` als ersten Schritt), Wartezeiten
 sind unzuverlässig; Läufe nicht parallel, mehrere `shot:`-Schritte in einem Lauf bündeln. Für die Marsbasis `mbt:S` (feste Erzählzeit) statt `seek` und `wait`.
@@ -56,7 +56,7 @@ Vollständig und aus dem Quelltext erzeugt: [`docs/modulkarte.md`](docs/modulkar
 | `src/testing/` | Prüfhaken (nur Testmodus) |
 | `src/styles/` | CSS je Bereich |
 | `tests/`, `tools/shots/` | Unit- und E2E-Tests, Bildschirmfotos |
-| `tools/` | `audio/` (Python), `models/`, `artifact/`, `build/`, `docs/`, `shots/`, `refactor/` (einmaliger Umbau, wird nicht mehr gebraucht) |
+| `tools/` | `audio/` (Python), `models/`, `artifact/`, `build/`, `docs/`, `shots/` |
 | `public/`, `site.json` | statische Dateien (Stimme, Musik, Effekte, Karten, Modelle, Schriften, `.htaccess`); Titel, Adresse, Impressum je Sprache |
 
 **Abhängigkeitsrichtung:** `core`/`orbit` → `data`/`i18n` → `render`/`mars`/`audio` → `ui`/`hud` → `app` → `main.js`. Zyklen zwischen `app`, `hud`, `ui` und
@@ -91,8 +91,8 @@ Vollständig und aus dem Quelltext erzeugt: [`docs/modulkarte.md`](docs/modulkar
 - **Größen der Oberfläche** hängen an der CSS-Variable `--u`, Messmarken am selben Faktor `ui`.
 - **Sprachen:** Deutsch ist Quellsprache, Übersetzungen mit deutschem Text als Schlüssel (ADR 0004). **Bild folgt Ton:** Einblendungen und Kamerafahrten hängen an `cue(k)` (ADR 0005).
 - **three.js bleibt r128** (ADR 0001). Kein Versionssprung nebenbei.
-- Jede Quelldatei beginnt mit einem deutschen Kopfkommentar `// ordner/name – Zweck`; die Modulkarte liest ihn. Kleine, gezielte Änderungen; Formatierung (Prettier) nie im selben Commit
-  wie eine inhaltliche Änderung (ADR 0007).
+- Jede Quelldatei beginnt mit einem deutschen Kopfkommentar `// ordner/name – Zweck`; die Modulkarte liest ihn. Kleine, gezielte Änderungen; Prettier (`npm run format`) formatiert `src/` und `tests/`; Formatierung nie im selben
+  Commit wie eine inhaltliche Änderung (ADR 0007).
 
 ## „Fertig“ heißt
 
@@ -100,7 +100,7 @@ Vollständig und aus dem Quelltext erzeugt: [`docs/modulkarte.md`](docs/modulkar
 2. `npm run test:e2e` grün; keine Konsolenfehler, keine fremden Adressen, keine fehlgeschlagenen Anfragen.
 3. Sichtprüfung: Bildschirmfotos im Hochformat (390×760) und Querformat (1920×1080) wirklich angesehen und kritisch beurteilt; bei Änderungen am Bau auch `dist/`
    (`npm run build`, `--dist`), bei Texten `--lang=en` und `--lang=pl`.
-4. Doku nachgezogen: diese Datei, `docs/`, ADR bei Entscheidungen, `CHANGELOG.md`, Modulkarte (`node tools/docs/modulkarte.mjs`) bei neuen Modulen.
+4. Doku nachgezogen: diese Datei, `docs/`, ADR bei Entscheidungen, `CHANGELOG.md`, Modulkarte (`npm run docs:map`) bei neuen oder umbenannten Modulen.
 5. Lizenzen eingetragen (siehe unten).
 
 Ausführlich: [`CONTRIBUTING.md`](CONTRIBUTING.md).

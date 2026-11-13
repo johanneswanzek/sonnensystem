@@ -9,7 +9,7 @@ Strategie: ADR 0006. Drei Ebenen: Unit-Tests (`tests/unit/`, Vitest), E2E (`test
 npm run test:unit                       # reine Logik: Kepler, Übersetzungen, Zeitmarken, Prüfung auf fremde Adressen
 npm run test:e2e                        # beide Projekte: Testseite (.test/) und dist/
 npm run test:e2e -- tests/e2e/zeit.spec.js     # eine Datei; kürzer: npm run test:e2e:file zeit
-npm run test:e2e:dist                   # nur die gebaute Website
+npm run test:e2e -- --project=dist      # nur die gebaute Website
 ```
 
 Ohne Grafikkarte `SOFTWARE_GL=1` setzen (Timeouts werden dann größer); `CHROME_PATH` für einen eigenen Chrome; `E2E_NOBUILD=1` nimmt vorhandene

@@ -16,7 +16,7 @@ Umbau der Struktur; Verhalten und Aussehen sollen gleich bleiben.
   three.js r128 kommt aus npm statt als klassisches Skript (ADR 0001, ADR 0002).
 - Übersetzungen und Sprecher-Zeitmarken liegen als JSON je Sprache vor (`src/i18n/`, `src/data/voice.<sprache>.json`).
 - Bau mit Node: `npm run build` (Website), `npm run build:artifact` (claude.ai-Artefakt), Pages-Workflow auf Node umgestellt. Python bleibt nur für
-  `tools/audio/`; `tools/build.py` und `tools/serve.py` entfallen.
+  `tools/audio/`; `tools/build.py`, `tools/serve.py`, `tools/test/` und der Monolith `src/sonnensystem.html` entfallen; auch der Workflow `e2e.yml` (die E2E-Suite läuft in `ci.yml`).
 - Bildschirmfotos über `npm run shots` (`tools/shots/`) statt `tools/test/run.js`.
 
 ### Hinzugefügt
@@ -25,7 +25,8 @@ Umbau der Struktur; Verhalten und Aussehen sollen gleich bleiben.
 - CI-Workflow (`.github/workflows/ci.yml`), Dependabot, Issue- und Pull-Request-Vorlagen, CODEOWNERS.
 - Dokumentation für Menschen und KI-Agenten: `AGENTS.md` (mit Anleitungen je Ordner), `docs/architecture.md`, erzeugte Modulkarte
   (`docs/modulkarte.md`), Entscheidungsprotokolle (`docs/adr/`), Glossar, `CONTRIBUTING.md`, `SECURITY.md`, `llms.txt`, Befehle und Unteragenten für Claude Code.
-- ESLint (`no-undef` als harte Regel), Typprüfung über JSDoc (`tsc`), Prettier (Formatierung als eigener Commit, ADR 0007).
+- ESLint (`no-undef` als harte Regel), Typprüfung über JSDoc (`tsc`), Prettier (Formatierung als eigener Commit 3b9d53d, ADR 0007; `.git-blame-ignore-revs`).
+- Erzeugte Modulkarte (`npm run docs:map`).
 
 ## [Version 9] – 2026-11-13
 

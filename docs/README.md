@@ -15,7 +15,7 @@ Wann lese ich was? Eine Zeile je Dokument. Zum Einstieg für Agenten gehört `AG
 ## In `docs/`
 
 - [`architecture.md`](architecture.md): Schichten, Abhängigkeitsrichtung, Datenfluss (Bild folgt Ton), Bau-Ziele, „Was ändere ich wo?“, technische Schuld. Lesen vor jeder Änderung über mehrere Module.
-- [`modulkarte.md`](modulkarte.md): Alle Module mit Zweck, Exporten und Abhängigkeiten; erzeugt von `tools/docs/modulkarte.mjs`. Lesen, um ein Modul zu finden.
+- [`modulkarte.md`](modulkarte.md): Alle Module mit Zweck, Exporten und Abhängigkeiten; erzeugt von `tools/docs/modulkarte.mjs` (`npm run docs:map`). Lesen, um ein Modul zu finden.
 - [`glossar.md`](glossar.md): Ich lese einen deutschen Fachbegriff (Halt, Abschnitt, Stichwort, Messmarken) und suche den Bezeichner im Code, oder umgekehrt.
 - [`produktion.md`](produktion.md): Wie Sprecher, Musik, Effekte, Modelle und Karten entstanden sind, mit Stimmen, Aufwand, Befehlen und Lizenzen. Lesen vor jeder Medienarbeit.
 - `sprechertext.de.json`, `sprechertext.en.json`, `sprechertext.pl.json`: der Sprechertext je Clip mit Stichworten für die Kamerafahrt.

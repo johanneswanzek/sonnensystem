@@ -13,7 +13,7 @@ Grundsätze:
 - Jede Datei muss für sich verständlich sein (Agenten und Suchindizes lesen sie einzeln): sprechende Überschrift, keine
   Verweise auf „oben“ oder „unten“ über Dateigrenzen. Aussagen über Geplantes ausdrücklich als geplant kennzeichnen.
 - Eine Entscheidung → ein ADR im MADR-Format (`docs/adr/0000-vorlage.md`), Eintrag im Index `docs/adr/README.md`.
-- `docs/modulkarte.md` nie von Hand ändern, sondern mit `node tools/docs/modulkarte.mjs` erzeugen.
+- `docs/modulkarte.md` nie von Hand ändern, sondern mit `npm run docs:map` erzeugen.
 - Neue Begriffe ins Glossar (`docs/glossar.md`), neue Dokumente ins Inhaltsverzeichnis (`docs/README.md`) und in `llms.txt`.
 - Befehle und Dateinamen gegen das Repo prüfen (`package.json`, `ls`), bevor sie in der Doku stehen.
 

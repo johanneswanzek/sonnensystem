@@ -30,9 +30,9 @@ im Querformat als ersten Schritt `pr:.5` nehmen.
 | `npm run format`, `npm run format:check` | Prettier anwenden bzw. prüfen (ADR 0007) |
 | `npm run typecheck` | Typprüfung (JSDoc, `tsc`) |
 | `npm run test:unit` | Unit-Tests (Vitest) |
-| `npm run test:e2e` | E2E-Tests (Playwright); `npm run test:e2e:file <name>` eine Datei, `npm run test:e2e:dist` nur `dist/` |
+| `npm run test:e2e` | E2E-Tests (Playwright); `npm run test:e2e:file <name>` eine Datei, `npm run test:e2e -- --project=dist` nur `dist/` |
 | `npm run shots -- 390 760 start focus:5 shot:mars` | Bildschirmfotos nach `.shots/` |
-| `node tools/docs/modulkarte.mjs` | `docs/modulkarte.md` neu erzeugen |
+| `npm run docs:map` | `docs/modulkarte.md` neu erzeugen |
 
 ## Zweige und Commits
 

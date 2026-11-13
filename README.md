@@ -102,7 +102,7 @@ npm run shots -- 390 760 start focus:8 wait:8000 shot:saturn-handy
 **E2E-Suite** (`tests/e2e/`): prüft alle Abläufe und Knöpfe der Seite (Laden, Start mit und ohne Ton, Tour, Navigation, Zeitraffer, Ton, Musik,
 Vollbild, Sprachen, Dialog „Quellen“, Erde und Mars, Layout, Robustheit ohne WebGL, Bau). Sie prüft Zustände, DOM, ARIA, Netz und Konsole,
 keine Bildvergleiche. Jede Anfrage an eine fremde Adresse, jede fehlgeschlagene Anfrage und jeder Konsolenfehler gilt als Fehler. Einmalig
-`npx playwright install --with-deps chromium`. Eine Datei: `npm run test:e2e -- tests/e2e/tour.spec.js`; nur `dist/`: `npm run test:e2e:dist`.
+`npx playwright install --with-deps chromium`. Eine Datei: `npm run test:e2e -- tests/e2e/tour.spec.js`; nur `dist/`: `npm run test:e2e -- --project=dist`.
 Ohne Grafikkarte `SOFTWARE_GL=1` setzen (deutlich langsamer, die Zeitgrenzen wachsen mit); `CHROME_PATH` nimmt einen vorhandenen Chrome.
 
 **Bildschirmfotos** (`tools/shots/run.js`, `npm run shots`): legt Bilder nach `.shots/`.

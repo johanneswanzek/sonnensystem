@@ -31,7 +31,7 @@ Von unten nach oben; ein Modul importiert aus tieferen Schichten und aus seiner 
 Die Richtung ist nicht streng: Es gibt Zyklen zwischen `app/`, `hud/`, `ui/` und `render/` (zum Beispiel braucht `hud/` die
 Tour, `app/loop.js` ruft `hud/` auf). Das ist erlaubt, solange die Importe nur Funktionen und Objekte betreffen, die erst
 zur Laufzeit benutzt werden; Werte auf oberster Ebene eines Moduls dürfen nicht von einem Zyklus abhängen (Fehler „Zugriff
-vor der Initialisierung“). Das Diagramm der Ordnerabhängigkeiten steht in [`modulkarte.md`](modulkarte.md) und ist dort
+vor der Initialisierung“). Das Diagramm der Ordnerabhängigkeiten (`npm run docs:map`) steht in [`modulkarte.md`](modulkarte.md) und ist dort
 automatisch erzeugt.
 
 ```mermaid
@@ -152,11 +152,10 @@ Die Aufteilung folgte den Abschnitten des früheren Monolithen und ändert das V
 
 - **Große Closures:** `MB` (`src/mars/base.js`, mit `MB.build` und der gesamten Szene), `AU` (`src/audio/engine.js`) und `SURF`
   (`src/render/surfaces.js`) sind je ein großes Objekt mit vielen lokalen Hilfen. Sie sind die größten Module und für gezieltes
-  Lesen zu lang. Vorschlag für den nächsten Schnitt: `mars/base.js` in Gelände (`hgt`, Boden), Himmel, Bauten, Fahrzeuge und
+  Lesen zu lang (nach der Formatierung: `mars/base.js` 1840 Zeilen, `audio/engine.js` 689, `render/surfaces.js` 220; zum Vergleich `render/post.js` 227). Vorschlag für den nächsten Schnitt: `mars/base.js` in Gelände (`hgt`, Boden), Himmel, Bauten, Fahrzeuge und
   Animationen (`anim[]`), Kamerapfad (`knots`, `OBST`) und Teilchen (`Puffs`); `audio/engine.js` in Musik (Überblendung der
   Stücke), Effekte (`SFX`, `playS`) und Sprecher (`say`, Absenken); `render/surfaces.js` in eine Datei je Körper.
-- **Dichte Zeilen:** Der Code stammt aus einem Monolithen mit sehr langen Zeilen; Zeilenzahlen in der Modulkarte unterschätzen
-  den Umfang. Formatierung mit Prettier als eigener Commit ist in ADR 0007 beschlossen.
+- **Richtgröße:** Der Richtwert von etwa 500 Zeilen je Modul ist nach der Formatierung (ADR 0007, Commit 3b9d53d) nur noch von `mars/base.js` und `audio/engine.js` überschritten; die Zeilenzahlen der Modulkarte sind seitdem aussagekräftig.
 - **Zustand `S`:** `S` ist ein untypisiertes Objekt (`Record<string, any>`). Typisieren (JSDoc `@typedef`) ist der nächste Schritt
   für `checkJs`.
 - **Zyklen:** `app/`, `hud/`, `ui/` und `render/` importieren einander; das trägt, solange nur Funktionen betroffen sind.

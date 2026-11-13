@@ -1,6 +1,6 @@
 # ADR 0007: Formatierung mit Prettier als eigener Commit nach der Aufteilung
 
-- Status: angenommen (Entscheidung des Orchestrators; die Umsetzung als Commit steht noch aus, Stand: Version 10)
+- Status: angenommen und umgesetzt (Formatierungs-Commit 3b9d53d, `.git-blame-ignore-revs` in 2c38d46)
 - Datum: 2026-11-13
 - Betrifft: `src/`, `tests/`, `package.json` (`format`, `format:check`), `.github/workflows/ci.yml`, `.git-blame-ignore-revs`
 
@@ -39,4 +39,4 @@ nach der Aufteilung und vor weiteren inhaltlichen Änderungen (`npm run format`)
 - Positiv: kurze Zeilen, eindeutige Edit-Stellen, lesbare Diffs, kleinere Auszüge für Agenten; Formatierungsstreit entfällt.
 - Negativ: ein großer Commit, der die Zeilennummern aller Dateien ändert (Verweise auf Zeilen in Notizen veralten); Dateien werden länger
   (die Richtgröße von etwa 500 Zeilen je Modul gilt danach neu zu prüfen, siehe „Bekannte technische Schuld“ in `docs/architecture.md`).
-- Offen: Prettier-Einstellungen (Zeilenbreite) und der Hash für `.git-blame-ignore-revs` entstehen erst mit dem Commit.
+- Umgesetzt: `npm run format` und `npm run format:check` formatieren bzw. prüfen `src/` und `tests/` (nicht Markdown, JSON, Medien; `.prettierignore` nimmt Erzeugtes, `public/` und `package-lock.json` aus). Der Hash steht in `.git-blame-ignore-revs`; einmalig `git config blame.ignoreRevsFile .git-blame-ignore-revs`.

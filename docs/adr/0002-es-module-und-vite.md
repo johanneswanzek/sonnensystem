@@ -62,3 +62,4 @@ Entwicklungsserver und Bauwerkzeug.
 - Die Modulkarte steht in `docs/modulkarte.md` (erzeugt von `tools/docs/modulkarte.mjs`), der Überblick in `docs/architecture.md`.
 - Offen: Die großen Closures `MB`, `AU` und `SURF` sind noch je ein Modul; Vorschlag für den nächsten Schnitt in `docs/architecture.md`, Abschnitt „Bekannte technische Schuld“.
 - Formatierung des übernommenen, dichten Codes: ADR 0007.
+- Geschichte: Der Umbau lief mit einem Skript (`tools/refactor/split.mjs`, AST-basiert, aus dem Monolithen). Skript und Monolith sind seit Commit 02dfcbc entfernt; der letzte Stand mit dem Skript ist `1c8625c` (`git show 1c8625c:tools/refactor/split.mjs`).

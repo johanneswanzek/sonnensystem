@@ -15,7 +15,7 @@ braucht.
 
 ## Arbeitsweise
 
-- Quelltext gezielt lesen: erst `docs/modulkarte.md` oder den Kopfkommentar, dann die Datei. Dateien sind (bis zur Formatierung nach ADR 0007) teils sehr dicht; mit `Grep` und
+- Quelltext gezielt lesen: erst `docs/modulkarte.md` oder den Kopfkommentar, dann die Datei. Die größten Module (`src/mars/base.js`, `src/audio/engine.js`) sind lang; mit `Grep` und
   Zeilenbereichen arbeiten statt ganze Dateien zu lesen.
 - Bildschirmfotos aus `.shots/` mit dem Lesewerkzeug ansehen und kritisch beurteilen wie ein Art Director; sie entstehen bei jedem Lauf neu (vorher ansehen). Nur wenige,
   gebündelte Läufe, nicht parallel (wenige Prozessorkerne).
