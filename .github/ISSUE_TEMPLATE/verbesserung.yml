@@ -1,0 +1,33 @@
+name: Verbesserung vorschlagen
+description: Eine neue Funktion, eine bessere Darstellung oder eine technische Verbesserung.
+title: "Verbesserung: "
+labels: ["verbesserung"]
+body:
+  - type: textarea
+    id: idee
+    attributes:
+      label: Was soll besser werden?
+      description: Beschreiben Sie das Ziel, nicht nur die Lösung.
+    validations:
+      required: true
+  - type: dropdown
+    id: bereich
+    attributes:
+      label: Bereich
+      options:
+        - Darstellung (Shader, Texturen, Licht)
+        - Kamerafahrt und Ablauf
+        - Bedienung und Layout
+        - Ton und Musik
+        - Barrierefreiheit
+        - Technik, Bau und Tests
+        - Dokumentation
+    validations:
+      required: true
+  - type: textarea
+    id: kosten
+    attributes:
+      label: Einschränkungen
+      description: Handys, Ladezeit, Lizenzen, Credits bei ElevenLabs – was ist zu beachten?
+    validations:
+      required: false

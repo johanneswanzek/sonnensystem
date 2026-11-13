@@ -1,0 +1,63 @@
+name: Fehler melden
+description: Etwas funktioniert nicht oder sieht falsch aus.
+title: "Fehler: "
+labels: ["fehler"]
+body:
+  - type: textarea
+    id: was
+    attributes:
+      label: Was ist passiert?
+      description: Was haben Sie gesehen oder gehört, und was hätten Sie erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: schritte
+    attributes:
+      label: Schritte zum Nachstellen
+      description: Zum Beispiel „Reise starten, Halt Mars, Abschnitt Basis“.
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: geraet
+    attributes:
+      label: Gerät und Bildschirmgröße
+      placeholder: z. B. Pixel 8, Hochformat; oder Laptop 1920×1080
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser und Version
+      placeholder: z. B. Safari 18 auf iOS, Chrome 130
+    validations:
+      required: true
+  - type: dropdown
+    id: sprache
+    attributes:
+      label: Sprache der Seite
+      options:
+        - Deutsch
+        - Englisch
+        - Polnisch
+    validations:
+      required: true
+  - type: dropdown
+    id: ausgabe
+    attributes:
+      label: Wo tritt es auf?
+      options:
+        - Website (sonnensystem.johannes-wanzek.de)
+        - Fassung als claude.ai-Artefakt
+        - Lokal beim Entwickeln
+    validations:
+      required: true
+  - type: textarea
+    id: anhang
+    attributes:
+      label: Bildschirmfoto oder Konsolenmeldung
+      description: Bilder hier hineinziehen; Fehlermeldungen aus der Browserkonsole einfügen.
+    validations:
+      required: false
