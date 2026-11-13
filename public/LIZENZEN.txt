@@ -3,7 +3,9 @@ QUELLEN UND LIZENZEN
 
 NASA (Karten und 3D-Modelle)
   img/earth-day.jpg, earth-night.jpg, earth-aux.jpg   Blue Marble, Nachtlichter, Höhen, Wasser, Wolken (NASA)
-  img/mars.jpg, img/jupiter.jpg                       NASA 3D Resources, "Images and Textures"
+  img/mars.jpg, img/jupiter.jpg, img/saturn.jpg,      NASA 3D Resources, "Images and Textures"
+  img/neptune.jpg, img/phobos.jpg, img/deimos.jpg     (https://github.com/nasa/NASA-3D-Resources), Phobos und Deimos
+                                                      verkleinert und in Graustufen
   models/*.glb                                        NASA 3D Resources, "3D Models"
                                                       (Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug, Vesta),
                                                       für das Web verkleinert
