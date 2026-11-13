@@ -1705,17 +1705,17 @@ const SKY_FS = MB_GLSL + `
 uniform vec3 sun; uniform vec3 hor; uniform vec3 zen; uniform float time; varying vec3 vD;
 void main(){
   vec3 d=normalize(vD); float h=max(d.y,0.0);
-  vec3 col=mix(hor,zen,pow(h,0.5));
+  vec3 col=mix(hor,zen,pow(h,0.42));
   // hohe, dünne Eiswolken: gestreckte Schlieren, die mit dem Wind wandern
   vec2 cp=d.xz/(d.y+0.22)*vec2(1.1,3.2)+vec2(time*0.012,time*0.004);
   float cl=mbN(cp)*0.55+mbN(cp*2.3+7.0)*0.3+mbN(cp*5.1+3.0)*0.15;
   col=mix(col,hor*1.16+vec3(0.03),smoothstep(0.50,0.84,cl)*smoothstep(0.04,0.32,d.y)*0.2);
   float s=max(dot(d,sun),0.0);
   col+=hor*pow(s,4.0)*0.3;                                                    // Staub streut das Licht nach vorn: zur Sonne hin wird der Himmel heller
-  col+=vec3(0.26,0.40,0.74)*(pow(s,20.0)*0.45+pow(s,160.0)*0.9);             // bläulicher Hof um die Sonne, wie auf dem Mars
+  col+=vec3(0.26,0.40,0.74)*(pow(s,12.0)*0.55+pow(s,90.0)*1.4+pow(s,600.0)*3.0);             // bläulicher Hof um die Sonne, wie auf dem Mars
   col=mix(col,mbHaze(d),exp(-h*9.0)*0.9);                                     // am Horizont geht der Himmel in den Dunst über
   col=mix(col,mbHaze(d),smoothstep(0.02,-0.06,d.y));
-  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*28.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
+  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*60.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
   gl_FragColor=vec4(col,1.0);
   #include <tonemapping_fragment>
   #include <encodings_fragment>
@@ -1725,7 +1725,7 @@ const DESKTOP = !!(window.matchMedia && window.matchMedia('(hover:hover) and (po
 const MB = (function(){
   const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(46,1,.5,14000);
   const lin = h => new THREE.Color(h).convertSRGBToLinear();
-  const sunDir = new THREE.Vector3(.73,.41,.55).normalize(), up = new THREE.Vector3(0,1,0);      // tief stehende Sonne von der Seite: lange Schatten
+  const sunDir = new THREE.Vector3(.73,.25,.55).normalize(), up = new THREE.Vector3(0,1,0);      // tief stehende Sonne von der Seite: lange Schatten
   const FLAT = [[120,-40,420],[430,-40,115]];                                // eingeebnete Flächen: x, z, Radius
   // Bauten, über die die Kamera steigt, statt hindurchzufahren: x, z, Radius, Höhe
   const OBST = [[12,-30,6,5],[0,0,9.5,10.5],[-18,-4,7.5,8.5],[15,-11,7.5,8.5],[3,18,7.5,8.5],[42,17,16,5.5],[-46,38,9,7.5],[-30,-25,11,6.5],[-9,-36,11,6.5],[430,-40,10,15],[275,-85,16,14],[62,-72,9,12],[90,-94,2,15.5],[30,-58,9,8]];
@@ -1739,11 +1739,12 @@ const MB = (function(){
   let puffs = null, skyU = null, lander = null, shadowEvery = 4;
   const DUST = [.64,.44,.29], STEAM = [.8,.8,.84];
   // Luftperspektive: Dunstfarbe, Aufhellung zur Sonne, Dichte am Boden (1/m), Abnahme mit der Höhe (1/m), Grunddichte (1/m)
-  const HZ = {mbSun:{value:sunDir}, mbHz:{value:lin(0xae8160)}, mbHzS:{value:lin(0xc89a70)}, mbHzP:{value:new THREE.Vector4(1/2600,1/170,1/16000,0)}, mbCam:{value:cam.position}};
+  const HZ = {mbSun:{value:sunDir}, mbHz:{value:lin(0xb07e58)}, mbHzS:{value:lin(0xd6a274)}, mbHzP:{value:new THREE.Vector4(1/5600,1/170,1/34000,0)}, mbCam:{value:cam.position}};
   // Hängt Luftperspektive (vor dem Tonemapping, damit sie auch mit HDR-Nachbearbeitung stimmt) und Staub auf nach oben weisenden Flächen an ein Material
   function haze(m,dust){
     if (!m || m.userData.mbHaze || !(m.isMeshStandardMaterial || m.isMeshBasicMaterial || m.isMeshLambertMaterial || m.isMeshPhongMaterial)) return m;
     m.userData.mbHaze = true;
+    if (m.isMeshStandardMaterial && !m.userData.keepEnv) m.envMapIntensity *= .5;
     const prev = m.onBeforeCompile, key = String(prev);
     m.onBeforeCompile = (sh,r) => {
       prev.call(m,sh,r);
@@ -1851,17 +1852,17 @@ const MB = (function(){
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;      // PCF mit Radius: weiche Kanten ohne Treppen
     // Himmel, Dunst, Licht
     const hor = lin(0xd0a680), sky = new THREE.Mesh(new THREE.SphereGeometry(9000,32,16), new THREE.ShaderMaterial({
-      uniforms:(skyU = Object.assign({sun:{value:sunDir}, hor:{value:lin(0xd2a47c)}, zen:{value:lin(0x6e5040)}, time:{value:0}},HZ)),
+      uniforms:(skyU = Object.assign({sun:{value:sunDir}, hor:{value:lin(0xc99468)}, zen:{value:lin(0x3a2a26)}, time:{value:0}},HZ)),
       vertexShader:`varying vec3 vD; void main(){ vD=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`, fragmentShader:SKY_FS, side:THREE.BackSide, depthWrite:false}));
     sc.add(sky);
     try { const es = new THREE.Scene(); es.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); sc.environment = pm.fromScene(es,0,1,12000).texture; pm.dispose(); } catch (e) {}
     sc.fog = new THREE.Fog(hor,280,5600);
     puffs = Puffs(320,hor);
     // Umgebungslicht: Himmel von oben, vom rötlichen Boden zurückgeworfenes Licht von unten; weniger als bisher, damit Schatten Tiefe haben
-    sc.add(new THREE.HemisphereLight(lin(0xd8b896),lin(0x5a3a28),.36));
-    sunL = new THREE.DirectionalLight(lin(0xfff0de),3.4); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
+    sc.add(new THREE.HemisphereLight(lin(0x9ea4b4),lin(0x4a2a1a),.2));
+    sunL = new THREE.DirectionalLight(lin(0xffe4c4),4.6); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
     shadowEvery = DESKTOP ? 2 : 4;
-    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0004; sunL.shadow.normalBias = .12; sunL.shadow.autoUpdate = false; sunL.shadow.radius = 2;
+    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0005; sunL.shadow.normalBias = .16; sunL.shadow.autoUpdate = false; sunL.shadow.radius = 2;
     const sca = sunL.shadow.camera; sca.left = -310; sca.right = 310; sca.top = 310; sca.bottom = -310; sca.near = 10; sca.far = 1600;
     sc.add(sunL,sunL.target);
 
@@ -1873,39 +1874,57 @@ const MB = (function(){
           'float dv=length(vViewPosition); vec2 wq=vUv*36.0; float nf=1.0-smoothstep(8.0,90.0,dv);' +
           'vec4 texelColor=mapTexelToLinear(texture2D(map,vUv)); vec4 wide=mapTexelToLinear(texture2D(map,vUv*0.131+0.37,2.5)); vec4 fine=mapTexelToLinear(texture2D(map,vUv*5.7+0.11));' +
           'texelColor=mix(texelColor,wide*1.06,0.38+0.5*smoothstep(50.0,520.0,dv)); texelColor.rgb*=mix(1.0,clamp(dot(fine.rgb,vec3(0.3,0.5,0.2))/0.13,0.55,1.6),0.5*nf);' +
-          // Farbe beruhigen: weniger Orange, mehr Butterscotch und Braun
-          'float lu=dot(texelColor.rgb,vec3(0.3,0.55,0.15)); texelColor.rgb=mix(texelColor.rgb,lu*vec3(1.32,0.86,0.6),0.22)*0.8;' +
+          // Farbe: Rostrot satter, dazu großflächig Umbra und helle Staubzungen
+          'float lu=dot(texelColor.rgb,vec3(0.3,0.55,0.15)); texelColor.rgb=max(mix(vec3(lu),texelColor.rgb,1.35),0.0)*vec3(1.04,0.86,0.72)*0.68;' +
           'float mA=mbN(wq*0.0085)*0.6+mbN(wq*0.031+7.0)*0.4, mS=smoothstep(0.5,0.7,mbN(wq*0.017+3.0)*0.72+mbN(wq*0.08+1.0)*0.28);' +
-          'texelColor.rgb*=mix(0.62,1.15,smoothstep(0.25,0.78,mA))*(0.93+0.14*mbN(wq*0.25));' +
+          'texelColor.rgb*=mix(0.5,1.12,smoothstep(0.25,0.78,mA))*(0.9+0.2*mbN(wq*0.25));' +
+          'float mU=smoothstep(0.55,0.3,mA); texelColor.rgb=mix(texelColor.rgb,vec3(0.11,0.062,0.04)*(0.8+0.4*mbN(wq*0.4)),mU*0.55);' +
+          'float mZ=smoothstep(0.62,0.78,mbN(vec2(wq.x*0.006+wq.y*0.012,wq.y*0.03-wq.x*0.01)+4.0))*(1.0-mS); texelColor.rgb=mix(texelColor.rgb,vec3(0.5,0.31,0.19),mZ*0.45);' +
           'texelColor.rgb=mix(texelColor.rgb,vec3(0.15,0.095,0.07)*(0.9+0.25*mbN(wq*0.6)),mS*0.7);' +
           // Rippel quer zum Wind, ihre Richtung schwankt langsam
           'float ra=0.55+0.6*(mbN(wq*0.01+5.0)-0.5); vec2 rd=vec2(cos(ra),sin(ra)); float rp=dot(wq,rd)*6.6+mbN(wq*0.35)*5.0; float rip=pow(0.5+0.5*sin(rp),1.6);' +
           'float gv=mbN(wq*2.7+3.1), gc=mbN(wq*0.85+9.0); float peb=smoothstep(0.66,0.82,gv)*(1.0-mS), cob=smoothstep(0.72,0.86,gc)*(1.0-mS);' +
-          'texelColor.rgb*=1.0-0.28*peb*nf-0.22*cob*smoothstep(160.0,20.0,dv); texelColor.rgb*=1.0+0.08*(rip-0.5)*mS*nf;' +
-          'float mbHt=(rip*0.035*mS+peb*0.014+cob*0.03)*nf;' +
-          'texelColor.rgb=mix(texelColor.rgb,vec3(0.2,0.105,0.06),0.45*smoothstep(500.0,2200.0,dv)); diffuseColor*=texelColor;')
+          'texelColor.rgb*=1.0-0.4*peb*nf-0.35*cob*smoothstep(160.0,20.0,dv); texelColor.rgb*=1.0+0.14*(rip-0.5)*mS*nf;' +
+          'float mbHt=(rip*0.055*mS+peb*0.03+cob*0.06)*nf;' +
+          'texelColor.rgb=mix(texelColor.rgb,vec3(0.17,0.085,0.05),0.4*smoothstep(500.0,2200.0,dv)); diffuseColor*=texelColor;')
           .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n{ float hF=dot(texture2D(map,vUv*5.7+0.11).rgb,vec3(0.333))*0.05*(1.0-smoothstep(4.0,40.0,dv))+mbHt; vec3 gsx=dFdx(-vViewPosition), gsy=dFdy(-vViewPosition); vec3 gra=cross(gsy,normal), grb=cross(normal,gsx); float gdet=dot(gsx,gra);' +
           ' normal=normalize(abs(gdet)*normal-sign(gdet)*(dFdx(hF)*gra+dFdy(hF)*grb)); }');
       };
       return m;
     };
+    // Technik-Oberflächen als kleine Canvas-Texturen: Paneelfugen, Nieten, Markierungsstreifen, Schmutz am Sockel (Leinwand unten = Fuß)
+    const tech = kind => {
+      const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+      x.fillStyle = kind ? '#d9dde0' : '#dedad2'; x.fillRect(0,0,256,256);
+      for (let i = 0; i < 16; i++) { const v = Math.round(hash(i,1,kind+7)*22-11); x.fillStyle = v > 0 ? 'rgba(255,255,255,' + v/60 + ')' : 'rgba(60,50,40,' + (-v/70) + ')'; x.fillRect((i%4)*64,Math.floor(i/4)*64,64,64); }
+      x.fillStyle = 'rgba(70,64,58,.75)';
+      if (kind) { for (let y = 0; y < 256; y += 32) x.fillRect(0,y,256,3); x.fillRect(127,0,2,256); x.fillStyle = 'rgba(255,255,255,.55)'; for (let y = 3; y < 256; y += 32) x.fillRect(0,y,256,1); }
+      else { for (let i = 0; i < 256; i += 64) { x.fillRect(i,0,2,256); x.fillRect(0,i,256,2); } x.fillStyle = 'rgba(90,84,76,.8)'; for (let i = 0; i < 256; i += 64) for (let j = 6; j < 64; j += 12) { x.fillRect(i+5,j+i%128,2,2); x.fillRect(i+57,j,2,2); } }
+      x.fillStyle = '#c8581c'; x.fillRect(0,kind ? 150 : 176,256,kind ? 10 : 12); x.fillStyle = '#2b2d31'; x.fillRect(0,kind ? 162 : 190,256,4);
+      x.fillStyle = '#26282c'; x.font = 'bold 22px monospace'; x.fillText(kind ? 'LOX-2' : 'M-04',kind ? 140 : 12,kind ? 120 : 160); x.fillText(kind ? 'CH4' : 'A7',kind ? 12 : 140,kind ? 210 : 40);
+      if (kind) { x.fillStyle = '#c8581c'; x.fillRect(40,60,38,20); }
+      const gr = x.createLinearGradient(0,256,0,180); gr.addColorStop(0,'rgba(92,52,30,.85)'); gr.addColorStop(.4,'rgba(110,64,38,.35)'); gr.addColorStop(1,'rgba(110,64,38,0)'); x.fillStyle = gr; x.fillRect(0,180,256,76);
+      for (let i = 0; i < 90; i++) { x.fillStyle = 'rgba(100,60,36,' + (.08+.15*hash(i,3,kind)) + ')'; x.fillRect(hash(i,4,kind)*256,150+hash(i,5,kind)*106,1+hash(i,6,kind)*5,8+hash(i,7,kind)*30); }
+      const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 4; t.repeat.set(kind ? 3 : 2,1); return t;
+    };
+    const hullT = tech(0), tankT = tech(1);
     M = {
-      white:new THREE.MeshStandardMaterial({color:lin(0xe8e4dc), roughness:.55, metalness:.05}),
-      worn:new THREE.MeshStandardMaterial({color:lin(0xc9bfb0), roughness:.85, side:THREE.DoubleSide}),
-      metal:new THREE.MeshStandardMaterial({color:lin(0x9aa0a6), roughness:.32, metalness:.9}),
-      dark:new THREE.MeshStandardMaterial({color:lin(0x2a2c30), roughness:.6, metalness:.4}),
+      white:new THREE.MeshStandardMaterial({map:hullT, bumpMap:hullT, bumpScale:.025, color:lin(0xf0eee8), roughness:.5, metalness:.12}),
+      worn:new THREE.MeshStandardMaterial({map:hullT, color:lin(0xb0a696), roughness:.8, side:THREE.DoubleSide}),
+      metal:new THREE.MeshStandardMaterial({color:lin(0xa8adb3), roughness:.26, metalness:.95}),
+      dark:new THREE.MeshStandardMaterial({color:lin(0x1e2024), roughness:.5, metalness:.5}),
       gold:new THREE.MeshStandardMaterial({color:lin(0xc09a45), roughness:.38, metalness:.85}),
       soil:soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, color:lin(0xf4f0ec), roughness:1, metalness:0, envMapIntensity:.6})),
       bed:new THREE.MeshStandardMaterial({color:lin(0x3a271c), roughness:1}),
-      frost:new THREE.MeshStandardMaterial({color:lin(0xdfeaf2), roughness:.35, metalness:.1}),
+      frost:new THREE.MeshStandardMaterial({map:tankT, bumpMap:tankT, bumpScale:.03, color:lin(0xf4f8fb), roughness:.3, metalness:.35}),
       orange:new THREE.MeshStandardMaterial({color:lin(0xd2702c), roughness:.6}),
-      glass:new THREE.MeshStandardMaterial({color:lin(0xc6e8f0), roughness:.06, metalness:0, transparent:true, opacity:.24, side:THREE.DoubleSide, depthWrite:false, envMapIntensity:1.8}),
+      glass:new THREE.MeshStandardMaterial({color:lin(0xb8dcea), roughness:.04, metalness:0, transparent:true, opacity:.08, side:THREE.DoubleSide, depthWrite:false, envMapIntensity:.8}),
       pad:new THREE.MeshStandardMaterial({color:lin(0x3d312b), roughness:.92}),
       paint:new THREE.MeshStandardMaterial({color:lin(0xe6dcc6), roughness:.8}),
-      road:new THREE.MeshStandardMaterial({color:lin(0x5a3828), roughness:1, transparent:true, opacity:.6, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
-      leaf:new THREE.MeshStandardMaterial({color:lin(0x4a7a36), roughness:.7, emissive:lin(0x3a1030), emissiveIntensity:.35}),
+      road:new THREE.MeshStandardMaterial({color:lin(0x3a2216), roughness:1, transparent:true, opacity:.72, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
+      leaf:new THREE.MeshStandardMaterial({color:lin(0x24781a), roughness:.6, emissive:lin(0x2a7014), emissiveIntensity:.3}),
       // Lichter deutlich über 1 (HDR): sie sollen in der Nachbearbeitung überstrahlen
-      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(5,3.7,2.3)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(3.2,.75,2.6)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(7,.7,.35)})
+      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(9,6.6,4)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(5.5,1.1,4.4)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(14,1.2,.5)})
     };
 
     // Gelände: Gitter zur Mitte hin verdichtet, Höhen aus Rauschen, an den Bauplätzen eingeebnet
@@ -1921,6 +1940,19 @@ const MB = (function(){
     const ground = new THREE.Mesh(geo,gm);
     ground.receiveShadow = true; sc.add(ground);
 
+    // Horizont: drei Ketten aus Tafelbergen und Kraterrand jenseits des Geländes (Ring aus Streifen, oben flach abgeschnitten); mbAir stuft sie nach Entfernung ab
+    const ridgeMat = new THREE.MeshLambertMaterial({color:lin(0x6a3a22)});
+    [[3300,170,1.3,3],[4600,300,2.1,11],[6200,480,3.0,23]].forEach(r => {
+      const n = 360, gp = new Float32Array((n+1)*2*3), ix = [];
+      for (let i = 0; i <= n; i++) {
+        const a = i/n*TAU, cx = Math.cos(a), cz = Math.sin(a), q = vnoise(cx*r[2]+r[3],1.7,cz*r[2]);
+        const mesa = ss(.46,.52,q), h = r[1]*(.18+.82*mesa)*(.8+.4*vnoise(cx*7+r[3],1,cz*7))+r[1]*.08*vnoise(cx*23,r[3],cz*23), rr = r[0]*(1+.08*(vnoise(cx*3,r[3]+2,cz*3)-.5));
+        gp.set([cx*rr,-60,cz*rr, cx*rr,h,cz*rr],i*6);
+        if (i < n) ix.push(i*2,i*2+1,i*2+2, i*2+1,i*2+3,i*2+2);
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(gp,3)); g.setIndex(ix); g.computeVertexNormals();
+      const m = new THREE.Mesh(g,ridgeMat); m.material.side = THREE.DoubleSide; m.frustumCulled = false; sc.add(m);
+    });
     // Steine, verstreut außerhalb der Bauplätze; jeder mit eigener Tönung. Dazu Kiesel rund um die Basis.
     const free = (x,z) => !(Math.hypot(x,z-10) < 75 || Math.hypot(x-430,z+40) < 60 || seg(x,z,-45,38,255,38) < 8 || seg(x,z,255,38,392,-30) < 8 || Math.hypot(x-275,z+85) < 36 ||
       (Math.abs(x+10) < 40 && Math.abs(z-95) < 26) || seg(x,z,270,-280,330,-220) < 22 || seg(x,z,178,-284,334,-128) < 22 || Math.hypot(x-62,z+72) < 14 || Math.hypot(x-30,z+58) < 12);
@@ -1947,7 +1979,7 @@ const MB = (function(){
     // Zentrale Kuppel aus gedrucktem Marsboden, mit sichtbaren Druckschichten
     const stripe = (() => { const c = document.createElement('canvas'); c.width = 8; c.height = 64; const x = c.getContext('2d'); for (let i = 0; i < 64; i++) { const v = Math.round(150+80*Math.sin(i/64*TAU*8)); x.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')'; x.fillRect(0,i,8,1); } const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1,3); return t; })();
     const hub = grp(0,0,0);
-    M.print = new THREE.MeshStandardMaterial({color:lin(0xa9704a), roughness:.95, bumpMap:stripe, bumpScale:.1, side:THREE.DoubleSide});
+    M.print = new THREE.MeshStandardMaterial({color:lin(0x8e5434), roughness:.95, bumpMap:stripe, bumpScale:.1, side:THREE.DoubleSide});
     add(new THREE.SphereGeometry(7.5,48,20,0,TAU,0,Math.PI/2),M.print,0,0,0,hub);
     add(new THREE.CylinderGeometry(7.7,7.9,.7,48),M.white,0,.35,0,hub);
     add(new THREE.SphereGeometry(1.4,20,10,0,TAU,0,Math.PI/2),M.glass,0,7.3,0,hub).castShadow = false;
@@ -1988,15 +2020,16 @@ const MB = (function(){
     };
     greenhouse(42,12); greenhouse(42,22);
     // Solarfeld: zur Sonne geneigte Module auf Pfosten
-    const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#14275c'; x.fillRect(0,0,128,64); x.strokeStyle = '#3d5aa3'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
+    const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#0a1638'; x.fillRect(0,0,128,64); x.fillStyle = '#12224e'; for (let i = 0; i < 128; i += 8) for (let j = 0; j < 64; j += 8) if ((i+j)%16) x.fillRect(i+1,j+1,6,6); x.strokeStyle = '#8a96b0'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
     const pq = new THREE.Quaternion().setFromUnitVectors(up,v2.set(sunDir.x*.55,1,sunDir.z*.55).normalize());
-    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0x9aa0b0), roughness:.16, metalness:.05, envMapIntensity:1.6}),48);
+    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0xb4bccc), roughness:.1, metalness:.4, envMapIntensity:1.5}),48);
     const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(.09,.09,2.2,6),M.metal,48);
     for (let r = 0, n = 0; r < 6; r++) for (let c = 0; c < 8; c++, n++) {
       const x = -10+(c-3.5)*7.6, z = 95+(r-2.5)*6.2, y = hgt(x,z);
       panels.setMatrixAt(n,m4.compose(v1.set(x,y+2.3,z),pq,s4.set(1,1,1))); posts.setMatrixAt(n,m4.compose(v1.set(x,y+1.1,z),q4.identity(),s4.set(1,1,1)));
     }
     panels.castShadow = panels.receiveShadow = true; posts.castShadow = true; sc.add(panels,posts);
+    panels.material.userData.keepEnv = M.glass.userData.keepEnv = true;
     // Kernreaktoren weit draußen hinter einem Wall: Kern im Boden, darüber der Schirm, der die Abwärme abstrahlt
     mound(256,-206,110,8,18,-Math.PI/4,.2);
     const rad = new THREE.MeshStandardMaterial({color:lin(0xd9d6cf), roughness:.5, metalness:.3, side:THREE.DoubleSide});
@@ -2090,9 +2123,9 @@ const MB = (function(){
     // Staubschleier, die mit dem Wind dicht über den Boden ziehen; sie bleiben um die Kamera herum
     anim.push((t,dt,clk) => {
       const S = 360, cx = cam.position.x, cz = cam.position.z;
-      for (let i = 0; i < (DESKTOP ? 42 : 26); i++) {
+      for (let i = 0; i < (DESKTOP ? 30 : 18); i++) {
         const x = cx+((hash(i,1,93)*S-clk*7-cx)%S+S)%S-S/2, z = cz+((hash(i,2,93)*S+clk*4.5-cz)%S+S)%S-S/2, d = Math.hypot(x-cx,z-cz);
-        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.025+.035*hash(i,5,93))*ss(18,70,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
+        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.01+.016*hash(i,5,93))*ss(30,90,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
       }
     });
     // Staubteufel in der Ferne: schlanker, sich wiegender Schlauch aus wirbelndem Staub
@@ -2121,8 +2154,9 @@ const MB = (function(){
     // Landefähre: sie sinkt zum Stichwort des Sprechers auf den Platz, das Triebwerk wirbelt Staub auf
     { const cv = document.createElement('canvas'); cv.width = 8; cv.height = 64; const cx = cv.getContext('2d'), gr = cx.createLinearGradient(0,0,0,64);
       gr.addColorStop(0,'rgba(255,246,228,.95)'); gr.addColorStop(.16,'rgba(255,214,150,.6)'); gr.addColorStop(.5,'rgba(255,150,80,.22)'); gr.addColorStop(1,'rgba(255,110,40,0)'); cx.fillStyle = gr; cx.fillRect(0,0,8,64);
-      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false})); fl.material.color.setRGB(3.2,2.7,2.2);
+      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false})); fl.material.color.setRGB(7,5.6,4.2);
       fl.position.y = 1.4-5.5; ln.add(fl);
+      const core = new THREE.Mesh(new THREE.ConeGeometry(.75,5,14,1,true),fl.material.clone()); core.material.color.setRGB(22,20,17); core.position.y = 2.5; fl.add(core);
       const light = new THREE.PointLight(0xffb070,0,170,1.5); light.position.y = -2; ln.add(light);
       const pc = VOICE.mars_base.cues.pad, ta = pc-1.6, tb = pc+5.6, px = 430, pz = -40, py = hgt(px,pz);
       lander = t => {
@@ -2332,7 +2366,7 @@ const MB = (function(){
     },
     render(shiftY){
       cam.aspect = W/H; cam.fov = 46-11*ss(1,1.7,W/H); cam.setViewOffset(W,H,0,shiftY,W,H);
-      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.35, thr:1.6, knee:.8, vig:.18});
+      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.26, thr:2, knee:.8, vig:.24});
     },
     project(v,out){ v2.copy(v).project(cam); out.x = (v2.x*.5+.5)*W; out.y = (-v2.y*.5+.5)*H; out.z = v2.z; return out; }
   };
