@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/rail – Titel, Text und Leiste der Himmelskörper unten; schmale Bildschirme. Eingebunden von src/main.js. */
 /* Schmale Bildschirme: der Tour-Knopf zeigt nur sein Zeichen, damit vier Knöpfe neben die Uhr passen */
 @media (max-width:480px){.tour span{display:none}.tour{width:calc(40*var(--u));padding:0;justify-content:center}}
 .tour{

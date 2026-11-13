@@ -1,6 +1,5 @@
 // mars/shaders – GLSL der Marsszene: Luftperspektive und Bodendetail (MB_GLSL), Himmel (SKY_FS).
 // Exporte: MB_GLSL, SKY_FS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Mars-Basis: eigene Szene auf der Oberfläche, Einheit Meter ---------- */
 // Gemeinsame Bausteine der Marsszene: Rauschen in Weltkoordinaten und Luftperspektive (Staubdunst, der mit der Höhe abnimmt und zur Sonne hin aufhellt)
@@ -16,21 +15,23 @@ vec3 mbAir(vec3 c,vec3 wp){
   return mix(c,mbHaze(dir),1.0-exp(-od));
 }
 `;
-const SKY_FS = MB_GLSL + `
+const SKY_FS =
+  MB_GLSL +
+  `
 uniform vec3 sun; uniform vec3 hor; uniform vec3 zen; uniform float time; varying vec3 vD;
 void main(){
   vec3 d=normalize(vD); float h=max(d.y,0.0);
-  vec3 col=mix(hor,zen,pow(h,0.5));
+  vec3 col=mix(hor,zen,pow(h,0.42));
   // hohe, dünne Eiswolken: gestreckte Schlieren, die mit dem Wind wandern
   vec2 cp=d.xz/(d.y+0.22)*vec2(1.1,3.2)+vec2(time*0.012,time*0.004);
   float cl=mbN(cp)*0.55+mbN(cp*2.3+7.0)*0.3+mbN(cp*5.1+3.0)*0.15;
   col=mix(col,hor*1.16+vec3(0.03),smoothstep(0.50,0.84,cl)*smoothstep(0.04,0.32,d.y)*0.2);
   float s=max(dot(d,sun),0.0);
   col+=hor*pow(s,4.0)*0.3;                                                    // Staub streut das Licht nach vorn: zur Sonne hin wird der Himmel heller
-  col+=vec3(0.26,0.40,0.74)*(pow(s,20.0)*0.45+pow(s,160.0)*0.9);             // bläulicher Hof um die Sonne, wie auf dem Mars
+  col+=vec3(0.26,0.40,0.74)*(pow(s,12.0)*0.55+pow(s,90.0)*1.4+pow(s,600.0)*3.0);             // bläulicher Hof um die Sonne, wie auf dem Mars
   col=mix(col,mbHaze(d),exp(-h*9.0)*0.9);                                     // am Horizont geht der Himmel in den Dunst über
   col=mix(col,mbHaze(d),smoothstep(0.02,-0.06,d.y));
-  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*28.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
+  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*60.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
   gl_FragColor=vec4(col,1.0);
   #include <tonemapping_fragment>
   #include <encodings_fragment>

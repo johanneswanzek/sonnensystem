@@ -12,11 +12,51 @@ import { BODIES } from '../../src/data/bodies.js';
 
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const SAME = {
-  en: ['Tour', 'Venus', 'Mars', 'Vesta', 'Jupiter', 'Saturn', 'Uranus', 'Phobos', 'Deimos', 'Io', 'Europa', 'Rhea', 'Titan',
-    'Titania', 'Oberon', 'Triton', 'ROTATION', '23 H 56 MIN', '24 H 37 MIN', '5 H 21 MIN', '9 H 56 MIN', '10 H 33 MIN',
-    '17 H 14 MIN', '16 H 6 MIN', 'Übersicht'],
-  pl: ['Mars', 'Saturn', 'Neptun', 'Deimos', 'Io', 'Europa', 'Kallisto', 'Oberon', '23 H 56 MIN', '24 H 37 MIN', '5 H 21 MIN',
-    '9 H 56 MIN', '10 H 33 MIN', '17 H 14 MIN', '16 H 6 MIN', 'EUROPA'],
+  en: [
+    'Tour',
+    'Venus',
+    'Mars',
+    'Vesta',
+    'Jupiter',
+    'Saturn',
+    'Uranus',
+    'Phobos',
+    'Deimos',
+    'Io',
+    'Europa',
+    'Rhea',
+    'Titan',
+    'Titania',
+    'Oberon',
+    'Triton',
+    'ROTATION',
+    '23 H 56 MIN',
+    '24 H 37 MIN',
+    '5 H 21 MIN',
+    '9 H 56 MIN',
+    '10 H 33 MIN',
+    '17 H 14 MIN',
+    '16 H 6 MIN',
+    'Übersicht',
+  ],
+  pl: [
+    'Mars',
+    'Saturn',
+    'Neptun',
+    'Deimos',
+    'Io',
+    'Europa',
+    'Kallisto',
+    'Oberon',
+    '23 H 56 MIN',
+    '24 H 37 MIN',
+    '5 H 21 MIN',
+    '9 H 56 MIN',
+    '10 H 33 MIN',
+    '17 H 14 MIN',
+    '16 H 6 MIN',
+    'EUROPA',
+  ],
 };
 
 function keys() {
@@ -36,8 +76,16 @@ function keys() {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   for (const m of html.matchAll(/<(\w+)[^>]*\sdata-t[^>]*>([\s\S]*?)<\/\1>/g)) out.add(m[2].trim());
   for (const m of html.matchAll(/aria-label="([^"]+)"/g)) out.add(m[1]);
-  const each = o => ['name', 'short', 'label', 'kind', 'blurb', 'sr', 'day', 'per', 'n'].forEach(k => { if (typeof o[k] === 'string') out.add(o[k]); });
-  for (const b of BODIES) { each(b); (b.stages || []).forEach(each); (b.sats || []).forEach(each); (b.facts || []).flat().forEach(s => out.add(s)); }
+  const each = o =>
+    ['name', 'short', 'label', 'kind', 'blurb', 'sr', 'day', 'per', 'n'].forEach(k => {
+      if (typeof o[k] === 'string') out.add(o[k]);
+    });
+  for (const b of BODIES) {
+    each(b);
+    (b.stages || []).forEach(each);
+    (b.sats || []).forEach(each);
+    (b.facts || []).flat().forEach(s => out.add(s));
+  }
   return out;
 }
 
@@ -46,7 +94,12 @@ describe('Übersetzungen vollständig', () => {
   for (const [lang, dict] of Object.entries({ en, pl })) {
     it(`${lang}: jeder Schlüssel übersetzt`, () => {
       const missing = [...all].filter(k => !(k in dict) && !SAME[lang].includes(k));
-      if (process.env.I18N_DEBUG) console.log(lang, all.size, [...all].filter(k => !(k in dict)));
+      if (process.env.I18N_DEBUG)
+        console.log(
+          lang,
+          all.size,
+          [...all].filter(k => !(k in dict)),
+        );
       expect(missing).toEqual([]);
     });
   }

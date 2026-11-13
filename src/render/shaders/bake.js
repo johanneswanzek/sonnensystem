@@ -1,6 +1,5 @@
 // render/shaders/bake – GLSL der gebackenen Oberflächen (Rauschen, Höhen, Erde).
 // Exporte: BAKE_LIB, BAKE_MAIN, BAKE_VS, EARTH_GEO
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Oberflächen: prozedural auf der Grafikkarte berechnet ---------- */
 const BAKE_VS = `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }`;

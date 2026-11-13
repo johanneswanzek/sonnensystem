@@ -9,7 +9,7 @@ import { foreignUrls } from './tools/build/check-foreign.mjs';
 const site = JSON.parse(fs.readFileSync(new URL('./site.json', import.meta.url), 'utf8'));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-// Kopf der Website (bisher tools/build.py): Titel, Beschreibung, canonical, hreflang, og:*, Favicon, lokale Schriften
+// Kopf der Website: Titel, Beschreibung, canonical, hreflang, og:*, Favicon, lokale Schriften
 function siteHead() {
   const url = site.url.replace(/\/$/, '') + '/';
   const langs = ['de', ...Object.keys(site.i18n || {}).sort()];
@@ -41,7 +41,7 @@ function siteHead() {
   };
 }
 
-// Prüfung „keine fremde Adresse“ und Aufräumen der alten Bibliotheken aus public/vendor (bis Phase B entfernt)
+// Prüfung „keine fremde Adresse“: der Bau bricht ab, wenn das Ergebnis auf einen fremden Server verweist
 function checkOutput() {
   let outDir;
   return {
@@ -49,7 +49,6 @@ function checkOutput() {
     apply: 'build',
     configResolved(c) { outDir = path.resolve(c.root, c.build.outDir); },
     closeBundle() {
-      for (const f of ['vendor/three.min.js', 'vendor/GLTFLoader.js']) fs.rmSync(path.join(outDir, f), { force: true });
       const bad = foreignUrls(outDir);
       if (bad.length) throw new Error('Die Seite verweist auf fremde Adressen:\n' + bad.join('\n'));
     },

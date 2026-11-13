@@ -7,17 +7,27 @@ import { foreignUrls } from '../../tools/build/check-foreign.mjs';
 
 const tmp = files => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'fremd-'));
-  for (const [f, t] of Object.entries(files)) { fs.mkdirSync(path.dirname(path.join(d, f)), { recursive: true }); fs.writeFileSync(path.join(d, f), t); }
+  for (const [f, t] of Object.entries(files)) {
+    fs.mkdirSync(path.dirname(path.join(d, f)), { recursive: true });
+    fs.writeFileSync(path.join(d, f), t);
+  }
   return d;
 };
 
 describe('Prüfung auf fremde Adressen', () => {
   it('meldet Schriften und Bibliotheken von fremden Servern', () => {
-    const d = tmp({ 'index.html': '<link href="https://fonts.googleapis.com/css2?family=X">', 'assets/a.js': 'load("https://cdn.jsdelivr.net/npm/three")' });
+    const d = tmp({
+      'index.html': '<link href="https://fonts.googleapis.com/css2?family=X">',
+      'assets/a.js': 'load("https://cdn.jsdelivr.net/npm/three")',
+    });
     expect(foreignUrls(d)).toHaveLength(2);
   });
   it('lässt Namensräume, die eigene Adresse und Binärdateien stehen', () => {
-    const d = tmp({ 'index.html': '<svg xmlns="http://www.w3.org/2000/svg"></svg><link rel="canonical" href="https://sonnensystem.johannes-wanzek.de/">', 'img/a.jpg': 'https://example.com' });
+    const d = tmp({
+      'index.html':
+        '<svg xmlns="http://www.w3.org/2000/svg"></svg><link rel="canonical" href="https://sonnensystem.johannes-wanzek.de/">',
+      'img/a.jpg': 'https://example.com',
+    });
     expect(foreignUrls(d)).toEqual([]);
   });
   it('das gebaute dist/ ist sauber (wenn vorhanden)', () => {

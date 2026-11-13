@@ -1,6 +1,5 @@
 // render/shaders/space – GLSL der Weltraumszene: Planeten, Wolken, Schnitt, Halo, Sonne, Ringe, Bahnen.
 // Exporte: CLOUD_FS, CORONA_FS, CORONA_VS, HALO_FS, LAYER_FS, ORBIT_FS, ORBIT_VS, PLANET_FS, RING_FS, SUN_FS, VS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Shader ---------- */
 const VS = `
@@ -9,17 +8,25 @@ void main(){ vUv=uv; vP=position; vN=normalize(mat3(modelMatrix)*normal); vec4 w
 // Planetenoberfläche: Relief aus der Höhenkarte, weicher Terminator, Meeresglanz, Atmosphärensaum, Stadtlichter, Ringschatten.
 // EARTH: echte Karten (Höhe, Wasser und Wolken in einer Hilfstextur); cut = Mittelwinkel und halbe Öffnung des Keils für den Querschnitt
 const CUT_GLSL = `if(cut.y>0.001){ float ca=atan(vP.z,vP.x); if(abs(mod(ca-cut.x+3.14159265,6.2831853)-3.14159265)<cut.y) discard; }`;
-const PLANET_FS = `
+const PLANET_FS =
+  `
 uniform sampler2D map; uniform sampler2D nmap; uniform sampler2D aux; uniform float nightK; uniform float specK; uniform float bumpK; uniform float gas; uniform vec2 texel;
 uniform vec4 atmo; uniform vec3 center; uniform vec3 ringN; uniform vec3 ringR; uniform vec2 cut; uniform vec2 cloud;
+uniform vec3 tint; uniform vec4 haze; uniform float time; uniform float flow; uniform float detail;
 varying vec2 vUv; varying vec3 vN; varying vec3 vW; varying vec3 vP;
+float ph(vec3 p){ p=fract(p*0.1031); p+=dot(p,p.zyx+31.32); return fract((p.x+p.y)*p.z); }
+float pn(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(mix(ph(i),ph(i+vec3(1.0,0.0,0.0)),f.x),mix(ph(i+vec3(0.0,1.0,0.0)),ph(i+vec3(1.0,1.0,0.0)),f.x),f.y),
+             mix(mix(ph(i+vec3(0.0,0.0,1.0)),ph(i+vec3(1.0,0.0,1.0)),f.x),mix(ph(i+vec3(0.0,1.0,1.0)),ph(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z); }
 #ifdef EARTH
 #define HGT(c) texture2D(aux,c).r
 #else
 #define HGT(c) texture2D(map,c).a
 #endif
 void main(){
-  ` + CUT_GLSL + `
+  ` +
+  CUT_GLSL +
+  `
   vec3 N=normalize(vN); vec3 L=normalize(-vW); vec3 V=normalize(cameraPosition-vW);
   vec4 tx=texture2D(map,vUv);
   float d0=dot(N,L); float relief=1.0;
@@ -46,10 +53,24 @@ void main(){
   sh*=1.0-0.5*texture2D(aux,cuv).b*cloud.y;
   base=mix(base,base*vec3(0.92,1.0,1.08),ocean*0.5);
 #else
-  vec4 nt=texture2D(nmap,vUv); float ocean=nt.a; vec3 night=nt.rgb; vec3 base=tx.rgb;
+  vec4 nt=texture2D(nmap,vUv); float ocean=nt.a; vec3 night=nt.rgb; vec3 base=tx.rgb*tint;
+  // Gasriesen aus der Nähe: feine Turbulenz entlang der Bänder; jede Breite dreht starr mit ihrem eigenen Tempo (Scherung, kein Schwimmen)
+  if(detail>0.0){
+    float fade=1.0-smoothstep(3.5,9.0,length(cameraPosition-center)/length(vP));
+    if(fade>0.0){
+      vec3 q=normalize(vP); float la=asin(clamp(q.y,-1.0,1.0)); float a=time*flow*(sin(la*11.0)+0.6*sin(la*23.0+1.0));
+      float ca=cos(a); float sa=sin(a); q.xz=vec2(ca*q.x-sa*q.z,sa*q.x+ca*q.z);
+      float w=pn(q*vec3(9.0,30.0,9.0));
+      float dd=pn(q*vec3(18.0,90.0,18.0)+w*1.6)*0.55+pn(q*vec3(41.0,190.0,41.0)+w*2.5)*0.3+pn(q*vec3(90.0,330.0,90.0))*0.15;
+      base*=1.0+detail*fade*(dd-0.5)*1.4;
+    }
+  }
 #endif
   vec3 col=base*(0.02+1.08*day*relief*sh);
-  col*=mix(1.0,0.55+0.45*pow(max(dot(N,V),0.0),0.45),gas);
+  float mu0=max(dot(N,V),0.0);
+  col*=mix(1.0,0.50+0.50*pow(mu0,0.5),gas);
+  // Dunst über der Wolkendecke: zum Rand hin trüber und heller (Eisriesen, Venus)
+  col=mix(col,haze.rgb*(0.02+1.05*smoothstep(-0.15,0.5,d0)),haze.a*pow(1.0-mu0,2.2));
   // Sonnenglanz auf dem Wasser: scharfer heller Kern und breiter Schimmer, zum Rand hin stärker (Fresnel); hell genug für den Bloom
   float nh=max(dot(N,normalize(L+V)),0.0); float mu=max(dot(N,V),0.0); float fr=0.25+0.75*pow(1.0-mu,4.0);
   col+=vec3(1.0,0.90,0.74)*(pow(nh,160.0)*1.1+pow(nh,22.0)*0.10)*fr*ocean*specK*day;
@@ -62,10 +83,13 @@ void main(){
   col+=night*nightK*(1.0-smoothstep(-0.14,0.06,d0));
   gl_FragColor=vec4(col,1.0);
 }`;
-const CLOUD_FS = `
+const CLOUD_FS =
+  `
 uniform sampler2D map; uniform float op; uniform vec2 cut; varying vec2 vUv; varying vec3 vN; varying vec3 vW; varying vec3 vP;
 void main(){
-  ` + CUT_GLSL + `
+  ` +
+  CUT_GLSL +
+  `
   vec3 N=normalize(vN); vec3 L=normalize(-vW); float d=dot(N,L); float day=smoothstep(-0.1,0.45,d);
   vec3 c=mix(vec3(1.0,0.55,0.32),vec3(1.0),smoothstep(0.0,0.3,d));
 #ifdef EARTH
@@ -124,9 +148,12 @@ float n3(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
   return mix(mix(mix(h(i),h(i+vec3(1.0,0.0,0.0)),f.x),mix(h(i+vec3(0.0,1.0,0.0)),h(i+vec3(1.0,1.0,0.0)),f.x),f.y),
              mix(mix(h(i+vec3(0.0,0.0,1.0)),h(i+vec3(1.0,0.0,1.0)),f.x),mix(h(i+vec3(0.0,1.0,1.0)),h(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z); }
 float fbm(vec3 p){ float a=0.5; float s=0.0; for(int i=0;i<5;i++){ s+=a*n3(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s/0.97; }`;
-const SUN_FS = `
+const SUN_FS =
+  `
 uniform float time; varying vec3 vP; varying vec3 vN; varying vec3 vW;
-` + SUN_NOISE + `
+` +
+  SUN_NOISE +
+  `
 // Abstand zum nächsten und zweitnächsten Zellmittelpunkt; die Mittelpunkte wandern langsam
 vec2 cells(vec3 p,float t){ vec3 i=floor(p); vec3 f=fract(p); float d1=8.0; float d2=8.0;
   for(int x=-1;x<=1;x++) for(int y=-1;y<=1;y++) for(int z=-1;z<=1;z++){
@@ -157,10 +184,13 @@ void main(){
   gl_FragColor=vec4(col*1.55,1.0);
 }`;
 // Korona, Chromosphäre und Protuberanzen: eine Fläche um die Sonne, die stets zur Kamera zeigt (additiv, HDR)
-const CORONA_VS = `varying vec2 vQ; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
-const CORONA_FS = `
-uniform float time; uniform float R; uniform float k; varying vec2 vQ;
-` + SUN_NOISE + `
+const CORONA_VS = `varying vec2 vQ; varying float vD; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); vD=length(c.xyz); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
+const CORONA_FS =
+  `
+uniform float time; uniform float R; uniform float k; varying vec2 vQ; varying float vD;
+` +
+  SUN_NOISE +
+  `
 void main(){
   float r=length(vQ)/R; if(r<0.985 || r>6.0) discard;
   vec2 d=vQ/(r*R); float hgt=r-1.0; float t=time;
@@ -180,7 +210,9 @@ void main(){
       col+=vec3(1.0,0.34,0.14)*pm*2.4;
     }
   }
-  gl_FragColor=vec4(col*k,1.0);
+  // Nah an der Sonne (Merkur, Venus) bliebe sonst das ganze Bild ein Schleier: Korona nur bis rund 35–55° um die Sonnenmitte
+  float ang=r*R/vD;
+  gl_FragColor=vec4(col*k*(1.0-smoothstep(0.6,1.0,ang)),1.0);
 }`;
 // Saturnringe mit Schatten des Planeten
 const RING_FS = `

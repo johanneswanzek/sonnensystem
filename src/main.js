@@ -1,7 +1,6 @@
 // main – Einstieg: Stil laden und die Module in der Reihenfolge des früheren Skripts starten.
 // Funktionen und Konstanten stehen in den Modulen bereit; die init…()-Funktionen erledigen, was vom DOM, vom
 // Renderer oder von anderen Modulen abhängt. Ein init, das false liefert, beendet den Start (kein WebGL).
-// Erzeugt von tools/refactor/split.mjs – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import './styles/base.css';
 import './styles/hud.css';
@@ -37,7 +36,7 @@ import { initEarth } from './hud/earth.js';
 import { initLoop } from './app/loop.js';
 import { initBoot } from './app/boot.js';
 
-function start(){
+function start() {
   initUtil();
   initI18n();
   initVoice();

@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/nav – Knöpfe Weiter und Zurück neben dem Namen. Eingebunden von src/main.js. */
 /* Weiter und Zurück: klein, neben dem Namen, mit dem Daumen erreichbar */
 .nav{display:flex;gap:calc(6*var(--u));flex:none;pointer-events:auto;padding-bottom:calc(6*var(--u))}
 .nav .icon{background:rgba(8,11,20,.45);opacity:.8}

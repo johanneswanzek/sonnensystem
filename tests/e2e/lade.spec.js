@@ -4,8 +4,13 @@ const L = require('./lib');
 
 test.describe.serial('Laden', () => {
   let s, info;
-  test.beforeAll(async ({ browser }, testInfo) => { info = testInfo; s = await L.open(browser, testInfo); });
-  test.afterAll(async () => { await s.close(); });
+  test.beforeAll(async ({ browser }, testInfo) => {
+    info = testInfo;
+    s = await L.open(browser, testInfo);
+  });
+  test.afterAll(async () => {
+    await s.close();
+  });
 
   test('Loader verschwindet, Startknöpfe erscheinen', async () => {
     const { page } = s;
@@ -38,13 +43,21 @@ test.describe.serial('Laden', () => {
 
   test('Canvas ist gezeichnet (nicht leer)', async () => {
     const { page } = s;
-    const dim = await page.evaluate(() => { const c = document.querySelector('#stage'); const r = c.getBoundingClientRect(); return [r.width, r.height]; });
-    expect(dim[0]).toBeGreaterThan(100); expect(dim[1]).toBeGreaterThan(100);
+    const dim = await page.evaluate(() => {
+      const c = document.querySelector('#stage');
+      const r = c.getBoundingClientRect();
+      return [r.width, r.height];
+    });
+    expect(dim[0]).toBeGreaterThan(100);
+    expect(dim[1]).toBeGreaterThan(100);
   });
 
   test('keine Konsolenfehler, keine fremden Adressen, keine fehlgeschlagenen Anfragen', async () => {
-    await s.page.waitForTimeout(1500);       // Modelle laden nach dem Start nach
+    await s.page.waitForTimeout(1500); // Modelle laden nach dem Start nach
     expect(L.problems(s.log)).toEqual([]);
-    expect(s.log.requests.some(u => /^\/assets\/index-[\w-]+\.js/.test(u)), 'gebündeltes Programm samt three.js geladen').toBe(true);
+    expect(
+      s.log.requests.some(u => /^\/assets\/index-[\w-]+\.js/.test(u)),
+      'gebündeltes Programm samt three.js geladen',
+    ).toBe(true);
   });
 });

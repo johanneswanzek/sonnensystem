@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/start – Startfläche „Reise starten“ und Hinweise (Toast). Eingebunden von src/main.js. */
 /* Startknopf: Ton braucht einen Tipp, deshalb beginnt die Reise hier */
 .start{
   display:flex;flex-direction:column;align-items:center;gap:calc(6*var(--u));pointer-events:auto;

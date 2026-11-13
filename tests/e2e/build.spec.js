@@ -1,6 +1,7 @@
 // Ablauf 13: Build (dist/): keine fremden Adressen, hreflang, Angaben aus site.json, alle referenzierten Dateien vorhanden.
 // Geprüft wird index.html samt den gebündelten Skripten unter assets/ (Vite).
-const fs = require('fs'), path = require('path');
+const fs = require('fs'),
+  path = require('path');
 const { test, expect } = require('playwright/test');
 const { ROOT, delivered } = require('./server');
 const L = require('./lib');
@@ -16,15 +17,23 @@ test.describe('Build dist/', () => {
     const own = cfg().url.replace(/\/$/, '');
     const urls = all().match(/https?:\/\/[^\s"'`<>)\\]+/g) || [];
     // three.js nennt in Warntexten seine Projektseiten; geladen wird von dort nichts (Netzprüfung in lade.spec.js)
-    const foreign = urls.filter(u => !u.startsWith(own) && !u.startsWith('http://www.w3.org/') && !/^https:\/\/(threejs\.org|github\.com\/mrdoob)\//.test(u));
+    const foreign = urls.filter(
+      u =>
+        !u.startsWith(own) &&
+        !u.startsWith('http://www.w3.org/') &&
+        !/^https:\/\/(threejs\.org|github\.com\/mrdoob)\//.test(u),
+    );
     expect(foreign).toEqual([]);
     // Geladen wird nichts von der eigenen Adresse: Skripte, Stile und Medien sind relativ
     const loads = html().match(/<(script|link|img|audio|source)\b[^>]*\b(src|href)="[^"]+"/g) || [];
-    for (const l of loads) if (!/rel="(canonical|alternate)"/.test(l)) expect(l, 'Ressource ist relativ').not.toMatch(/(src|href)="(https?:)?\/\//);
+    for (const l of loads)
+      if (!/rel="(canonical|alternate)"/.test(l))
+        expect(l, 'Ressource ist relativ').not.toMatch(/(src|href)="(https?:)?\/\//);
   });
 
   test('Kopf: lang, viewport, Titel, Beschreibung, canonical, Open Graph', () => {
-    const h = html(), c = cfg();
+    const h = html(),
+      c = cfg();
     expect(h).toMatch(/<html lang="de">/);
     expect(h).toMatch(/<meta name="viewport" content="[^"]*width=device-width/);
     expect(h).toContain('<title>' + c.title + '</title>');
@@ -34,23 +43,28 @@ test.describe('Build dist/', () => {
   });
 
   test('hreflang-Verweise für de, en, pl und x-default', () => {
-    const h = html(), c = cfg();
-    for (const l of ['de', 'en', 'pl']) expect(h).toContain('<link rel="alternate" hreflang="' + l + '" href="' + c.url + '?lang=' + l + '">');
+    const h = html(),
+      c = cfg();
+    for (const l of ['de', 'en', 'pl'])
+      expect(h).toContain('<link rel="alternate" hreflang="' + l + '" href="' + c.url + '?lang=' + l + '">');
     expect(h).toContain('<link rel="alternate" hreflang="x-default" href="' + c.url + '">');
     expect(Object.keys(c.i18n).sort()).toEqual(['en', 'pl']);
   });
 
   test('Angaben aus site.json (Impressum, Datenschutz, Titel und Beschreibung je Sprache) sind eingebaut', () => {
-    const a = all(), c = cfg();
+    const a = all(),
+      c = cfg();
     // vite.config.js setzt sie als Bauzeit-Konstante (__SITE__ -> SITE_CFG in src/core/target.js)
     expect(a).toContain(JSON.stringify(c.i18n.en.title));
     expect(a).toContain(JSON.stringify(c.i18n.pl.description));
-    expect(a).toMatch(/impressum:/); expect(a).toMatch(/datenschutz:/);
+    expect(a).toMatch(/impressum:/);
+    expect(a).toMatch(/datenschutz:/);
   });
 
   test('dist/ enthält keine Prüfhaken und keine Artefakt-Reste', () => {
     const a = all();
-    for (const k of ['__t', '__mbt', '__clk', '__cam', '__au']) expect(a, k).not.toMatch(new RegExp('window\\.' + k + '\\b|\\b' + k + '='));
+    for (const k of ['__t', '__mbt', '__clk', '__cam', '__au'])
+      expect(a, k).not.toMatch(new RegExp('window\\.' + k + '\\b|\\b' + k + '='));
     expect(a).not.toContain('claude:viewport-fit-sides');
     expect(a).not.toContain('fonts.googleapis.com');
     expect(a).toMatch(/["']\.glb["']/);
@@ -58,7 +72,9 @@ test.describe('Build dist/', () => {
   });
 
   test('alle im Dokument referenzierten Dateien (script, link, icon) existieren', () => {
-    const refs = [...html().matchAll(/\b(?:src|href)="([^"#?]+)"/g)].map(m => m[1]).filter(u => !/^(https?:|data:|mailto:)/.test(u));
+    const refs = [...html().matchAll(/\b(?:src|href)="([^"#?]+)"/g)]
+      .map(m => m[1])
+      .filter(u => !/^(https?:|data:|mailto:)/.test(u));
     expect(refs.length).toBeGreaterThan(2);
     for (const r of refs) expect(exists(r), r).toBe(true);
   });
@@ -71,11 +87,18 @@ test.describe('Build dist/', () => {
     // Modelle: Namen aus loadModels()
     const src = fs.readFileSync(path.join(ROOT, 'src/app/boot.js'), 'utf8');
     const lm = src.slice(src.indexOf('function loadModels'), src.indexOf('async function boot'));
-    const names = new Set([...lm.matchAll(/(?:get\(|\[)\s*'(\w+)'/g), ...[...lm.matchAll(/\[((?:'\w+',?\s*)+)\]/g)].flatMap(m => [...m[1].matchAll(/'(\w+)'/g)])].map(m => m[1]));
+    const names = new Set(
+      [
+        ...lm.matchAll(/(?:get\(|\[)\s*'(\w+)'/g),
+        ...[...lm.matchAll(/\[((?:'\w+',?\s*)+)\]/g)].flatMap(m => [...m[1].matchAll(/'(\w+)'/g)]),
+      ].map(m => m[1]),
+    );
     expect(names.size).toBeGreaterThanOrEqual(7);
     for (const n of names) expect(exists('models/' + n + '.glb'), 'models/' + n + '.glb').toBe(true);
     // Sprecher: 15 Clips je Sprache, Musik
-    for (const l of ['de', 'en', 'pl']) for (const id of L.CLIPS) expect(exists('voice/' + (l === 'de' ? '' : l + '/') + id + '.mp3'), l + '/' + id).toBe(true);
+    for (const l of ['de', 'en', 'pl'])
+      for (const id of L.CLIPS)
+        expect(exists('voice/' + (l === 'de' ? '' : l + '/') + id + '.mp3'), l + '/' + id).toBe(true);
     expect(exists('audio/music.mp3')).toBe(true);
   });
 
@@ -83,7 +106,10 @@ test.describe('Build dist/', () => {
     const css = fs.readFileSync(path.join(DIST, 'vendor/fonts/fonts.css'), 'utf8');
     const urls = [...css.matchAll(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g)].map(m => m[1]);
     expect(urls.length).toBeGreaterThan(0);
-    for (const u of urls) { expect(u, 'Schrift lokal').not.toMatch(/^(https?:)?\/\//); expect(exists('vendor/fonts/' + u.replace(/^\.\//, '')), u).toBe(true); }
+    for (const u of urls) {
+      expect(u, 'Schrift lokal').not.toMatch(/^(https?:)?\/\//);
+      expect(exists('vendor/fonts/' + u.replace(/^\.\//, '')), u).toBe(true);
+    }
   });
 
   test('Vorschaubild, Favicon und Lizenzdatei sind dabei', () => {

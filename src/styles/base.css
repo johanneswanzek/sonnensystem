@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/base – Grundlagen: Farben und Schriften (Variablen), Bühne mit 3D- und Overlay-Canvas, Ladeanzeige, Maßstab --u. Eingebunden von src/main.js. */
 /* Layout: full-bleed 3D stage. All figures are drawn as measurement marks around the
    focused body on an overlay canvas; only the name and one sentence sit bottom-left.
    Body rail along the bottom edge, time controls top-left. Single dark look by choice.

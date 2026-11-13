@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/language-menu – Sprachwahl oben rechts mit aufklappender Liste. Eingebunden von src/main.js. */
 /* Sprachwahl: Knopf mit dem Kürzel der Sprache, darunter klappt die Liste auf */
 .langbox{position:relative;flex:none}
 #lang{font:500 calc(11*var(--u))/1 var(--mono);letter-spacing:.06em}

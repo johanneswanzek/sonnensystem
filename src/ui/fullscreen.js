@@ -1,7 +1,6 @@
 // ui/fullscreen – Vollbild und Kinoansicht.
 // Exporte: cine, fullBtn; initFullscreen
 // Hängt ab von: app/tour.js, core/util.js, i18n/index.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { setSpeed, setTour, speedIdx, tour } from '../app/tour.js';
@@ -13,8 +12,9 @@ import { measure } from './layout.js';
 // Belegt in initFullscreen() (Reihenfolge des Starts, siehe main.js)
 let fullBtn, fullIcon;
 
-let cine = false, fsEntered = false;
-function setCine(on){
+let cine = false,
+  fsEntered = false;
+function setCine(on) {
   cine = on;
   app.classList.toggle('cine', on);
   fullBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -24,27 +24,46 @@ function setCine(on){
   measure();
 }
 const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement;
-const onFs = () => { if (!fsElement() && fsEntered) { fsEntered = false; if (cine) setCine(false); } measure(); };
+const onFs = () => {
+  if (!fsElement() && fsEntered) {
+    fsEntered = false;
+    if (cine) setCine(false);
+  }
+  measure();
+};
 
-export function initFullscreen(){
-// Vollbild: blendet die Bedienelemente aus und nutzt echtes Browser-Vollbild, wo das Gerät es erlaubt
-fullBtn = $('#full'), fullIcon = $('#fullIcon');
-fullBtn.addEventListener('click', () => {
-  const on = !cine;
-  setCine(on);
-  try {
-    if (on) {
-      const req = app.requestFullscreen || app.webkitRequestFullscreen;
-      if (req) { const p = req.call(app); fsEntered = true; if (p && p.catch) p.catch(() => { fsEntered = false; }); }
-    } else if (fsElement()) {
-      const ex = document.exitFullscreen || document.webkitExitFullscreen;
-      if (ex) { const p = ex.call(document); if (p && p.catch) p.catch(() => {}); }
+export function initFullscreen() {
+  // Vollbild: blendet die Bedienelemente aus und nutzt echtes Browser-Vollbild, wo das Gerät es erlaubt
+  ((fullBtn = $('#full')), (fullIcon = $('#fullIcon')));
+  fullBtn.addEventListener('click', () => {
+    const on = !cine;
+    setCine(on);
+    try {
+      if (on) {
+        const req = app.requestFullscreen || app.webkitRequestFullscreen;
+        if (req) {
+          const p = req.call(app);
+          fsEntered = true;
+          if (p && p.catch)
+            p.catch(() => {
+              fsEntered = false;
+            });
+        }
+      } else if (fsElement()) {
+        const ex = document.exitFullscreen || document.webkitExitFullscreen;
+        if (ex) {
+          const p = ex.call(document);
+          if (p && p.catch) p.catch(() => {});
+        }
+      }
+    } catch (err) {
+      fsEntered = false;
     }
-  } catch (err) { fsEntered = false; }
-});
-document.addEventListener('fullscreenchange', onFs); document.addEventListener('webkitfullscreenchange', onFs);
-$('#slower').addEventListener('click', () => setSpeed(speedIdx-1));
-$('#faster').addEventListener('click', () => setSpeed(speedIdx+1));
+  });
+  document.addEventListener('fullscreenchange', onFs);
+  document.addEventListener('webkitfullscreenchange', onFs);
+  $('#slower').addEventListener('click', () => setSpeed(speedIdx - 1));
+  $('#faster').addEventListener('click', () => setSpeed(speedIdx + 1));
 }
 
 export { cine, fullBtn };

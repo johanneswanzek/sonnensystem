@@ -1,4 +1,4 @@
-// Prüft die Seite in einem Chrome ohne Fenster und macht Bildschirmfotos (bisher tools/test/run.js).
+// Prüft die Seite in einem Chrome ohne Fenster und macht Bildschirmfotos.
 //
 //   npm run shots -- [--dist] [--desk] [--nobuild] [--lang=en|pl] <Breite> <Höhe> [Schritte ...]
 //

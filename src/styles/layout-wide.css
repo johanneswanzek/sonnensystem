@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/layout-wide – Querformat: Uhr und Titel in den Ecken; niedriges Querformat (Handy quer). Eingebunden von src/main.js. */
 /* Querformat (Monitor, Tablet quer): Uhr und Titel rücken in die Ecken, der Himmelskörper nutzt die volle Bildhöhe */
 .wide .caption{max-width:clamp(300px,36vw,calc(600*var(--u)))}
 .wide .titlerow{justify-content:flex-start;gap:calc(22*var(--u))}
