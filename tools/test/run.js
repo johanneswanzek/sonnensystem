@@ -1,10 +1,11 @@
 // Prüft die Seite in einem Chrome ohne Fenster und macht Bildschirmfotos.
 //
-//   node tools/test/run.js [--dist] [--desk] <Breite> <Höhe> [Schritte ...]
+//   node tools/test/run.js [--dist] [--desk] [--lang=en|pl] <Breite> <Höhe> [Schritte ...]
 //
 // Ohne --dist wird die Testseite gebaut (.test/, mit Prüfhaken) und zusammen mit public/ ausgeliefert.
 // Mit --dist wird dist/ unverändert geprüft, so wie es veröffentlicht wird; Prüfhaken gibt es dort nicht.
 // --desk lässt in der Testseite die volle Desktop-Ausstattung an (ohne Grafikkarte sehr langsam).
+// --lang=en öffnet die Seite mit ?lang=en; ohne die Angabe meldet der Browser Deutsch als Sprache, die Seite wählt dann Deutsch.
 // Jede Anfrage an eine fremde Adresse wird abgebrochen und am Ende gemeldet.
 //
 // Schritte:  start          Reise ohne Ton starten und die Tour anhalten
@@ -29,6 +30,7 @@ const ROOT = path.resolve(__dirname, '../..');
 const argv = process.argv.slice(2);
 const flag = f => { const i = argv.indexOf(f); if (i < 0) return false; argv.splice(i, 1); return true; };
 const DIST = flag('--dist'), DESK = flag('--desk');
+const LANG = (argv.find(a => a.startsWith('--lang=')) || '').slice(7); if (LANG) flag('--lang=' + LANG);
 const [w, h, ...steps] = argv;
 if (!+w || !+h) { console.log(fs.readFileSync(__filename, 'utf8').split('\n').filter(l => l.startsWith('//')).map(l => l.slice(3)).join('\n')); process.exit(1); }
 
@@ -57,14 +59,14 @@ const srv = http.createServer((q, r) => {
   if (process.env.SOFTWARE_GL) args.push('--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist');
   if (process.getuid && process.getuid() === 0) args.push('--no-sandbox');
   const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined, args });
-  const page = await (await browser.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: +process.env.DSF || 1 })).newPage();
+  const page = await (await browser.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: +process.env.DSF || 1, locale: process.env.LOCALE || 'de-DE' })).newPage();
   const foreign = [], failed = [];
   await page.route('**/*', r => { const u = r.request().url(); if (u.startsWith(origin) || u.startsWith('data:') || u.startsWith('blob:')) return r.continue(); foreign.push(u); return r.abort(); });
   page.on('response', r => { if (r.status() >= 400) failed.push(r.status() + ' ' + r.url().replace(origin, '')); });
   page.on('console', m => { const t = m.text(); if ((m.type() === 'error' || m.type() === 'warning') && !t.includes('GPU stall')) console.log('[' + m.type() + ']', t.slice(0, 700)); });
   page.on('pageerror', e => console.log('[pageerror]', e.message));
   const t0 = Date.now();
-  await page.goto(origin + '/');
+  await page.goto(origin + '/' + (LANG ? '?lang=' + LANG : ''));
   await page.waitForSelector('#start:not([hidden])', { timeout: 240000 });
   console.log('geladen nach', Date.now() - t0, 'ms');
   const hook = js => { if (DIST) throw new Error('Dieser Schritt braucht die Prüfhaken und geht nicht mit --dist'); return page.evaluate(js); };

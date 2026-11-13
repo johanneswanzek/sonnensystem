@@ -2,7 +2,7 @@
 
 Animierte 3D-Reise durch das Sonnensystem im Browser, mit Sprecher und Musik: die Planeten an ihren für das
 Datum berechneten Positionen, ein Flug durch die Wolken der Erde bis in ihren Kern, eine mögliche Kolonie auf
-dem Mars und der Asteroidengürtel. Läuft auf dem Handy wie auf einem großen Monitor.
+dem Mars und der Asteroidengürtel. Läuft auf dem Handy wie auf einem großen Monitor, in Deutsch, Englisch und Polnisch.
 
 **Live:** https://sonnensystem.johannes-wanzek.de/
 
@@ -26,7 +26,7 @@ Karten und Modelle nicht von der Festplatte laden.
 src/sonnensystem.html    die ganze Seite in einer Datei: Stil, Markup, Programm (three.js r128, kein Framework)
 site.json                Adresse, Titel, Beschreibung, Verweise auf Impressum und Datenschutz
 public/                  wird unverändert veröffentlicht
-  voice/, audio/           Sprecher (15 Clips) und Musik als MP3
+  voice/, audio/           Sprecher (15 Clips je Sprache; voice/en/, voice/pl/) und Musik als MP3
   img/                     Karten von Erde, Mars und Jupiter
   models/                  3D-Modelle (GLB)
   vendor/                  three.js, GLTFLoader, Schriften – alles lokal, nichts kommt von fremden Servern
@@ -39,7 +39,7 @@ tools/
   models/                  Modelle verkleinern und für claude.ai-Artefakte umwandeln
 docs/
   produktion.md            wie Sprecher, Musik und Modelle entstanden sind
-  sprechertext.json        der Sprechertext mit den Stichworten für die Kamerafahrt
+  sprechertext.<Sprache>.json   der Sprechertext (de, en, pl) mit den Stichworten für die Kamerafahrt
 .github/workflows/pages.yml   baut und veröffentlicht bei jedem Push auf main
 CLAUDE.md                Projektnotizen für die Arbeit mit einem KI-Assistenten
 ```
@@ -64,6 +64,15 @@ hochladen. Die Seite besteht nur aus statischen Dateien.
 **Einstellungen** stehen in `site.json`. Wer dort `impressum` und `datenschutz` einträgt (Adresse oder Pfad),
 bekommt die Verweise im Dialog „Quellen“ (letzter Knopf der Leiste unten).
 
+## Sprachen
+
+Die Seite gibt es in Deutsch, Englisch und Polnisch. Beim ersten Besuch entscheidet die Sprache des Browsers
+(alles andere als Deutsch oder Polnisch bekommt Englisch), danach die letzte Wahl über den Knopf oben rechts.
+Eine Adresse mit `?lang=de`, `?lang=en` oder `?lang=pl` legt die Sprache fest und eignet sich zum Verlinken.
+
+Alle Texte stehen deutsch in `src/sonnensystem.html`; die Übersetzungen liegen daneben in der Tabelle `TR`
+(Schlüssel ist der deutsche Text). Titel und Beschreibung der Seite je Sprache stehen in `site.json` unter `i18n`.
+
 ## Bedienung
 
 | Eingabe | Wirkung |
@@ -84,6 +93,7 @@ cd tools/test && npm install && npx playwright install chromium && cd ../..
 node tools/test/run.js 390 760 start focus:8 wait:8000 shot:saturn-handy
 node tools/test/run.js 1920 1080 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:mars-landung
 node tools/test/run.js --dist 1280 720 go wait:6000 shot:start      # prüft dist/ so, wie es veröffentlicht wird
+node tools/test/run.js --lang=pl 390 760 start focus:4 wait:5000 shot:erde-polnisch
 ```
 
 Alle Schritte stehen im Kopf von `tools/test/run.js`. Jede Anfrage an eine fremde Adresse gilt als Fehler.

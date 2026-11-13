@@ -50,6 +50,24 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
 #speed{font:500 calc(12*var(--u))/1 var(--mono);font-variant-numeric:tabular-nums;min-width:calc(74*var(--u));text-align:center}
 #eff{font:400 calc(11*var(--u))/1.3 var(--mono);color:var(--sun);margin:0;min-height:calc(14*var(--u))}
 .hudr{display:flex;gap:calc(6*var(--u));flex:none}
+/* Sprachwahl: Knopf mit dem Kürzel der Sprache, darunter klappt die Liste auf */
+.langbox{position:relative;flex:none}
+#lang{font:500 calc(11*var(--u))/1 var(--mono);letter-spacing:.06em}
+.langmenu{
+  position:absolute;right:0;top:calc(46*var(--u));z-index:5;display:flex;flex-direction:column;gap:2px;min-width:calc(124*var(--u));padding:calc(5*var(--u));
+  border:1px solid var(--line);border-radius:calc(14*var(--u));background:#0a0e1a;box-shadow:0 calc(10*var(--u)) calc(30*var(--u)) rgba(0,0,0,.5);
+}
+.langmenu[hidden]{display:none}
+.langmenu button{
+  display:flex;align-items:center;gap:calc(9*var(--u));height:calc(38*var(--u));padding:0 calc(12*var(--u)) 0 calc(10*var(--u));border:0;border-radius:calc(9*var(--u));background:none;
+  font:500 calc(13*var(--u))/1 var(--body);color:var(--dim);cursor:pointer;white-space:nowrap;text-align:left;
+}
+.langmenu button::before{content:"";width:calc(6*var(--u));height:calc(6*var(--u));border-radius:50%;background:transparent;flex:none}
+.langmenu button[aria-checked="true"]{color:var(--ink)}
+.langmenu button[aria-checked="true"]::before{background:var(--sun)}
+@media (hover:hover){.langmenu button:hover{background:rgba(144,151,171,.14);color:var(--ink)}}
+/* Schmale Bildschirme: der Tour-Knopf zeigt nur sein Zeichen, damit vier Knöpfe neben die Uhr passen */
+@media (max-width:480px){.tour span{display:none}.tour{width:calc(40*var(--u));padding:0;justify-content:center}}
 .tour{
   display:inline-flex;align-items:center;gap:calc(8*var(--u));height:calc(40*var(--u));padding:0 calc(14*var(--u)) 0 calc(12*var(--u));border:1px solid var(--line);border-radius:999px;
   background:var(--panel);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:500 calc(13*var(--u))/1 var(--body);cursor:pointer;flex:none;
@@ -116,7 +134,7 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
 .dot{width:calc(8*var(--u));height:calc(8*var(--u));border-radius:50%;background:var(--c);flex:none}
 
 /* Vollbild: nur Szene, Messmarken, Name und die Knöpfe für Ton und Verlassen */
-.cine .clock,.cine #tour,.cine #blurb,.cine .rail{display:none}
+.cine .clock,.cine #tour,.cine .langbox,.cine #blurb,.cine .rail{display:none}
 .cine .hud{justify-content:flex-end}
 .cine .bottom{background:linear-gradient(to top,rgba(4,6,12,.7) 0%,rgba(4,6,12,0) 100%);padding-block:calc(40*var(--u)) calc(20*var(--u))}
 .cine #name{font-size:clamp(34px,8vw,calc(56*var(--u)))}
@@ -170,12 +188,12 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
   <canvas id="stage" aria-label="3D-Ansicht des Sonnensystems mit Umlaufbahnen"></canvas>
   <canvas id="fx" aria-hidden="true"></canvas>
   <div id="labels" aria-hidden="true"></div>
-  <p id="loader">Karten werden geladen …</p>
+  <p id="loader" data-t>Karten werden geladen …</p>
   <p class="toast" id="toast" role="status"></p>
 
   <div class="hud">
     <div class="clock">
-      <p class="eyebrow">Simuliertes Datum</p>
+      <p class="eyebrow" data-t>Simuliertes Datum</p>
       <p id="date">–</p>
       <div class="stepper" role="group" aria-label="Zeitraffer">
         <button id="slower" type="button" aria-label="Langsamer">−</button>
@@ -187,7 +205,7 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
     <div class="hudr">
       <button id="tour" class="tour" type="button" aria-pressed="false">
         <svg viewBox="0 0 12 12" aria-hidden="true"><path id="tourIcon" d="M2.5 1l8 5-8 5z"/></svg>
-        <span>Tour</span>
+        <span data-t>Tour</span>
       </button>
       <button id="sound" class="icon" type="button" aria-pressed="false" aria-label="Ton einschalten">
         <svg viewBox="0 0 14 12" aria-hidden="true"><path id="soundIcon" d="M1.5 4.5h2l3-2.5v8l-3-2.5h-2zM9.5 4.5l3 3M12.5 4.5l-3 3"/></svg>
@@ -195,6 +213,10 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
       <button id="full" class="icon" type="button" aria-pressed="false" aria-label="Vollbild">
         <svg viewBox="0 0 12 12" aria-hidden="true"><path id="fullIcon" d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8"/></svg>
       </button>
+      <div class="langbox">
+        <button id="lang" class="icon" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Sprache">DE</button>
+        <div id="langMenu" class="langmenu" role="menu" hidden></div>
+      </div>
     </div>
   </div>
 
@@ -202,9 +224,9 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
     <div class="start" id="start" hidden>
       <button class="go" id="go" type="button">
         <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1l8 5-8 5z"/></svg>
-        <span>Reise starten</span>
+        <span data-t>Reise starten</span>
       </button>
-      <button class="quiet" id="goQuiet" type="button">Ohne Ton starten</button>
+      <button class="quiet" id="goQuiet" type="button" data-t>Ohne Ton starten</button>
     </div>
     <div class="caption in" id="caption">
       <p id="kind">Übersicht</p>
@@ -222,15 +244,15 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
   </div>
 
   <dialog id="credits" aria-labelledby="creditsT">
-    <h2 id="creditsT">Quellen und Lizenzen</h2>
-    <p>Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.</p>
-    <p><b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.</p>
-    <p><b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.</p>
-    <p><b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.</p>
-    <p><b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).</p>
-    <p>Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.</p>
+    <h2 id="creditsT" data-t>Quellen und Lizenzen</h2>
+    <p data-t>Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.</p>
+    <p data-t><b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.</p>
+    <p data-t><b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.</p>
+    <p data-t><b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.</p>
+    <p data-t><b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).</p>
+    <p data-t>Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.</p>
     <p id="legal" hidden></p>
-    <form method="dialog"><button class="chip" type="submit">Schließen</button></form>
+    <form method="dialog"><button class="chip" type="submit" data-t>Schließen</button></form>
   </dialog>
 </div>
 
@@ -247,6 +269,38 @@ const ss = (a,b,x) => { const t = clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
 const easeIO = t => t < .5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
 const easeO = t => 1-Math.pow(1-t,3);
 const easeQ = t => t*t*t*(t*(6*t-15)+10);      // sehr weicher An- und Auslauf für Kamerafahrten
+
+/* ---------- Sprache ---------- */
+// Deutsch ist die Quellsprache: alle Texte stehen deutsch im Programm, TR liefert dazu die Übersetzung (fehlt eine, bleibt der deutsche Text).
+// Die Sprache kommt aus der Adresse (?lang=en), sonst aus der letzten Wahl, sonst aus den Sprachen des Browsers; unbekannte Sprachen bekommen Englisch.
+const LANGS = {de:'Deutsch', en:'English', pl:'Polski'};
+const LANG = (function(){
+  let l = null;
+  try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  if (!LANGS[l]) try { l = localStorage.getItem('sonnensystem.lang'); } catch (e) {}
+  if (!LANGS[l]) {
+    l = 'en';
+    const want = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+    for (const n of want) { const k = String(n).slice(0,2).toLowerCase(); if (LANGS[k]) { l = k; break; } }
+  }
+  return l;
+})();
+const LOC = {de:'de-DE', en:'en-GB', pl:'pl-PL'}[LANG];          // Zahlen und Datum
+const TR = {
+en:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"3D view of the solar system with orbits","Karten werden geladen …":"Loading maps …","Oberflächen werden berechnet …":"Computing surfaces …","Marsbasis wird aufgebaut …":"Building the Mars base …","Simuliertes Datum":"Simulated date","Zeitraffer":"Time lapse","Langsamer":"Slower","Schneller":"Faster","Pause":"Paused","1 Tag/s":"1 day/s"," Tage/s":" days/s","Nahansicht: ":"Close-up: ","Tour pausieren":"Pause the tour","Tour starten":"Start the tour","Ton einschalten":"Turn sound on","Vollbild":"Full screen","Vollbild verlassen":"Exit full screen","Sprache":"Language","Reise starten":"Start the journey","Ohne Ton starten":"Start without sound","Vorheriger Halt":"Previous stop","Nächster Halt":"Next stop","Himmelskörper":"Celestial bodies","Musik und Sprecher":"Music and narrator","Nur Sprecher, ohne Musik":"Narrator only, no music","Ton aus":"Sound off",". Antippen für: ":". Tap for: ","Tour starten oder anhalten · Leertaste":"Start or pause the tour · Space","Ton · Taste M":"Sound · M key","Vollbild · Taste F":"Full screen · F key","Vorheriger Halt · Pfeil links":"Previous stop · Left arrow","Nächster Halt · Pfeil rechts":"Next stop · Right arrow","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"The 3D view could not be started. It requires WebGL, which is not available in this environment.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Diameter {0} km. Mean distance from the Sun {1} AU. Orbital period {2}. Axial tilt {3} degrees. Rotation {4}. Known moons: {5}.","Quellen":"Sources","Impressum":"Legal notice","Datenschutz":"Privacy","Schließen":"Close","Quellen und Lizenzen":"Sources and licences","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"The positions of the planets are calculated from orbital elements for the date shown. Distances and sizes are compressed, otherwise nothing would be visible.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Maps:</b> Earth (Blue Marble, night lights, elevation, clouds), Mars and Jupiter come from NASA. The other surfaces are computed in the browser.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>3D models:</b> habitat module, pressurised rover, rover, helicopter, antenna, spacesuit and the asteroid Vesta come from the “NASA 3D Resources” archive. The other structures of the Mars base are an original design based on studies by the space agencies.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Narrator and music:</b> generated with artificial intelligence at ElevenLabs (elevenlabs.io), the music with Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technology:</b> three.js (MIT licence). Fonts: Instrument Serif and IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA has neither reviewed nor endorsed this project.","Übersicht":"Overview","Sonnensystem":"Solar System","Sonne":"Sun","Merkur":"Mercury","Erde":"Earth","Asteroidengürtel":"Asteroid belt","Asteroiden":"Asteroids","Neptun":"Neptune","Mond":"Moon","Ganymed":"Ganymede","Kallisto":"Callisto","Stern · Zentrum des Systems":"Star · Centre of the system","Gesteinsplanet · 1. Planet":"Rocky planet · 1st planet","Gesteinsplanet · 2. Planet":"Rocky planet · 2nd planet","Gesteinsplanet · 3. Planet":"Rocky planet · 3rd planet","Gesteinsplanet · 4. Planet":"Rocky planet · 4th planet","Kleinkörper · zwischen Mars und Jupiter":"Small bodies · between Mars and Jupiter","Gasriese · 5. Planet":"Gas giant · 5th planet","Gasriese · 6. Planet":"Gas giant · 6th planet","Eisriese · 7. Planet":"Ice giant · 7th planet","Eisriese · 8. Planet":"Ice giant · 8th planet","Erde · Kontinente und Ozeane":"Earth · Continents and oceans","Erde · Aufbau":"Earth · Structure","Mars · Eine mögliche Kolonie":"Mars · A possible colony","58,6 TAGE":"58.6 DAYS","243 TAGE":"243 DAYS","88 Tage":"88 days","224,7 Tage":"224.7 days","365,25 Tage":"365.25 days","687 Tage":"687 days","3,63 Jahre":"3.63 years","11,86 Jahre":"11.86 years","29,45 Jahre":"29.45 years","84,0 Jahre":"84.0 years","164,8 Jahre":"164.8 years","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Eight planets, their positions calculated for the date shown. The ring of light shows how long sunlight takes to reach each orbit. Distances and sizes are compressed. Maps and 3D models: NASA. Narrator voice and music are AI-generated (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planets. Age 4.57 billion years. Orbit of Neptune 30.07 AU. Light to Neptune 4.2 hours.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"It holds 99.86 % of the mass of the solar system. Its light takes a good eight minutes to reach the Earth.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Diameter 1,392,700 km. Surface about 5,500 °C. Spectral class G2V. Rotation at the equator 25 days.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"The smallest and fastest planet. On its strongly elliptical orbit its speed varies between 39 and 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Almost as large as the Earth, but around 465 °C hot beneath dense clouds. It spins backwards, and a day on Venus lasts longer than its year.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"The only known planet with liquid water on its surface. On the night side the cities glow.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Around 71 % of the surface is water, spread across five oceans. The remaining 29 % form seven continents.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Section from the centre to the surface: 6,371 km. The crust is drawn exaggerated; to scale it would be thinner than a line.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rust-red from iron oxide in the dust. Phobos circles it faster than Mars rotates.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"A design based on studies by the space agencies. Habitat, rovers, antenna and spacesuits are NASA models; the other structures are reconstructions.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"At 525 km, Vesta is one of the largest asteroids. In the picture the chunks are far closer together than in reality: on average about a million kilometres separate them.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Vesta: diameter 525 km, orbital period 3.63 years. More than 1.4 million asteroids are known; together they have about 3 percent of the mass of the Moon.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"More than twice as massive as all the other planets combined. The Great Red Spot is a storm larger than the Earth.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Its rings of water ice are around 280,000 km across, yet in the main rings mostly only about ten metres thick. The planet casts its shadow on them.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Its axis is tilted by 98°. It rolls around the Sun on its side, rings and moons included.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"The planet farthest from the Sun. Since its discovery in 1846 it has completed just a single orbit. Triton circles it against the direction of rotation.","BEKANNTE ASTEROIDEN":"KNOWN ASTEROIDS","ÜBER 1,4 MIO.":"OVER 1.4 MILLION","GESAMTMASSE":"TOTAL MASS","3 % DES MONDES":"3 % OF THE MOON","WOHNMODULE":"HABITAT MODULES","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"PRESSURE CABINS · TUNNELS · AIRLOCKS","STRAHLENSCHUTZ":"RADIATION SHIELD","2 BIS 3 M MARSBODEN ALS SCHILD":"2 TO 3 M OF MARTIAN SOIL AS A SHIELD","GEWÄCHSHÄUSER":"GREENHOUSES","NAHRUNG UND SAUERSTOFF":"FOOD AND OXYGEN","SOLARFELD":"SOLAR FIELD","SONNE 43 % SO STARK WIE AUF DER ERDE":"SUNLIGHT 43 % AS STRONG AS ON EARTH","KERNREAKTOREN":"NUCLEAR REACTORS","JE 10 KW · AUCH IM STAUBSTURM":"10 KW EACH · EVEN IN A DUST STORM","TREIBSTOFFANLAGE":"FUEL PLANT","WASSER · SAUERSTOFF · METHAN":"WATER · OXYGEN · METHANE","LANDEPLATZ":"LANDING PAD","430 M ABSTAND · SCHUTZWÄLLE":"430 M AWAY · PROTECTIVE BERMS","DRUCKROVER":"PRESSURISED ROVER","MEHRTÄGIGE FAHRTEN":"MULTI-DAY TRIPS","FUNKANLAGE":"RADIO STATION","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SIGNAL TO EARTH: 3 TO 22 MIN","DURCHMESSER":"DIAMETER","ACHSNEIGUNG":"AXIAL TILT","RÜCKLÄUFIG":"RETROGRADE","MONDE":"MOONS","KEINE":"NONE","UMLAUF SEIT PERIHEL":"ORBIT SINCE PERIHELION","JAHR ":"YEAR ","TAG ":"DAY ","SONNE":"SUN"," AE":" AU","LICHT ":"LIGHT ","BAHNTEMPO":"ORBITAL SPEED","BEKANNTE MONDE":"KNOWN MOONS","ERDE IM MASSSTAB":"EARTH TO SCALE","OBERFLÄCHE":"SURFACE","KERN 15 MIO. °C":"CORE 15 MILLION °C","ANTEIL AN DER MASSE":"SHARE OF THE MASS","DES SONNENSYSTEMS":"OF THE SOLAR SYSTEM","ROTATION AM ÄQUATOR":"ROTATION AT THE EQUATOR","25 TAGE":"25 DAYS","SPEKTRALKLASSE G2V":"SPECTRAL CLASS G2V","LICHT ZUR ERDE":"LIGHT TO EARTH","LICHT AB SONNE":"LIGHT FROM THE SUN","{0} ERREICHT":"{0} REACHED","PERIHEL 2061":"PERIHELION 2061","VON WASSER BEDECKT":"COVERED BY WATER","LANDFLÄCHE":"LAND AREA","PAZIFIK":"PACIFIC","ATLANTIK":"ATLANTIC","INDISCHER OZEAN":"INDIAN OCEAN","NORDPOLARMEER":"ARCTIC OCEAN","SÜDPOLARMEER":"SOUTHERN OCEAN","ASIEN":"ASIA","AFRIKA":"AFRICA","NORDAMERIKA":"NORTH AMERICA","SÜDAMERIKA":"SOUTH AMERICA","ANTARKTIS":"ANTARCTICA","EUROPA":"EUROPE","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"INNER CORE","RADIUS 1.220 KM":"RADIUS 1,220 KM","FEST · 5.400 °C":"SOLID · 5,400 °C","ÄUSSERER KERN":"OUTER CORE","2.260 KM DICK":"2,260 KM THICK","FLÜSSIGES EISEN":"LIQUID IRON","UNTERER MANTEL":"LOWER MANTLE","2.230 KM DICK":"2,230 KM THICK","BIS 3.700 °C":"UP TO 3,700 °C","OBERER MANTEL":"UPPER MANTLE","BIS 660 KM TIEFE":"DOWN TO 660 KM","ZÄHES GESTEIN":"VISCOUS ROCK","KRUSTE":"CRUST","5 BIS 70 KM DICK":"5 TO 70 KM THICK","FESTES GESTEIN":"SOLID ROCK"},
+pl:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"Widok 3D Układu Słonecznego z orbitami","Karten werden geladen …":"Wczytywanie map …","Oberflächen werden berechnet …":"Obliczanie powierzchni …","Marsbasis wird aufgebaut …":"Budowanie bazy na Marsie …","Simuliertes Datum":"Symulowana data","Zeitraffer":"Przyspieszenie czasu","Langsamer":"Wolniej","Schneller":"Szybciej","Pause":"Pauza","1 Tag/s":"1 dzień/s"," Tage/s":" dni/s","Nahansicht: ":"Zbliżenie: ","Tour":"Podróż","Tour pausieren":"Wstrzymaj podróż","Tour starten":"Wznów podróż","Ton einschalten":"Włącz dźwięk","Vollbild":"Pełny ekran","Vollbild verlassen":"Zamknij pełny ekran","Sprache":"Język","Reise starten":"Rozpocznij podróż","Ohne Ton starten":"Rozpocznij bez dźwięku","Vorheriger Halt":"Poprzedni przystanek","Nächster Halt":"Następny przystanek","Himmelskörper":"Ciała niebieskie","Musik und Sprecher":"Muzyka i lektor","Nur Sprecher, ohne Musik":"Tylko lektor, bez muzyki","Ton aus":"Dźwięk wyłączony",". Antippen für: ":". Dotknij, aby wybrać: ","Tour starten oder anhalten · Leertaste":"Rozpocznij lub wstrzymaj podróż · Spacja","Ton · Taste M":"Dźwięk · klawisz M","Vollbild · Taste F":"Pełny ekran · klawisz F","Vorheriger Halt · Pfeil links":"Poprzedni przystanek · strzałka w lewo","Nächster Halt · Pfeil rechts":"Następny przystanek · strzałka w prawo","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"Nie udało się uruchomić widoku 3D. Wymaga on WebGL, które nie jest dostępne w tym środowisku.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Średnica {0} km. Średnia odległość od Słońca {1} au. Okres obiegu {2}. Nachylenie osi {3} stopnia. Obrót {4}. Znane księżyce: {5}.","Quellen":"Źródła","Impressum":"Nota prawna","Datenschutz":"Prywatność","Schließen":"Zamknij","Quellen und Lizenzen":"Źródła i licencje","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"Położenia planet obliczono z elementów orbit dla wyświetlanej daty. Odległości i rozmiary są ściśnięte, inaczej nic nie byłoby widać.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Mapy:</b> Ziemia (Blue Marble, nocne światła, wysokości, chmury), Mars i Jowisz pochodzą z NASA. Pozostałe powierzchnie są obliczane w przeglądarce.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>Modele 3D:</b> moduł mieszkalny, łazik ciśnieniowy, łazik, śmigłowiec, antena, skafander i planetoida Westa pochodzą z archiwum „NASA 3D Resources”. Pozostałe budowle bazy marsjańskiej to własny projekt oparty na studiach agencji kosmicznych.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Lektor i muzyka:</b> wygenerowane przez sztuczną inteligencję w ElevenLabs (elevenlabs.io), muzyka w Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technika:</b> three.js (licencja MIT). Kroje pisma: Instrument Serif i IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA nie weryfikowała tego projektu ani go nie wspiera.","Übersicht":"Przegląd","Sonnensystem":"Układ Słoneczny","Sonne":"Słońce","Merkur":"Merkury","Venus":"Wenus","Erde":"Ziemia","Asteroidengürtel":"Pas planetoid","Asteroiden":"Planetoidy","Vesta":"Westa","Jupiter":"Jowisz","Uranus":"Uran","Mond":"Księżyc","Phobos":"Fobos","Ganymed":"Ganimedes","Rhea":"Rea","Titan":"Tytan","Titania":"Tytania","Triton":"Tryton","Stern · Zentrum des Systems":"Gwiazda · Centrum układu","Gesteinsplanet · 1. Planet":"Planeta skalista · 1. planeta","Gesteinsplanet · 2. Planet":"Planeta skalista · 2. planeta","Gesteinsplanet · 3. Planet":"Planeta skalista · 3. planeta","Gesteinsplanet · 4. Planet":"Planeta skalista · 4. planeta","Kleinkörper · zwischen Mars und Jupiter":"Małe ciała · między Marsem a Jowiszem","Gasriese · 5. Planet":"Gazowy olbrzym · 5. planeta","Gasriese · 6. Planet":"Gazowy olbrzym · 6. planeta","Eisriese · 7. Planet":"Lodowy olbrzym · 7. planeta","Eisriese · 8. Planet":"Lodowy olbrzym · 8. planeta","Erde · Kontinente und Ozeane":"Ziemia · Kontynenty i oceany","Erde · Aufbau":"Ziemia · Budowa","Mars · Eine mögliche Kolonie":"Mars · Możliwa kolonia","58,6 TAGE":"58,6 DNIA","243 TAGE":"243 DNI","88 Tage":"88 dni","224,7 Tage":"224,7 dnia","365,25 Tage":"365,25 dnia","687 Tage":"687 dni","3,63 Jahre":"3,63 roku","11,86 Jahre":"11,86 roku","29,45 Jahre":"29,45 roku","84,0 Jahre":"84 lata","164,8 Jahre":"164,8 roku","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Osiem planet, ich położenia obliczono dla wyświetlanej daty. Pierścień światła pokazuje, jak długo światło słoneczne biegnie do każdej orbity. Odległości i rozmiary są ściśnięte. Mapy i modele 3D: NASA. Głos lektora i muzykę wygenerowała sztuczna inteligencja (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planet. Wiek 4,57 miliarda lat. Orbita Neptuna 30,07 au. Światło do Neptuna 4,2 godziny.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"Zawiera 99,86 % masy Układu Słonecznego. Jego światło potrzebuje ponad ośmiu minut, by dotrzeć do Ziemi.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Średnica 1 392 700 km. Powierzchnia ok. 5500 °C. Typ widmowy G2V. Obrót na równiku 25 dni.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"Najmniejsza i najszybsza planeta. Na silnie eliptycznej orbicie jej prędkość waha się od 39 do 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Prawie tak duża jak Ziemia, ale pod gęstymi chmurami panuje około 465 °C. Obraca się wstecz, a doba na Wenus trwa dłużej niż jej rok.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"Jedyna znana planeta z ciekłą wodą na powierzchni. Po nocnej stronie świecą miasta.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Około 71 % powierzchni to woda, podzielona na pięć oceanów. Pozostałe 29 % tworzy siedem kontynentów.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Przekrój od środka do powierzchni: 6371 km. Skorupę narysowano z przesadą, w skali byłaby cieńsza niż kreska.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rdzawoczerwony od tlenku żelaza w pyle. Fobos okrąża go szybciej, niż Mars się obraca.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"Projekt oparty na studiach agencji kosmicznych. Habitat, łaziki, antena i skafandry to modele NASA, pozostałe budowle odtworzono.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"Westa, o średnicy 525 km, należy do największych planetoid. Na obrazie bryły są dużo gęściej niż w rzeczywistości: średnio dzieli je około miliona kilometrów.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Westa: średnica 525 km, okres obiegu 3,63 roku. Znanych jest ponad 1,4 miliona planetoid, razem mają około 3 procent masy Księżyca.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"Ponad dwa razy masywniejszy niż wszystkie pozostałe planety razem. Wielka Czerwona Plama to burza większa od Ziemi.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Jego pierścienie z lodu wodnego mają około 280 000 km szerokości, ale w głównych pierścieniach zwykle tylko około dziesięciu metrów grubości. Planeta rzuca na nie cień.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Jego oś jest nachylona o 98°. Toczy się wokół Słońca na boku, razem z pierścieniami i księżycami.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"Planeta najdalsza od Słońca. Od odkrycia w 1846 roku ukończył zaledwie jedno okrążenie. Tryton okrąża go przeciwnie do kierunku obrotu.","BEKANNTE ASTEROIDEN":"ZNANE PLANETOIDY","ÜBER 1,4 MIO.":"PONAD 1,4 MLN","GESAMTMASSE":"ŁĄCZNA MASA","3 % DES MONDES":"3 % MASY KSIĘŻYCA","WOHNMODULE":"MODUŁY MIESZKALNE","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"KABINY CIŚNIENIOWE · TUNELE · ŚLUZY","STRAHLENSCHUTZ":"OSŁONA PRZED PROMIENIOWANIEM","2 BIS 3 M MARSBODEN ALS SCHILD":"2 DO 3 M GRUNTU MARSJAŃSKIEGO JAKO TARCZA","GEWÄCHSHÄUSER":"SZKLARNIE","NAHRUNG UND SAUERSTOFF":"ŻYWNOŚĆ I TLEN","SOLARFELD":"POLE OGNIW SŁONECZNYCH","SONNE 43 % SO STARK WIE AUF DER ERDE":"SŁOŃCE ŚWIECI Z 43 % MOCY ZIEMSKIEJ","KERNREAKTOREN":"REAKTORY JĄDROWE","JE 10 KW · AUCH IM STAUBSTURM":"PO 10 KW · TAKŻE W BURZY PYŁOWEJ","TREIBSTOFFANLAGE":"WYTWÓRNIA PALIWA","WASSER · SAUERSTOFF · METHAN":"WODA · TLEN · METAN","LANDEPLATZ":"LĄDOWISKO","430 M ABSTAND · SCHUTZWÄLLE":"430 M OD BAZY · WAŁY OCHRONNE","DRUCKROVER":"ŁAZIK CIŚNIENIOWY","MEHRTÄGIGE FAHRTEN":"WIELODNIOWE WYPRAWY","FUNKANLAGE":"STACJA RADIOWA","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SYGNAŁ DO ZIEMI: 3 DO 22 MIN","DURCHMESSER":"ŚREDNICA","ACHSNEIGUNG":"NACHYLENIE OSI","ROTATION":"OBRÓT","RÜCKLÄUFIG":"WSTECZNY","MONDE":"KSIĘŻYCE","KEINE":"BRAK","UMLAUF SEIT PERIHEL":"OBIEG OD PERYHELIUM","JAHR ":"ROK ","TAG ":"DZIEŃ ","SONNE":"SŁOŃCE"," AE":" AU","LICHT ":"ŚWIATŁO ","BAHNTEMPO":"PRĘDKOŚĆ ORBITALNA","BEKANNTE MONDE":"ZNANE KSIĘŻYCE","ERDE IM MASSSTAB":"ZIEMIA W SKALI","OBERFLÄCHE":"POWIERZCHNIA","KERN 15 MIO. °C":"JĄDRO 15 MLN °C","ANTEIL AN DER MASSE":"UDZIAŁ W MASIE","DES SONNENSYSTEMS":"UKŁADU SŁONECZNEGO","ROTATION AM ÄQUATOR":"OBRÓT NA RÓWNIKU","25 TAGE":"25 DNI","SPEKTRALKLASSE G2V":"TYP WIDMOWY G2V","LICHT ZUR ERDE":"ŚWIATŁO DO ZIEMI","LICHT AB SONNE":"ŚWIATŁO OD SŁOŃCA","{0} ERREICHT":"ŚWIATŁO DOTARŁO: {0}","PERIHEL 2061":"PERYHELIUM 2061","VON WASSER BEDECKT":"POKRYTE WODĄ","LANDFLÄCHE":"LĄDY","PAZIFIK":"PACYFIK","ATLANTIK":"ATLANTYK","INDISCHER OZEAN":"OCEAN INDYJSKI","NORDPOLARMEER":"OCEAN ARKTYCZNY","SÜDPOLARMEER":"OCEAN POŁUDNIOWY","ASIEN":"AZJA","AFRIKA":"AFRYKA","NORDAMERIKA":"AMERYKA PÓŁNOCNA","SÜDAMERIKA":"AMERYKA POŁUDNIOWA","ANTARKTIS":"ANTARKTYDA","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"JĄDRO WEWNĘTRZNE","RADIUS 1.220 KM":"PROMIEŃ 1220 KM","FEST · 5.400 °C":"STAŁE · 5400 °C","ÄUSSERER KERN":"JĄDRO ZEWNĘTRZNE","2.260 KM DICK":"GRUBOŚĆ 2260 KM","FLÜSSIGES EISEN":"CIEKŁE ŻELAZO","UNTERER MANTEL":"PŁASZCZ DOLNY","2.230 KM DICK":"GRUBOŚĆ 2230 KM","BIS 3.700 °C":"DO 3700 °C","OBERER MANTEL":"PŁASZCZ GÓRNY","BIS 660 KM TIEFE":"DO GŁĘBOKOŚCI 660 KM","ZÄHES GESTEIN":"PLASTYCZNA SKAŁA","KRUSTE":"SKORUPA","5 BIS 70 KM DICK":"GRUBOŚĆ 5 DO 70 KM","FESTES GESTEIN":"LITA SKAŁA"}
+}[LANG] || {};
+const tr = s => TR[s] || s;
+const fill = (s,...a) => tr(s).replace(/\{(\d)\}/g,(m,k) => a[k]);
+// Sprachwechsel lädt die Seite neu: Texte, Sprecher und Zeitmarken hängen an der Sprache. Die eigene Website trägt die Sprache in der Adresse.
+function setLang(l){
+  if (!LANGS[l] || l === LANG) return;
+  try { localStorage.setItem('sonnensystem.lang', l); } catch (e) {}
+  try {
+    if (window.SITE) { const u = new URL(location.href); u.searchParams.set('lang', l); location.replace(u.href); }
+    else location.reload();
+  } catch (e) { location.reload(); }
+}
 
 /* ---------- Daten ---------- */
 // Bahnelemente J2000 (JPL, Standish): a [AE], e, I, L, w = Länge des Perihels, O = Knotenlänge [Grad], dL [Grad/Jahrhundert]
@@ -316,8 +370,11 @@ const HALLEY = {el:{a:17.834,e:.96714,I:162.26,L:236.16,w:169.75,O:58.42,dL:478.
 const RMAX = 47;                         // Szenenradius der Neptunbahn (gestaucht)
 const SPEEDS = [0,1,5,20,60,200,730];    // Tage pro Sekunde
 const DWELL0 = 12;
-// Sprecheraufnahmen: Länge d in Sekunden und Marker, zu denen die Erd-Kapitel ihre Einblendungen starten
-const VOICE = {"overview":{"d":19.06,"cues":{}},"sun":{"d":14.28,"cues":{}},"mercury":{"d":13.13,"cues":{}},"venus":{"d":14.22,"cues":{}},"earth":{"d":9.0,"cues":{}},"earth_geo":{"d":29.76,"cues":{"water":8.23,"oceans":12.17,"land":18.76,"continents":22.22}},"earth_core":{"d":39.38,"cues":{"open":4.23,"inner":6.89,"outer":14.63,"mantle":23.69,"crust":31.5}},"mars":{"d":17.27,"cues":{}},"mars_base":{"d":68.71,"cues":{"intro":1.7,"hab":6.44,"berm":10.7,"green":15.43,"solar":23.66,"reactor":26.5,"isru":32.3,"pad":41.9,"rover":47.88,"comm":52.17,"end":61.9}},"belt":{"d":30.64,"cues":{"count":3.85,"mass":10.63,"vesta":15.75,"crater":21.64,"jupiter":26.12}},"jupiter":{"d":13.28,"cues":{}},"saturn":{"d":13.35,"cues":{}},"uranus":{"d":11.67,"cues":{}},"neptune":{"d":14.63,"cues":{}},"outro":{"d":8.02,"cues":{}}};
+// Sprecheraufnahmen je Sprache: Länge d in Sekunden und Marker, zu denen Einblendungen und Kamerafahrten starten (geschrieben von tools/audio/finalize.py)
+const VOICE_DE = {"overview":{"d":19.06,"cues":{}},"sun":{"d":14.28,"cues":{}},"mercury":{"d":13.13,"cues":{}},"venus":{"d":14.22,"cues":{}},"earth":{"d":9.0,"cues":{}},"earth_geo":{"d":29.76,"cues":{"water":8.23,"oceans":12.17,"land":18.76,"continents":22.22}},"earth_core":{"d":39.38,"cues":{"open":4.23,"inner":6.89,"outer":14.63,"mantle":23.69,"crust":31.5}},"mars":{"d":17.27,"cues":{}},"mars_base":{"d":68.71,"cues":{"intro":1.7,"hab":6.44,"berm":10.7,"green":15.43,"solar":23.66,"reactor":26.5,"isru":32.3,"pad":41.9,"rover":47.88,"comm":52.17,"end":61.9}},"belt":{"d":30.64,"cues":{"count":3.85,"mass":10.63,"vesta":15.75,"crater":21.64,"jupiter":26.12}},"jupiter":{"d":13.28,"cues":{}},"saturn":{"d":13.35,"cues":{}},"uranus":{"d":11.67,"cues":{}},"neptune":{"d":14.63,"cues":{}},"outro":{"d":8.02,"cues":{}}};
+const VOICE_EN = {"overview":{"d":18.47,"cues":{}},"sun":{"d":13.76,"cues":{}},"mercury":{"d":12.57,"cues":{}},"venus":{"d":15.03,"cues":{}},"earth":{"d":8.8,"cues":{}},"earth_geo":{"d":29.19,"cues":{"water":8.23,"oceans":12.1,"land":18.38,"continents":22.22}},"earth_core":{"d":38.48,"cues":{"open":4.01,"inner":6.57,"outer":14.12,"mantle":22.89,"crust":30.44}},"mars":{"d":18.07,"cues":{}},"mars_base":{"d":75.52,"cues":{"intro":2.06,"hab":7.21,"berm":12.17,"green":17.96,"solar":26.86,"reactor":29.93,"isru":36.39,"pad":46.25,"rover":52.55,"comm":57.74,"end":68.07}},"belt":{"d":30.54,"cues":{"count":3.91,"mass":9.74,"vesta":15.3,"crater":21.48,"jupiter":26.54}},"jupiter":{"d":13.76,"cues":{}},"saturn":{"d":14.37,"cues":{}},"uranus":{"d":12.89,"cues":{}},"neptune":{"d":15.04,"cues":{}},"outro":{"d":8.02,"cues":{}}};
+const VOICE_PL = {"overview":{"d":17.28,"cues":{}},"sun":{"d":13.8,"cues":{}},"mercury":{"d":11.64,"cues":{}},"venus":{"d":13.75,"cues":{}},"earth":{"d":8.88,"cues":{}},"earth_geo":{"d":27.44,"cues":{"water":7.37,"oceans":10.63,"land":16.39,"continents":20.07}},"earth_core":{"d":37.72,"cues":{"open":4.78,"inner":6.57,"outer":13.54,"mantle":22.57,"crust":30.44}},"mars":{"d":16.11,"cues":{}},"mars_base":{"d":68.0,"cues":{"intro":1.7,"hab":5.12,"berm":9.64,"green":15.05,"solar":22.57,"reactor":25.61,"isru":31.34,"pad":39.88,"rover":45.58,"comm":50.02,"end":60.71}},"belt":{"d":30.18,"cues":{"count":3.88,"mass":9.77,"vesta":15.05,"crater":20.68,"jupiter":25.38}},"jupiter":{"d":12.17,"cues":{}},"saturn":{"d":14.35,"cues":{}},"uranus":{"d":12.2,"cues":{}},"neptune":{"d":12.7,"cues":{}},"outro":{"d":7.78,"cues":{}}};
+const VOICE = {de:VOICE_DE, en:VOICE_EN, pl:VOICE_PL}[LANG];
 
 /* ---------- DOM ---------- */
 const app = $('#app'), canvas = $('#stage'), fx = $('#fx'), rail = $('#rail'), labelsEl = $('#labels'), loader = $('#loader');
@@ -326,10 +383,34 @@ const hudEl = $('.hud'), hudR = $('.hudr'), clockEl = $('.clock'), navEl = $('.n
 const elDate = $('#date'), elSpeed = $('#speed'), elEff = $('#eff'), tourBtn = $('#tour'), tourIcon = $('#tourIcon');
 const c2 = fx.getContext('2d');
 
+// Übersetzen: feste Texte im Markup (data-t), Beschriftungen für Vorleseprogramme und die Texte der Himmelskörper
+app.lang = LANG;
+if (LANG !== 'de') {
+  app.querySelectorAll('[data-t]').forEach(e => { e.innerHTML = tr(e.innerHTML.trim()); });
+  app.querySelectorAll('[aria-label]').forEach(e => e.setAttribute('aria-label', tr(e.getAttribute('aria-label'))));
+  const each = o => ['name','short','label','kind','blurb','sr','day','per','n'].forEach(k => { if (typeof o[k] === 'string') o[k] = tr(o[k]); });
+  BODIES.forEach(b => { each(b); (b.stages || []).forEach(each); (b.sats || []).forEach(each); if (b.facts) b.facts = b.facts.map(f => f.map(tr)); });
+  // Messmarken stehen auf dem Canvas: die Zeichen des erweiterten Lateins vorab laden, sonst erscheint der erste Text in einer Ersatzschrift
+  try { ['500 11px "IBM Plex Mono"','400 11px "IBM Plex Mono"'].forEach(f => document.fonts.load(f,'ĄĆĘŁŃÓŚŹŻ').catch(() => {})); } catch (e) {}
+}
+elName.textContent = BODIES[0].name; elName.classList.toggle('long', BODIES[0].name.length > 12); elKind.textContent = BODIES[0].kind;
+// Sprachwahl oben rechts
+const langBtn = $('#lang'), langMenu = $('#langMenu');
+const openLang = on => { langMenu.hidden = !on; langBtn.setAttribute('aria-expanded', on ? 'true' : 'false'); };
+langBtn.textContent = LANG.toUpperCase();
+Object.keys(LANGS).forEach(l => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.lang = l; b.textContent = LANGS[l]; b.setAttribute('role','menuitemradio'); b.setAttribute('aria-checked', l === LANG ? 'true' : 'false');
+  b.addEventListener('click', () => { openLang(false); setLang(l); });
+  langMenu.appendChild(b);
+});
+langBtn.addEventListener('click', () => openLang(langMenu.hidden));
+document.addEventListener('click', e => { if (!langMenu.hidden && !e.target.closest('.langbox')) openLang(false); });
+
 BODIES.forEach((b,i) => {
   const c = document.createElement('button');
   c.type = 'button'; c.className = 'chip'; c.id = 'chip-' + b.id;
-  c.innerHTML = '<span class="dot" style="--c:' + b.color + '"></span><span>' + (i === 0 ? 'Übersicht' : b.short || b.name) + '</span>';
+  c.innerHTML = '<span class="dot" style="--c:' + b.color + '"></span><span>' + (i === 0 ? tr('Übersicht') : b.short || b.name) + '</span>';
   c.addEventListener('click', () => focus(i, true));
   rail.appendChild(c); b.chip = c;
   if (i > 0) {
@@ -345,21 +426,28 @@ elBlurb.textContent = BODIES[0].blurb;
 const creditsEl = $('#credits'), SITE = window.SITE || {};
 {
   const c = document.createElement('button');
-  c.type = 'button'; c.className = 'chip more'; c.textContent = 'Quellen';
+  c.type = 'button'; c.className = 'chip more'; c.textContent = tr('Quellen');
   c.addEventListener('click', () => { if (creditsEl.showModal) creditsEl.showModal(); else creditsEl.setAttribute('open',''); });
   rail.appendChild(c);
   const legal = $('#legal');
   [['impressum','Impressum'],['datenschutz','Datenschutz']].forEach(p => {
     if (typeof SITE[p[0]] !== 'string' || !SITE[p[0]]) return;
-    const a = document.createElement('a'); a.href = SITE[p[0]]; a.textContent = p[1];
+    const a = document.createElement('a'); a.href = SITE[p[0]]; a.textContent = tr(p[1]);
     if (legal.childNodes.length) legal.appendChild(document.createTextNode(' · '));
     legal.appendChild(a); legal.hidden = false;
   });
+  // Eigene Website: Sprache, Titel und Beschreibung des Dokuments nachziehen (im Artefakt gehört das Dokument dem Rahmen)
+  if (window.SITE) {
+    document.documentElement.lang = LANG;
+    const m = SITE.i18n && SITE.i18n[LANG], d = document.querySelector('meta[name="description"]');
+    if (m && m.title) document.title = m.title;
+    if (m && m.description && d) d.content = m.description;
+  }
 }
 
 function fail(){
   loader.hidden = true;
-  elBlurb.textContent = 'Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.';
+  elBlurb.textContent = tr('Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.');
 }
 if (!window.THREE) { fail(); return; }
 let renderer;
@@ -428,7 +516,7 @@ const AU = (function(){
     return fetch(url).then(r => { if (!r.ok) throw new Error(url); return r.arrayBuffer(); }).then(b => new Promise((res,rej) => ctx.decodeAudioData(b,res,rej)));
   }
   function loadClips(){
-    if (!clipsReady) clipsReady = Promise.all(Object.keys(VOICE).map(id => decode('voice/' + id + '.mp3').then(buf => { clips[id] = buf; }).catch(() => {})));
+    if (!clipsReady) clipsReady = Promise.all(Object.keys(VOICE).map(id => decode('voice/' + (LANG === 'de' ? '' : LANG + '/') + id + '.mp3').then(buf => { clips[id] = buf; }).catch(() => {})));
     return clipsReady;
   }
   // Das Stück beginnt mit seinem Auftakt und bleibt dann in der Schleife
@@ -1237,7 +1325,7 @@ const MB = (function(){
     ['green',[42,5.5,17],'GEWÄCHSHÄUSER','NAHRUNG UND SAUERSTOFF'],['solar',[-10,5,95],'SOLARFELD','SONNE 43 % SO STARK WIE AUF DER ERDE'],
     ['reactor',[300,9,-250],'KERNREAKTOREN','JE 10 KW · AUCH IM STAUBSTURM'],['isru',[275,13,-85],'TREIBSTOFFANLAGE','WASSER · SAUERSTOFF · METHAN'],
     ['pad',[430,14,-40],'LANDEPLATZ','430 M ABSTAND · SCHUTZWÄLLE'],['rover',[8,5.5,38],'DRUCKROVER','MEHRTÄGIGE FAHRTEN'],
-    ['comm',[62,10.5,-72],'FUNKANLAGE','SIGNAL ZUR ERDE: 3 BIS 22 MIN']].map(l => ({cue:l[0], v:new THREE.Vector3(l[1][0],l[1][1],l[1][2]), n:l[2], f:l[3]}));
+    ['comm',[62,10.5,-72],'FUNKANLAGE','SIGNAL ZUR ERDE: 3 BIS 22 MIN']].map(l => ({cue:l[0], v:new THREE.Vector3(l[1][0],l[1][1],l[1][2]), n:tr(l[2]), f:tr(l[3])}));
 
   function hgt(x,z){
     let f = 1;
@@ -1940,8 +2028,8 @@ function showInfo(animate){
   const st = b.stages && b.stages[stage];
   elName.textContent = b.name; elName.classList.toggle('long', b.name.length > 12);
   elKind.textContent = (st && st.kind) || b.kind; elBlurb.textContent = (st && st.blurb) || b.blurb;
-  elSr.textContent = b.sr || ('Durchmesser ' + b.diam.toLocaleString('de-DE') + ' km. Mittlerer Sonnenabstand ' + b.el.a.toLocaleString('de-DE',{maximumFractionDigits:2}) +
-    ' AE. Umlaufzeit ' + b.per + '. Achsneigung ' + b.tilt.toLocaleString('de-DE',{maximumFractionDigits:1}) + ' Grad. Rotation ' + b.day.toLowerCase() + '. Bekannte Monde: ' + b.moons + '.');
+  elSr.textContent = b.sr || fill('Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.',
+    b.diam.toLocaleString(LOC), b.el.a.toLocaleString(LOC,{maximumFractionDigits:2}), b.per, b.tilt.toLocaleString(LOC,{maximumFractionDigits:1}), b.day.toLowerCase(), b.moons);
   b.chip.setAttribute('aria-current','true');
   if (b.orbit) b.orbit.material.uniforms.base.value = .5;
   rail.scrollTo({left:b.chip.offsetLeft-rail.clientWidth/2+b.chip.offsetWidth/2, behavior:reduced ? 'auto' : 'smooth'});
@@ -1958,20 +2046,21 @@ function step(d){
 function setTour(on){
   tour = on; tourT = 0;
   tourBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  tourBtn.setAttribute('aria-label', on ? 'Tour pausieren' : 'Tour starten');
+  tourBtn.setAttribute('aria-label', tr(on ? 'Tour pausieren' : 'Tour starten'));
   tourIcon.setAttribute('d', on ? 'M2 1h3v10H2zM7 1h3v10H7z' : 'M2.5 1l8 5-8 5z');
   if (!on) BODIES[cur].chip.style.setProperty('--p',0);
 }
 function setSpeed(i){
   speedIdx = clamp(i,0,SPEEDS.length-1);
   const s = SPEEDS[speedIdx];
-  elSpeed.textContent = s === 0 ? 'Pause' : s === 1 ? '1 Tag/s' : s + ' Tage/s';
+  elSpeed.textContent = s === 0 ? tr('Pause') : s === 1 ? tr('1 Tag/s') : s + tr(' Tage/s');
 }
 const soundBtn = $('#sound'), soundIcon = $('#soundIcon'), toastEl = $('#toast');
 // Ton in drei Stufen: Musik und Sprecher, nur Sprecher, aus
 const SND = [['Musik und Sprecher','M1.5 4.5h2l3-2.5v8l-3-2.5h-2zM9 4c.9 1 .9 3 0 4M10.8 2.6c1.8 1.8 1.8 5 0 6.8'],
   ['Nur Sprecher, ohne Musik','M1.5 4.5h2l3-2.5v8l-3-2.5h-2zM9 4c.9 1 .9 3 0 4'],
   ['Ton aus','M1.5 4.5h2l3-2.5v8l-3-2.5h-2zM9.5 4.5l3 3M12.5 4.5l-3 3']];
+SND.forEach(m => { m[0] = tr(m[0]); });
 let soundMode = 2, toastTimer = 0;
 function toast(t){
   toastEl.textContent = t; toastEl.classList.add('on');
@@ -1979,7 +2068,7 @@ function toast(t){
 }
 function showSound(say){
   soundBtn.setAttribute('aria-pressed', soundMode < 2 ? 'true' : 'false');
-  soundBtn.setAttribute('aria-label', SND[soundMode][0] + '. Antippen für: ' + SND[(soundMode+1)%3][0]);
+  soundBtn.setAttribute('aria-label', SND[soundMode][0] + tr('. Antippen für: ') + SND[(soundMode+1)%3][0]);
   soundIcon.setAttribute('d', SND[soundMode][1]);
   if (say) toast(SND[soundMode][0]);
 }
@@ -2010,7 +2099,7 @@ function setCine(on){
   cine = on;
   app.classList.toggle('cine', on);
   fullBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  fullBtn.setAttribute('aria-label', on ? 'Vollbild verlassen' : 'Vollbild');
+  fullBtn.setAttribute('aria-label', tr(on ? 'Vollbild verlassen' : 'Vollbild'));
   fullIcon.setAttribute('d', on ? 'M4 1v3H1M11 4H8V1M8 11V8h3M1 8h3v3' : 'M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8');
   if (on && !tour && begun) setTour(true);
   measure();
@@ -2055,14 +2144,15 @@ canvas.addEventListener('wheel', e => {
 window.addEventListener('keydown', e => {
   if (e.altKey || e.ctrlKey || e.metaKey || creditsEl.open) return;
   const onBtn = e.target && e.target.closest && e.target.closest('button');
-  if (e.key === 'ArrowRight') step(1);
+  if (e.key === 'Escape' && !langMenu.hidden) { openLang(false); langBtn.focus(); }
+  else if (e.key === 'ArrowRight') step(1);
   else if (e.key === 'ArrowLeft') step(-1);
   else if (e.key === ' ' && !onBtn) { e.preventDefault(); if (begun) tourBtn.click(); else begin(true); }
   else if (e.key === 'f' || e.key === 'F') fullBtn.click();
   else if (e.key === 'm' || e.key === 'M') soundBtn.click();
 });
 if (window.matchMedia && window.matchMedia('(hover:hover)').matches)
-  [[tourBtn,'Tour starten oder anhalten · Leertaste'],[soundBtn,'Ton · Taste M'],[fullBtn,'Vollbild · Taste F'],[$('#prev'),'Vorheriger Halt · Pfeil links'],[$('#next'),'Nächster Halt · Pfeil rechts']].forEach(p => { p[0].title = p[1]; });
+  [[tourBtn,'Tour starten oder anhalten · Leertaste'],[soundBtn,'Ton · Taste M'],[fullBtn,'Vollbild · Taste F'],[$('#prev'),'Vorheriger Halt · Pfeil links'],[$('#next'),'Nächster Halt · Pfeil rechts'],[langBtn,'Sprache']].forEach(p => { p[0].title = tr(p[1]); });
 if (window.ResizeObserver) new ResizeObserver(measure).observe(app); else window.addEventListener('resize', measure);
 
 /* ---------- Messmarken (2D-Overlay) ---------- */
@@ -2070,10 +2160,10 @@ const INK = '236,232,220', DIM = '144,151,171', SUNC = '243,185,77';
 const MONO = '"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace';
 const FONT = ['500 9px ' + MONO, '500 13px ' + MONO, '500 9px ' + MONO, '500 10px ' + MONO], LH = [12,17,12,13];
 const rgba = (c,a) => 'rgba(' + c + ',' + clamp(a,0,1).toFixed(3) + ')';
-const nf0 = new Intl.NumberFormat('de-DE',{maximumFractionDigits:0});
-const nf1 = new Intl.NumberFormat('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});
-const nf2 = new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
-const nf3 = new Intl.NumberFormat('de-DE',{minimumFractionDigits:3,maximumFractionDigits:3});
+const nf0 = new Intl.NumberFormat(LOC,{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat(LOC,{minimumFractionDigits:1,maximumFractionDigits:1});
+const nf2 = new Intl.NumberFormat(LOC,{minimumFractionDigits:2,maximumFractionDigits:2});
+const nf3 = new Intl.NumberFormat(LOC,{minimumFractionDigits:3,maximumFractionDigits:3});
 const rects = [], proj = new THREE.Vector3(), s0 = {x:0,y:0,z:0}, s1 = {x:0,y:0,z:0};
 let plate = .36;                  // Deckkraft der Platte hinter Textblöcken
 const MARKS = [0,.25,.5];        // Einblendzeiten der Messmarken innerhalb einer Gruppe
@@ -2163,7 +2253,7 @@ function dimension(cx,cy,rp,rr,txt,delay){
   c2.setLineDash([]);
   line(cx-hw,y,cx+hw,y,INK,.8*A);
   line(cx-hw,y-4,cx-hw,y+4,INK,.8*A); line(cx+hw,y-4,cx+hw,y+4,INK,.8*A);
-  label(cx,y+7,.5,0,[[txt,1],['DURCHMESSER',0]],A);
+  label(cx,y+7,.5,0,[[txt,1],[tr('DURCHMESSER'),0]],A);
   return y;
 }
 function screenDir(base,dirWorld,scale,out){
@@ -2225,25 +2315,25 @@ function planetHUD(b,dt,A0){
           c2.strokeStyle = rgba(SUNC,.9*a); c2.lineWidth = 1.2; c2.beginPath(); c2.arc(cx,cy,rr+6,a0,a0+da*p,da < 0); c2.stroke();
         }
         label(cx+d0.x*(e+8),cy+d0.y*(e+8),d0.x > .35 ? 0 : d0.x < -.35 ? 1 : .5,d0.y < -.35 ? 1 : d0.y > .35 ? 0 : .5,
-          [['ACHSNEIGUNG',0],[(b.tilt < 1 ? nf2 : nf1).format(b.tilt*p) + '°',1]],a);
+          [[tr('ACHSNEIGUNG'),0],[(b.tilt < 1 ? nf2 : nf1).format(b.tilt*p) + '°',1]],a);
       }
     }
-    corner(cx,cy,rr,-1,-1,b.retro ? [['ROTATION',0],[b.day,1],['RÜCKLÄUFIG',2]] : [['ROTATION',0],[b.day,1]],.5);
-    if (!b.moons && !b.minor) corner(cx,cy,rr,1,-1,[['MONDE',0],['KEINE',1]],.75);
+    corner(cx,cy,rr,-1,-1,b.retro ? [[tr('ROTATION'),0],[b.day,1],[tr('RÜCKLÄUFIG'),2]] : [[tr('ROTATION'),0],[b.day,1]],.5);
+    if (!b.moons && !b.minor) corner(cx,cy,rr,1,-1,[[tr('MONDE'),0],[tr('KEINE'),1]],.75);
   } else if (grp === 1) {
     // Umlauf seit dem Perihel als Bogen
     gauge(cx,cy,rr,b.frac,rv(0));
     const yr = b.period > 1000;
-    corner(cx,cy,rr,-1,1,[['UMLAUF SEIT PERIHEL',0],
-      [yr ? 'JAHR ' + nf2.format(b.frac*b.period/365.25*rv(0)) + ' / ' + nf2.format(b.period/365.25) : 'TAG ' + nf0.format(b.frac*b.period*rv(0)) + ' / ' + nf0.format(b.period),1]],0);
+    corner(cx,cy,rr,-1,1,[[tr('UMLAUF SEIT PERIHEL'),0],
+      [yr ? tr('JAHR ') + nf2.format(b.frac*b.period/365.25*rv(0)) + ' / ' + nf2.format(b.period/365.25) : tr('TAG ') + nf0.format(b.frac*b.period*rv(0)) + ' / ' + nf0.format(b.period),1]],0);
     // Sonnenabstand jetzt, Licht fließt zur Scheibe
     tmp.copy(b.pos).multiplyScalar(-1).normalize(); screenDir(b.pos,tmp,b.R*.7,d0);
-    if (d0.l > 3) side(cx,cy,rr,d0.x,d0.y,[['SONNE',0],[nf3.format(b.r) + ' AE',1],['LICHT ' + lightShort(b.r),2]],.25,'in');
+    if (d0.l > 3) side(cx,cy,rr,d0.x,d0.y,[[tr('SONNE'),0],[nf3.format(b.r) + tr(' AE'),1],[tr('LICHT ') + lightShort(b.r),2]],.25,'in');
     // Bahntempo jetzt (Vis-viva-Gleichung)
     place(b,b.E+.02,tmp).sub(b.pos).normalize(); screenDir(b.pos,tmp,b.R*.7,d1);
-    if (d1.l > 3) side(cx,cy,rr,d1.x,d1.y,[['BAHNTEMPO',0],[nf2.format(29.7847*Math.sqrt(2/b.r-1/b.el.a)) + ' KM/S',1]],.5,'arrow');
+    if (d1.l > 3) side(cx,cy,rr,d1.x,d1.y,[[tr('BAHNTEMPO'),0],[nf2.format(29.7847*Math.sqrt(2/b.r-1/b.el.a)) + ' KM/S',1]],.5,'arrow');
   } else {
-    corner(cx,cy,rr,1,-1,[['BEKANNTE MONDE',0],[nf0.format(b.moons*rv(0)),1]],0);
+    corner(cx,cy,rr,1,-1,[[tr('BEKANNTE MONDE'),0],[nf0.format(b.moons*rv(0)),1]],0);
     moonTags(b,cx,cy,rr,rp,dist,dt);
   }
 }
@@ -2258,15 +2348,15 @@ function sunHUD(b,A0){
     if (p > 0 && y) {          // die Erde im selben Maßstab
       disc(cx+rp+14,y,Math.max(.9,rp/109.2),'79,143,214',A*p);
       ring(cx+rp+14,y,5,0,TAU,'79,143,214',.4*A*p);
-      label(cx+rp+14,y-10,.5,1,[['ERDE IM MASSSTAB',3]],A*p);
+      label(cx+rp+14,y-10,.5,1,[[tr('ERDE IM MASSSTAB'),3]],A*p);
     }
-    corner(cx,cy,rr,1,-1,[['OBERFLÄCHE',0],[nf0.format(5500*rv(.5)) + ' °C',1],['KERN 15 MIO. °C',0]],.5);
+    corner(cx,cy,rr,1,-1,[[tr('OBERFLÄCHE'),0],[nf0.format(5500*rv(.5)) + ' °C',1],[tr('KERN 15 MIO. °C'),0]],.5);
   } else {
     gauge(cx,cy,rr,.9986,rv(0));
-    corner(cx,cy,rr,-1,1,[['ANTEIL AN DER MASSE',0],[nf2.format(99.86*rv(0)) + ' %',1],['DES SONNENSYSTEMS',0]],0);
-    corner(cx,cy,rr,-1,-1,[['ROTATION AM ÄQUATOR',0],['25 TAGE',1],['SPEKTRALKLASSE G2V',0]],.25);
+    corner(cx,cy,rr,-1,1,[[tr('ANTEIL AN DER MASSE'),0],[nf2.format(99.86*rv(0)) + ' %',1],[tr('DES SONNENSYSTEMS'),0]],0);
+    corner(cx,cy,rr,-1,-1,[[tr('ROTATION AM ÄQUATOR'),0],[tr('25 TAGE'),1],[tr('SPEKTRALKLASSE G2V'),0]],.25);
     tmp.copy(e.pos).normalize(); screenDir(b.pos,tmp,b.R*.7,d0);
-    if (d0.l > 3) side(cx,cy,rr,d0.x,d0.y,[['LICHT ZUR ERDE',0],[lightTxt(e.r),1],[nf3.format(e.r) + ' AE',0]],.5,'out','79,143,214');
+    if (d0.l > 3) side(cx,cy,rr,d0.x,d0.y,[[tr('LICHT ZUR ERDE'),0],[lightTxt(e.r),1],[nf3.format(e.r) + tr(' AE'),0]],.5,'out','79,143,214');
   }
 }
 
@@ -2276,8 +2366,8 @@ function overviewHUD(){
     const az = Math.atan2(camera.position.z,camera.position.x);
     tmp.set(Math.cos(az)*pulseR,0,Math.sin(az)*pulseR); scr(tmp,s0);
     if (onScreen(s0)) {
-      const a = A*Math.min(1,pulseA*3), lines = [['LICHT AB SONNE',0],[lightTxt(Math.pow(pulseR/10,1/.45)),1]];
-      if (pulseHit && pulseHitT < 1.6) lines.push([pulseHit.name.toUpperCase() + ' ERREICHT',2,1]);
+      const a = A*Math.min(1,pulseA*3), lines = [[tr('LICHT AB SONNE'),0],[lightTxt(Math.pow(pulseR/10,1/.45)),1]];
+      if (pulseHit && pulseHitT < 1.6) lines.push([fill('{0} ERREICHT',pulseHit.name.toUpperCase()),2,1]);
       disc(s0.x,s0.y,2.6,SUNC,a);
       label(s0.x,s0.y+9,.5,0,lines,a);
     }
@@ -2285,7 +2375,7 @@ function overviewHUD(){
   scr(HALLEY.pos,s1);
   if (onScreen(s1) && s1.x > 0 && s1.x < W) {
     ring(s1.x,s1.y,5,0,TAU,'191,227,255',.6*A);
-    label(s1.x+9,s1.y,0,.5,[['1P/HALLEY',3],['PERIHEL 2061',0]],A*.9);
+    label(s1.x+9,s1.y,0,.5,[['1P/HALLEY',3],[tr('PERIHEL 2061'),0]],A*.9);
   }
 }
 
@@ -2302,8 +2392,13 @@ function cloudFX(k){
   }
 }
 // Name, Breite, Länge, 1 = Ozean, Verzögerung nach dem Stichwort des Sprechers (in der Reihenfolge, in der er sie nennt)
-const GEO = [['PAZIFIK',0,-150,1,0.14],['ATLANTIK',25,-40,1,1.0],['INDISCHER OZEAN',-22,78,1,1.93],['NORDPOLARMEER',80,-150,1,4.0],['SÜDPOLARMEER',-63,-120,1,4.5],
-  ['ASIEN',45,90,0,0],['AFRIKA',5,20,0,0.71],['NORDAMERIKA',45,-100,0,1.83],['SÜDAMERIKA',-12,-58,0,2.98],['ANTARKTIS',-74,40,0,4.58],['EUROPA',50,15,0,5.45],['AUSTRALIEN',-25,134,0,6.4]];
+const GEO = [['PAZIFIK',0,-150,1],['ATLANTIK',25,-40,1],['INDISCHER OZEAN',-22,78,1],['NORDPOLARMEER',80,-150,1],['SÜDPOLARMEER',-63,-120,1],
+  ['ASIEN',45,90,0],['AFRIKA',5,20,0],['NORDAMERIKA',45,-100,0],['SÜDAMERIKA',-12,-58,0],['ANTARKTIS',-74,40,0],['EUROPA',50,15,0],['AUSTRALIEN',-25,134,0]];
+// Sekunden nach dem Stichwort (oceans bzw. continents), zu denen der Sprecher den Namen nennt; Reihenfolge wie in GEO (geschrieben von tools/audio/finalize.py)
+const GEO_T_DE = [0.14,1.0,1.93,4.0,4.5,0,0.71,1.83,2.98,4.58,5.45,6.4];
+const GEO_T_EN = [0.15,1.04,2.14,4.04,4.54,0,0.58,1.54,2.66,4.01,5.13,6.13];
+const GEO_T_PL = [0,0.63,1.5,3.3,3.8,0,0.55,1.52,2.9,4.3,5.36,6.24];
+GEO.forEach((g,i) => { g[0] = tr(g[0]); g[4] = {de:GEO_T_DE, en:GEO_T_EN, pl:GEO_T_PL}[LANG][i] || 0; });
 const gA = new THREE.Vector3(), gB = new THREE.Vector3(), gC = new THREE.Vector3();
 function geoHUD(b){
   const A = hudVis, t = narT(), dist = camera.position.distanceTo(b.pos), k = H/(2*dist*Math.tan(camera.fov*DEG/2));
@@ -2312,8 +2407,8 @@ function geoHUD(b){
   // Anteile als Bogen: 71 % Wasser, 29 % Land
   const pw = easeO(clamp((t-cue('water'))/1.4,0,1)), pl = easeO(clamp((t-cue('land'))/1.4,0,1));
   ring(cx,cy,rr,0,TAU,INK,.14*A);
-  if (pw > 0) { ring(cx,cy,rr,top,top+TAU*.71*pw,'110,170,235',.95*A,1.8); label(gx,topL+8,0,0,[['VON WASSER BEDECKT',0],[nf0.format(71*pw) + ' %',1]],A*pw); }
-  if (pl > 0) { ring(cx,cy,rr,top+TAU*.71,top+TAU*(.71+.29*pl),'214,186,130',.95*A,1.8); label(W-gx,topH+8,1,0,[['LANDFLÄCHE',0],[nf0.format(29*pl) + ' %',1]],A*pl); }
+  if (pw > 0) { ring(cx,cy,rr,top,top+TAU*.71*pw,'110,170,235',.95*A,1.8); label(gx,topL+8,0,0,[[tr('VON WASSER BEDECKT'),0],[nf0.format(71*pw) + ' %',1]],A*pw); }
+  if (pl > 0) { ring(cx,cy,rr,top+TAU*.71,top+TAU*(.71+.29*pl),'214,186,130',.95*A,1.8); label(W-gx,topH+8,1,0,[[tr('LANDFLÄCHE'),0],[nf0.format(29*pl) + ' %',1]],A*pl); }
   b.mesh.updateWorldMatrix(true,false);
   gB.copy(camera.position).sub(b.pos).normalize();
   c2.textAlign = 'center'; c2.textBaseline = 'top';
@@ -2337,6 +2432,7 @@ const LAYERS = [['INNERER KERN',['RADIUS 1.220 KM','FEST · 5.400 °C'],.095,'25
   ['UNTERER MANTEL',['2.230 KM DICK','BIS 3.700 °C'],.72,'226,84,30','mantle',0],
   ['OBERER MANTEL',['BIS 660 KM TIEFE','ZÄHES GESTEIN'],.935,'250,150,60','mantle',1.4],
   ['KRUSTE',['5 BIS 70 KM DICK','FESTES GESTEIN'],.988,'176,150,126','crust',0]];
+LAYERS.forEach(L => { L[0] = tr(L[0]); L[1] = L[1].map(tr); });
 function coreHUD(b){
   if (cutS.open < .05) return;
   const A = hudVis, t = narT(), dist = camera.position.distanceTo(b.pos), k = H/(2*dist*Math.tan(camera.fov*DEG/2));
@@ -2450,7 +2546,7 @@ function drawHUD(dt){
     if (i !== cur && frp && Math.hypot(s0.x-fcx,s0.y-fcy) < frp*1.05 && camera.position.distanceTo(b.pos) > fd) show = false;
     if (i === cur && trans > .35) show = false;
     if (show) {
-      if (b.r) { const t = nf2.format(b.r) + ' AE'; if (t !== b.auTxt) { b.auTxt = t; b.lblSub.textContent = t; b.lw = 0; } }
+      if (b.r) { const t = nf2.format(b.r) + tr(' AE'); if (t !== b.auTxt) { b.auTxt = t; b.lblSub.textContent = t; b.lw = 0; } }
       if (!b.lw) { b.lw = b.lbl.offsetWidth || 70; b.lh = b.lbl.offsetHeight || 30; }
       // der Name beginnt am Rand der Scheibe, nicht darin
       const x0 = s0.x+Math.max(0,Math.min(70*ui,b.R*b.scl*H/(2*camera.position.distanceTo(b.pos)*Math.tan(camera.fov*DEG/2)))-7*ui), y0 = s0.y-b.lh/2;
@@ -2462,7 +2558,7 @@ function drawHUD(dt){
 }
 
 /* ---------- Schleife ---------- */
-const fmt = new Intl.DateTimeFormat('de-DE',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
+const fmt = new Intl.DateTimeFormat(LOC,{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
 let last = 0;
 
 function frame(now){
@@ -2479,7 +2575,7 @@ function frame(now){
   if (Math.abs(want-effSpeed) < .002) effSpeed = want;
   simDays += effSpeed*dt;
   const slowed = moving && want < userSpeed*.95;
-  const effTxt = slowed ? 'Nahansicht: ' + want.toLocaleString('de-DE',{maximumFractionDigits:want < .1 ? 2 : 1}) + ' Tage/s' : '';
+  const effTxt = slowed ? tr('Nahansicht: ') + want.toLocaleString(LOC,{maximumFractionDigits:want < .1 ? 2 : 1}) + tr(' Tage/s') : '';
   if (elEff.textContent !== effTxt) elEff.textContent = effTxt;
   const day = Math.floor(simDays);
   if (day !== lastDay) { lastDay = day; elDate.textContent = fmt.format(new Date((simDays+10957.5)*864e5)); }
@@ -2638,7 +2734,7 @@ async function boot(){
   const loadTex = url => new Promise((res,rej) => new THREE.TextureLoader().load(url, t => { t.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy()); t.wrapS = THREE.RepeatWrapping; res(t); }, undefined, rej));
   const maps = await Promise.all(['img/earth-day.jpg','img/earth-night.jpg','img/earth-aux.jpg','img/mars.jpg','img/jupiter.jpg'].map(u => loadTex(u).catch(() => null)));
   const real = maps[0] && maps[1] && maps[2] ? maps : null;
-  loader.textContent = 'Oberflächen werden berechnet …';
+  loader.textContent = tr('Oberflächen werden berechnet …');
   moonTex = await bake(512,SURF.moon);
   for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
@@ -2652,7 +2748,7 @@ async function boot(){
   buildBackdrop(); buildSun(BODIES[1]);
   for (let i = 2; i < BODIES.length; i++) (BODIES[i].minor ? buildMinor : buildPlanet)(BODIES[i]);
   buildExtras();
-  loader.textContent = 'Marsbasis wird aufgebaut …';
+  loader.textContent = tr('Marsbasis wird aufgebaut …');
   await nextFrame();
   try { MB.build(await bakeFlat(DESKTOP ? 2048 : 1024,SURF.ground)); } catch (e) { console.warn('Marsbasis:', e); }
   for (let i = 2; i < BODIES.length; i++) place(BODIES[i], solve(BODIES[i],simDays), BODIES[i].pos);

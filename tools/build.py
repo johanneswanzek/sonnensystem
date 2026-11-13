@@ -50,7 +50,10 @@ def page(cfg, test=False, desk=False):
 
     url = cfg['url'].rstrip('/') + '/'
     esc = lambda k: html.escape(cfg[k], quote=True)
-    site = {'impressum': cfg.get('impressum', ''), 'datenschutz': cfg.get('datenschutz', '')}
+    # Titel und Beschreibung der anderen Sprachen reicht die Seite selbst nach (window.SITE.i18n), der Kopf bleibt deutsch
+    site = {'impressum': cfg.get('impressum', ''), 'datenschutz': cfg.get('datenschutz', ''), 'i18n': cfg.get('i18n', {})}
+    alt = ''.join('<link rel="alternate" hreflang="%s" href="%s?lang=%s">\n' % (l, html.escape(url, quote=True), l) for l in ['de'] + sorted(cfg.get('i18n', {})))
+    alt += '<link rel="alternate" hreflang="x-default" href="%s">\n' % html.escape(url, quote=True)
     head = '''<!doctype html>
 <html lang="de">
 <head>
@@ -60,7 +63,7 @@ def page(cfg, test=False, desk=False):
 <meta name="description" content="%(description)s">
 <meta name="theme-color" content="#04060c">
 <link rel="canonical" href="%(url)s">
-<meta property="og:type" content="website">
+%(alt)s<meta property="og:type" content="website">
 <meta property="og:url" content="%(url)s">
 <meta property="og:title" content="%(title)s">
 <meta property="og:description" content="%(description)s">
@@ -73,7 +76,7 @@ def page(cfg, test=False, desk=False):
 html,body{margin:0}
 [hidden]{display:none !important}
 </style>
-''' % {'title': esc('title'), 'description': esc('description'), 'url': html.escape(url, quote=True), 'site': json.dumps(site, ensure_ascii=False)}
+''' % {'title': esc('title'), 'description': esc('description'), 'url': html.escape(url, quote=True), 'site': json.dumps(site, ensure_ascii=False).replace('</', '<\\/'), 'alt': alt}
     i = s.index('<style>')
     j = s.index('</style>') + len('</style>')
     return (head + s[i:j] + '\n</head>\n<body>\n'

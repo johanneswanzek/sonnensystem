@@ -6,10 +6,14 @@ from scipy.signal import resample_poly
 ROOT = os.environ.get('SONNENSYSTEM_ROOT') or os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 D = os.path.join(ROOT, 'work', 'models') + os.sep
 M = D + 'sherpa-onnx-whisper-small/'
-rec = sherpa_onnx.OfflineRecognizer.from_whisper(encoder=M + 'small-encoder.int8.onnx', decoder=M + 'small-decoder.int8.onnx', tokens=M + 'small-tokens.txt', language='de', task='transcribe', num_threads=4)
+RECS = {}
+def recognizer(lang):          # je Sprache ein eigener Erkenner (Whisper bekommt die Sprache fest vorgegeben)
+    if lang not in RECS: RECS[lang] = sherpa_onnx.OfflineRecognizer.from_whisper(encoder=M + 'small-encoder.int8.onnx', decoder=M + 'small-decoder.int8.onnx', tokens=M + 'small-tokens.txt', language=lang, task='transcribe', num_threads=4)
+    return RECS[lang]
 def norm(s):
     s = s.lower().replace('ß', 'ss')
-    return re.sub(r'[^a-zäöü0-9]+', ' ', s).strip()
+    s = re.sub(r'(?<=\d)[.,](?=\d{3}\b)', '', s)          # 4,000 und 4.000 wie 4000 behandeln
+    return re.sub(r'[^a-zäöüąćęłńóśźż0-9]+', ' ', s).strip()
 def load16(path):
     x, sr = sf.read(path, dtype='float32', always_2d=True); x = x.mean(axis=1)
     if sr != 16000: x = resample_poly(x, 16000, sr).astype(np.float32)
@@ -25,9 +29,9 @@ def segments(x):
     vad.flush()
     while not vad.empty(): s = vad.front; out.append((s.start / 16000, np.array(s.samples, dtype=np.float32))); vad.pop()
     return out
-def align(path, parts, words=None):
+def align(path, parts, words=None, lang='de'):
     """parts: Liste (Text, Marker oder None). Liefert Dauer, Marker-Zeiten, erkannten Text."""
-    x = load16(path); segs = segments(x)
+    x = load16(path); segs = segments(x); rec = recognizer(lang)
     tr = ''; tmap = []          # je Zeichen des erkannten Texts eine Zeit
     for t0, smp in segs:
         st = rec.create_stream(); st.accept_waveform(16000, smp); rec.decode_stream(st)

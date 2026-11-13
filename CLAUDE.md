@@ -1,7 +1,7 @@
 # Projektnotizen
 
-Animierte 3D-Reise durch das Sonnensystem mit Sprecher und Musik. Sprache der Oberfläche, der Kommentare und
-der Doku ist Deutsch. Live: https://sonnensystem.johannes-wanzek.de/ (GitHub Pages, Repo
+Animierte 3D-Reise durch das Sonnensystem mit Sprecher und Musik, in Deutsch, Englisch und Polnisch. Quellsprache
+der Oberfläche sowie Sprache der Kommentare und der Doku ist Deutsch. Live: https://sonnensystem.johannes-wanzek.de/ (GitHub Pages, Repo
 `johanneswanzek/sonnensystem`, Deploy per Action bei Push auf `main`).
 
 ## Grundsätze
@@ -20,7 +20,7 @@ der Doku ist Deutsch. Live: https://sonnensystem.johannes-wanzek.de/ (GitHub Pag
 - Alle Größen der Oberfläche hängen an der CSS-Variable `--u` (1px auf dem Handy, bis etwa 2px auf großen
   Monitoren), die Messmarken auf dem Overlay-Canvas am selben Faktor `ui`.
 - Nach jeder Änderung prüfen: `node tools/test/run.js ...` im Handyformat (390×760) und im Querformat
-  (1920×1080), bei Änderungen am Build zusätzlich `--dist`.
+  (1920×1080), bei Änderungen am Build zusätzlich `--dist`, bei Änderungen an Texten zusätzlich `--lang=en` und `--lang=pl`.
 
 ## Befehle
 
@@ -42,8 +42,9 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
 
 | Abschnitt | Inhalt |
 | --- | --- |
-| Daten | `BODIES` (Index 0 Übersicht, 1 Sonne, 2 Merkur, 3 Venus, 4 Erde, 5 Mars, 6 Asteroidengürtel/Vesta, 7 Jupiter, 8 Saturn, 9 Uranus, 10 Neptun), `VOICE` (Dauer und Zeitmarken je Clip) |
-| DOM | Elemente, Leiste, Dialog „Quellen“ (`window.SITE` liefert Impressum und Datenschutz) |
+| Sprache | `LANG` (aus `?lang=`, sonst letzte Wahl, sonst Browsersprache; unbekannt → Englisch), `TR` (Übersetzungen, Schlüssel ist der deutsche Text), `tr`, `fill`, `setLang` |
+| Daten | `BODIES` (Index 0 Übersicht, 1 Sonne, 2 Merkur, 3 Venus, 4 Erde, 5 Mars, 6 Asteroidengürtel/Vesta, 7 Jupiter, 8 Saturn, 9 Uranus, 10 Neptun), `VOICE_DE`/`VOICE_EN`/`VOICE_PL` (Dauer und Zeitmarken je Clip), `VOICE` (die der gewählten Sprache) |
+| DOM | Elemente, Übersetzen der festen Texte (`data-t`), Sprachwahl oben rechts, Leiste, Dialog „Quellen“ (`window.SITE` liefert Impressum und Datenschutz) |
 | Ton | `AU`: Web Audio, ein Musikstück als Schleife (`MUSIC`), Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme |
 | Oberflächen | `SURF`: prozedurale Texturen, auf der Grafikkarte gebacken |
 | Bahnmechanik | Kepler-Bahnen aus Bahnelementen für das angezeigte Datum |
@@ -61,7 +62,13 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   Mars hat 0 Planet, 1 Basis. `setStage(n)` wechselt, die Tour läuft sie der Reihe nach durch.
 - **Bild folgt Ton:** `narT()` ist die Sprecherzeit des laufenden Clips, `cue(k)` die Zeitmarke eines
   Stichworts aus `VOICE`. Einblendungen und die Kamerafahrt über die Marsbasis hängen an diesen Marken. Die
-  Werte in `VOICE` schreibt `tools/audio/finalize.py`; von Hand nur ändern, wenn auch der Clip dazu passt.
+  Werte in `VOICE_*` und `GEO_T_*` schreibt `tools/audio/finalize.py`; von Hand nur ändern, wenn auch der Clip dazu passt.
+- **Sprachen:** Alle Texte stehen deutsch im Programm; `tr('…')` schlägt sie in `TR` nach, fehlt ein Eintrag, bleibt
+  der deutsche Text. Wer einen sichtbaren Text ändert oder ergänzt, muss den Schlüssel in `TR.en` und `TR.pl`
+  mitziehen. Texte im Markup tragen `data-t`, `aria-label` wird immer übersetzt. Zahlen und Datum richten sich nach
+  `LOC`. Die Clips liegen in `public/voice/` (Deutsch), `public/voice/en/` und `public/voice/pl/`, die Texte dazu
+  in `docs/sprechertext.<Sprache>.json`. Ein Sprachwechsel lädt die Seite neu (Website: `?lang=`, Artefakt:
+  gemerkte Wahl). Polnisch braucht das erweiterte Latein der Schriften (`public/vendor/fonts/*latin-ext*`).
 - **Layout:** `measure()` setzt `ui` (Maßstab), `wide` (Querformat: Uhr und Titel in den Ecken, der Körper
   nutzt die volle Höhe; die Übersicht bleibt über dem Titel), `topH`/`botH` (freie Fläche) und `guard`
   (Flächen von Uhr und Titel, denen Beschriftungen ausweichen). `drawHUD` rechnet in Einheiten von `ui` und
@@ -99,5 +106,5 @@ Herkunft der Modelle und Karten. Das Erzeugen bei ElevenLabs kostet Credits; nie
 ## Fassung als claude.ai-Artefakt
 
 Adresse: https://claude.ai/artifact/KuNTVJioeEebKquH2AEGuk. Veröffentlicht wird `src/sonnensystem.html`,
-dazu als Begleitdateien `voice/`, `audio/`, `img/` aus `public/` und `models/*.json` aus `.artifact/models/`
+dazu als Begleitdateien `voice/` (mit `en/` und `pl/`), `audio/`, `img/` aus `public/` und `models/*.json` aus `.artifact/models/`
 (`cd tools/models && npm install && node embed.mjs`).

@@ -1,0 +1,240 @@
+{
+ "overview": [
+  [
+   "Nasz Układ Słoneczny.",
+   null
+  ],
+  [
+   "Od 4,5 miliarda lat osiem światów krąży tu wokół jednej gwiazdy. Każdy po własnej orbicie. Każdy we własnym rytmie.",
+   null
+  ],
+  [
+   "Zapraszam w podróż. Od ognia Słońca aż po skraj ciemności.",
+   null
+  ]
+ ],
+ "sun": [
+  [
+   "Słońce.",
+   null
+  ],
+  [
+   "Kula rozżarzonego gazu, tak ogromna, że Ziemia zmieściłaby się w niej ponad milion razy. Całe światło, całe ciepło, całe życie na naszej planecie zaczyna się właśnie tutaj.",
+   null
+  ]
+ ],
+ "mercury": [
+  [
+   "Merkury.",
+   null
+  ],
+  [
+   "Najmniejsza ze wszystkich planet i najszybsza. W zaledwie 88 dni okrąża Słońce. Jego powierzchnia opowiada o miliardach lat uderzeń.",
+   null
+  ]
+ ],
+ "venus": [
+  [
+   "Wenus.",
+   null
+  ],
+  [
+   "Prawie tak duża jak Ziemia. A jednak trudno o bardziej obcy świat. Pod jej gęstymi chmurami jest tak gorąco, że topi się ołów. I jakby tego było mało: obraca się wstecz.",
+   null
+  ]
+ ],
+ "earth": [
+  [
+   "A potem: Ziemia.",
+   null
+  ],
+  [
+   "Błękitna planeta w czerni kosmosu. Jedyne miejsce, o którym wiemy, że istnieje na nim życie.",
+   null
+  ]
+ ],
+ "earth_geo": [
+  [
+   "Podejdźmy bliżej. Przez chmury, w głąb cieniutkiej powłoki powietrza, która chroni wszelkie życie.",
+   null
+  ],
+  [
+   "Ponad dwie trzecie tego świata pokrywa woda.",
+   "water"
+  ],
+  [
+   "Pacyfik, Atlantyk, Ocean Indyjski. I lodowate morza przy biegunach.",
+   "oceans"
+  ],
+  [
+   "Pomiędzy nimi z wody wyłania się siedem kontynentów.",
+   "land"
+  ],
+  [
+   "Azja i Afryka. Ameryka Północna i Ameryka Południowa. Antarktyda, Europa i Australia.",
+   "continents"
+  ]
+ ],
+ "earth_core": [
+  [
+   "Lecz największa tajemnica kryje się głęboko pod naszymi stopami.",
+   null
+  ],
+  [
+   "Otwórzmy Ziemię.",
+   "open"
+  ],
+  [
+   "W samym środku spoczywa jądro wewnętrzne. Kula z litego żelaza, gorąca jak powierzchnia Słońca.",
+   "inner"
+  ],
+  [
+   "Wokół niego płynie jądro zewnętrzne, ocean ciekłego metalu. To ono wytwarza pole magnetyczne, które chroni nas przed wiatrem słonecznym.",
+   "outer"
+  ],
+  [
+   "Wyżej leży płaszcz Ziemi. Prawie 3000 kilometrów gorącej skały, która porusza się nieskończenie powoli.",
+   "mantle"
+  ],
+  [
+   "A na samym wierzchu: skorupa. Cieniutka jak skórka jabłka. To na niej rozgrywa się wszystko, co znamy.",
+   "crust"
+  ]
+ ],
+ "mars": [
+  [
+   "Mars.",
+   null
+  ],
+  [
+   "Zimna pustynia czerwonego pyłu. Tutaj wznosi się najwyższy wulkan Układu Słonecznego. A kanion ciągnie się przez 4000 kilometrów. Kiedyś płynęła tu woda. Czy było tu także życie, nie wiemy do dziś.",
+   null
+  ]
+ ],
+ "mars_base": [
+  [
+   "Zejdźmy w dół.",
+   null
+  ],
+  [
+   "Tak mogłaby wyglądać pierwsza osada na innym świecie.",
+   "intro"
+  ],
+  [
+   "W centrum leżą moduły mieszkalne, połączone ze sobą tunelami.",
+   "hab"
+  ],
+  [
+   "Niektóre są przysypane marsjańskim gruntem. Osłania on przed groźnym promieniowaniem.",
+   "berm"
+  ],
+  [
+   "Tuż obok, w szklarniach, rosną sałata, ziemniaki i zboże. Rośliny dają pożywienie, a do tego świeży tlen.",
+   "green"
+  ],
+  [
+   "Prąd dostarczają pola ogniw słonecznych.",
+   "solar"
+  ],
+  [
+   "A na długie burze pyłowe: małe reaktory jądrowe, w bezpiecznej odległości, za wałem.",
+   "reactor"
+  ],
+  [
+   "Ta instalacja jest sercem kolonii. Z lodu w gruncie i z rzadkiego powietrza wytwarza wodę, tlen i paliwo na lot powrotny.",
+   "isru"
+  ],
+  [
+   "Lądowisko leży daleko na uboczu, żeby pył wzbijany przez silniki nie uderzał w stację.",
+   "pad"
+  ],
+  [
+   "Pojazdy z kabiną ciśnieniową wożą ludzi przez pustynię całymi dniami.",
+   "rover"
+  ],
+  [
+   "A ponad wszystkim: antena skierowana ku Ziemi. Sygnał radiowy biegnie nawet 22 minuty. Kto tu mieszka, jest zdany na siebie.",
+   "comm"
+  ],
+  [
+   "Na razie to wszystko jest tylko planem. Ale pierwsi ludzie, którzy staną na tym gruncie, być może już się urodzili.",
+   "end"
+  ]
+ ],
+ "belt": [
+  [
+   "Między Marsem a Jowiszem leży pas planetoid.",
+   null
+  ],
+  [
+   "Miliony brył skały i metalu. Pozostałości z czasów, gdy powstawały planety.",
+   "count"
+  ],
+  [
+   "A jednak nie ma tu prawie nic. Wszystkie razem ważą mniej niż nasz Księżyc.",
+   "mass"
+  ],
+  [
+   "To jest Westa. Ma ponad 500 kilometrów średnicy i jest jedną z największych.",
+   "vesta"
+  ],
+  [
+   "Na jej biegunie południowym zieje krater, prawie tak szeroki jak ona sama.",
+   "crater"
+  ],
+  [
+   "Grawitacja Jowisza sprawiła, że z tego wszystkiego nigdy nie powstała planeta.",
+   "jupiter"
+  ]
+ ],
+ "jupiter": [
+  [
+   "Jowisz.",
+   null
+  ],
+  [
+   "Olbrzym wśród planet. Cięższy niż wszystkie pozostałe razem wzięte. Jego Wielka Czerwona Plama to burza większa od Ziemi. Szaleje od ponad 100 lat.",
+   null
+  ]
+ ],
+ "saturn": [
+  [
+   "Saturn.",
+   null
+  ],
+  [
+   "Być może najpiękniejszy widok w całym Układzie Słonecznym. Jego pierścienie składają się z niezliczonych brył lodu. Szerokie na setki tysięcy kilometrów, a jednak często grube zaledwie na kilka metrów.",
+   null
+  ]
+ ],
+ "uranus": [
+  [
+   "Uran.",
+   null
+  ],
+  [
+   "Świat, który leży na boku. Prawdopodobnie przewróciło go kiedyś potężne zderzenie. Od tamtej pory toczy się wokół Słońca, razem ze swoimi pierścieniami i księżycami.",
+   null
+  ]
+ ],
+ "neptune": [
+  [
+   "Neptun.",
+   null
+  ],
+  [
+   "Najdalsza z planet. 30 razy dalej od Słońca niż Ziemia. Tutaj wieją najszybsze wiatry w Układzie Słonecznym. A jeden rok trwa 165 ziemskich lat.",
+   null
+  ]
+ ],
+ "outro": [
+  [
+   "Osiem światów. Jedna gwiazda.",
+   null
+  ],
+  [
+   "A pośród nich mała, błękitna planeta, którą nazywamy domem.",
+   null
+  ]
+ ]
+}

@@ -1,19 +1,26 @@
 # Produktion: Sprecher, Musik, Modelle, Karten
 
-Stand: Version 7 (November 2026). Dieses Dokument hält fest, womit die Medien entstanden sind und wie man sie
+Stand: Version 8 (November 2026, dreisprachig). Dieses Dokument hält fest, womit die Medien entstanden sind und wie man sie
 neu erzeugt.
 
 ## Sprecher
 
 - **Dienst:** ElevenLabs, Modell `eleven_v4`, Ausgabe `mp3_44100_128`.
-- **Stimme:** „Helmut“, Voice-ID `JiW03c2Gt43XNUQAumRP` (aus der Stimmbibliothek von ElevenLabs).
-- **Text:** [`sprechertext.json`](sprechertext.json). Je Clip eine Liste von Abschnitten `[Text, Stichwort]`.
+- **Stimmen** (aus der Stimmbibliothek von ElevenLabs), jeweils mit dem Sprachkennzeichen der Sprache erzeugt:
+
+  | Sprache | Stimme | Voice-ID | Text |
+  | --- | --- | --- | --- |
+  | Deutsch | „Helmut“ | `JiW03c2Gt43XNUQAumRP` | [`sprechertext.de.json`](sprechertext.de.json) |
+  | Englisch | „Jim Executive – Authoritative, British and Warm“ | `tXxkePQsw0G69D8VeDzp` | [`sprechertext.en.json`](sprechertext.en.json) |
+  | Polnisch | „Adam“ | `hIssydxXZ1WuDorjx6Ic` | [`sprechertext.pl.json`](sprechertext.pl.json) |
+
+- **Text:** die drei Dateien oben. Je Clip eine Liste von Abschnitten `[Text, Stichwort]`.
   Ein Stichwort markiert die Stelle, an der in der Seite etwas passiert (Kamerafahrt, Einblendung).
 - **Regieanweisungen** stehen im Text in eckigen Klammern: `[warmly]` am Anfang, `[pause]` zwischen den
   Abschnitten, `[long pause]` vor dem Schlussgedanken. Zahlen als Ziffern schreiben („22 Minuten“).
 - **Clips:** `overview`, `sun`, `mercury`, `venus`, `earth`, `earth_geo`, `earth_core`, `mars`, `mars_base`,
   `belt`, `jupiter`, `saturn`, `uranus`, `neptune`, `outro`.
-- **Aufwand:** alle 15 Clips zusammen rund 5.100 Credits (Einleitung in zwei Fassungen).
+- **Aufwand:** Deutsch rund 5.100 Credits (Einleitung in zwei Fassungen), Englisch 4.660, Polnisch 4.483 (je eine Fassung).
 
 So lautet zum Beispiel der Auftrag für die Marsbasis:
 
@@ -26,14 +33,20 @@ So lautet zum Beispiel der Auftrag für die Marsbasis:
 python tools/audio/proc.py res1.json overview_a overview_b sun mercury venus earth earth_geo earth_core mars belt jupiter saturn uranus neptune outro
 python tools/audio/proc.py res2.json mars_base
 python tools/audio/finalize.py
+
+python tools/audio/proc.py --lang en res.en.json overview sun mercury venus earth earth_geo earth_core mars mars_base belt jupiter saturn uranus neptune outro
+python tools/audio/finalize.py --lang en          # Polnisch entsprechend mit pl
 ```
 
-- `proc.py` nimmt die Rohdateien aus `work/el/<Clip>.mp3`, kürzt Stille an den Rändern, bringt jeden Clip auf
+- `proc.py` nimmt die Rohdateien aus `work/el/<Clip>.mp3` (mit `--lang` aus `work/el/<Sprache>/`, Ausgabe dann nach
+  `public/voice/<Sprache>/`), kürzt Stille an den Rändern, bringt jeden Clip auf
   −18 LUFS, begrenzt Spitzen weich und schreibt `public/voice/<Clip>.mp3` (96 kbit/s, mono).
 - `align.py` findet die Zeitmarken: Sprachabschnitte per Silero-VAD, Text je Abschnitt per Whisper (small,
   über sherpa-onnx), dann zeichenweiser Abgleich mit dem Skript. Die Modelle gehören nach `work/models/`.
-- `finalize.py` trägt Dauer und Zeitmarken in die Konstante `VOICE` in `src/sonnensystem.html` ein, ebenso die
-  Zeitpunkte, zu denen die Namen der Ozeane und Kontinente erscheinen.
+- `finalize.py` trägt Dauer und Zeitmarken der Sprache in `src/sonnensystem.html` ein (`VOICE_DE`, `VOICE_EN`,
+  `VOICE_PL`), ebenso die Zeitpunkte, zu denen die Namen der Ozeane und Kontinente erscheinen (`GEO_T_*`).
+- Die Stichworte (`water`, `hab`, `pad` …) müssen in allen Sprachen an derselben inhaltlichen Stelle stehen; die
+  Kamerafahrt rechnet relativ zu ihnen und passt sich so an die Länge jeder Fassung an.
 
 Die Kamerafahrten richten sich nach diesen Marken. Wer einen Clip neu erzeugt, muss `proc.py` und
 `finalize.py` laufen lassen, sonst passen Bild und Ton nicht mehr zusammen. Der Ordner `work/` wird nicht
@@ -93,5 +106,5 @@ Sonne, Merkur, Venus, Saturn, Uranus, Neptun, die Monde und der Marsboden werden
 ## Schriften und Bibliotheken
 
 - three.js r128 als klassisches Skript (`THREE` global) und der dazugehörige `GLTFLoader`.
-- Instrument Serif 400, IBM Plex Sans 400/500, IBM Plex Mono 400/500, jeweils der lateinische Zeichensatz als
-  WOFF2 (aus den `@fontsource`-Paketen).
+- Instrument Serif 400, IBM Plex Sans 400/500, IBM Plex Mono 400/500, jeweils der lateinische Zeichensatz und das
+  erweiterte Latein (für Polnisch) als WOFF2 (aus den `@fontsource`-Paketen).

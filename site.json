@@ -3,5 +3,15 @@
   "title": "Sonnensystem – eine Kamerafahrt",
   "description": "Animierte 3D-Reise durch das Sonnensystem: Planeten an ihren berechneten Positionen, ein Blick ins Innere der Erde und eine mögliche Kolonie auf dem Mars. Mit Sprecher und Musik.",
   "impressum": "",
-  "datenschutz": ""
+  "datenschutz": "",
+  "i18n": {
+    "en": {
+      "title": "Solar System – a camera flight",
+      "description": "Animated 3D journey through the solar system: planets at their calculated positions, a look inside the Earth and a possible colony on Mars. With narrator and music."
+    },
+    "pl": {
+      "title": "Układ Słoneczny – lot kamery",
+      "description": "Animowana podróż 3D przez Układ Słoneczny: planety w obliczonych położeniach, spojrzenie do wnętrza Ziemi i możliwa kolonia na Marsie. Z lektorem i muzyką."
+    }
+  }
 }

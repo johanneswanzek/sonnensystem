@@ -1,0 +1,240 @@
+{
+ "overview": [
+  [
+   "Our solar system.",
+   null
+  ],
+  [
+   "For 4.5 billion years, eight worlds have circled a single star. Each on its own path. Each at its own pace.",
+   null
+  ],
+  [
+   "Join me on a journey. From the fire of the Sun, to the edge of darkness.",
+   null
+  ]
+ ],
+ "sun": [
+  [
+   "The Sun.",
+   null
+  ],
+  [
+   "A ball of glowing gas, so vast that the Earth would fit inside it more than a million times. All the light, all the warmth, all life on our planet begins here.",
+   null
+  ]
+ ],
+ "mercury": [
+  [
+   "Mercury.",
+   null
+  ],
+  [
+   "The smallest of all the planets, and the fastest. In just 88 days it races once around the Sun. Its surface tells of billions of years of impacts.",
+   null
+  ]
+ ],
+ "venus": [
+  [
+   "Venus.",
+   null
+  ],
+  [
+   "Almost as large as the Earth. And yet it could hardly be more alien. Beneath its dense clouds it is hot enough to melt lead. And as if that were not strange enough: it spins backwards.",
+   null
+  ]
+ ],
+ "earth": [
+  [
+   "And then: the Earth.",
+   null
+  ],
+  [
+   "A blue planet in the blackness of space. The only place we know of that carries life.",
+   null
+  ]
+ ],
+ "earth_geo": [
+  [
+   "Let us come closer. Down through the clouds, into the wafer-thin shell of air that protects all life.",
+   null
+  ],
+  [
+   "More than two thirds of this world are covered by water.",
+   "water"
+  ],
+  [
+   "The Pacific, the Atlantic, the Indian Ocean. And the icy seas at the poles.",
+   "oceans"
+  ],
+  [
+   "Between them, seven continents rise from the water.",
+   "land"
+  ],
+  [
+   "Asia and Africa. North America and South America. Antarctica, Europe and Australia.",
+   "continents"
+  ]
+ ],
+ "earth_core": [
+  [
+   "But the greatest secret lies deep beneath our feet.",
+   null
+  ],
+  [
+   "Let us open up the Earth.",
+   "open"
+  ],
+  [
+   "At the very centre rests the inner core. A sphere of solid iron, as hot as the surface of the Sun.",
+   "inner"
+  ],
+  [
+   "Around it flows the outer core, an ocean of liquid metal. It generates the magnetic field that shields us from the solar wind.",
+   "outer"
+  ],
+  [
+   "Above it lies the mantle. Almost 3,000 kilometres of hot rock, moving infinitely slowly.",
+   "mantle"
+  ],
+  [
+   "And on the very outside: the crust. Wafer-thin, like the skin of an apple. Everything we know takes place upon it.",
+   "crust"
+  ]
+ ],
+ "mars": [
+  [
+   "Mars.",
+   null
+  ],
+  [
+   "A cold desert of red dust. Here rises the tallest volcano in the solar system. And a canyon stretches 4,000 kilometres across the land. Water once flowed here. Whether there was life as well, we still do not know.",
+   null
+  ]
+ ],
+ "mars_base": [
+  [
+   "Let us descend.",
+   null
+  ],
+  [
+   "This is what it might look like: the first settlement on another world.",
+   "intro"
+  ],
+  [
+   "At the centre lie the living modules, connected to one another by tunnels.",
+   "hab"
+  ],
+  [
+   "Some are buried beneath Martian soil. It shields them from the dangerous radiation.",
+   "berm"
+  ],
+  [
+   "Right beside them, lettuce, potatoes and grain grow in greenhouses. The plants provide food, and fresh oxygen as well.",
+   "green"
+  ],
+  [
+   "The power comes from fields of solar cells.",
+   "solar"
+  ],
+  [
+   "And for the long dust storms: small nuclear reactors, at a safe distance behind an earthen wall.",
+   "reactor"
+  ],
+  [
+   "This plant is the heart of the colony. From ice in the ground and from the thin air, it produces water, oxygen, and fuel for the flight home.",
+   "isru"
+  ],
+  [
+   "The landing pad lies far outside, so that the dust thrown up by the engines does not hit the station.",
+   "pad"
+  ],
+  [
+   "Vehicles with pressurised cabins carry people through the desert for days at a time.",
+   "rover"
+  ],
+  [
+   "And above it all: the antenna to Earth. A radio message takes up to 22 minutes. Whoever lives here is on their own.",
+   "comm"
+  ],
+  [
+   "For now, all of this is a plan. But the first people to set foot on this ground may already have been born.",
+   "end"
+  ]
+ ],
+ "belt": [
+  [
+   "Between Mars and Jupiter lies the asteroid belt.",
+   null
+  ],
+  [
+   "Millions of chunks of rock and metal. Leftovers from the time when the planets were formed.",
+   "count"
+  ],
+  [
+   "And yet there is almost nothing here. All of them together weigh less than our Moon.",
+   "mass"
+  ],
+  [
+   "This is Vesta. More than 500 kilometres across, one of the largest of them all.",
+   "vesta"
+  ],
+  [
+   "At its south pole gapes a crater, almost as wide as Vesta itself.",
+   "crater"
+  ],
+  [
+   "Jupiter's gravity prevented all of this from ever becoming a planet.",
+   "jupiter"
+  ]
+ ],
+ "jupiter": [
+  [
+   "Jupiter.",
+   null
+  ],
+  [
+   "The giant among the planets. Heavier than all the others combined. Its Great Red Spot is a storm larger than the Earth. It has been raging for well over 100 years.",
+   null
+  ]
+ ],
+ "saturn": [
+  [
+   "Saturn.",
+   null
+  ],
+  [
+   "Perhaps the most beautiful sight in the entire solar system. Its rings are made of countless chunks of ice. Hundreds of thousands of kilometres wide, and yet often only a few metres thick.",
+   null
+  ]
+ ],
+ "uranus": [
+  [
+   "Uranus.",
+   null
+  ],
+  [
+   "A world lying on its side. A tremendous collision probably knocked it over long ago. Ever since, it has been rolling around the Sun, together with its rings and moons.",
+   null
+  ]
+ ],
+ "neptune": [
+  [
+   "Neptune.",
+   null
+  ],
+  [
+   "The outermost of the planets. 30 times farther from the Sun than the Earth. Out here blow the fastest winds in the solar system. And a single year lasts 165 Earth years.",
+   null
+  ]
+ ],
+ "outro": [
+  [
+   "Eight worlds. One star.",
+   null
+  ],
+  [
+   "And in the midst of it all, a small blue planet that we call home.",
+   null
+  ]
+ ]
+}
