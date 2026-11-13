@@ -28,4 +28,14 @@ describe('Kepler', () => {
     const out = place(b, solve(b, 0), new THREE.Vector3());
     expect(out.length()).toBeCloseTo(10 * Math.pow(b.r, .45), 6);
   });
+  it('Erde am 1. Januar 2000 nahe dem Perihel: 0,9833 AE', () => {
+    const b = { el: { ...earth.el } }; solve(b, 0);
+    expect(b.r).toBeCloseTo(0.9833, 3);
+  });
+  it('nach einer Umlaufzeit steht ein Planet wieder an derselben Stelle (Mars, 686,98 Tage)', () => {
+    const mars = { el: { a: 1.52371034, e: .0933941, I: 1.84969142, L: -4.55343205, w: -23.94362959, O: 49.55953891, dL: 19140.30268499 } };
+    const a = { el: mars.el }, b = { el: mars.el };
+    solve(a, 1000); solve(b, 1000 + 686.98);
+    expect(Math.abs(a.frac - b.frac)).toBeLessThan(1e-3);
+  });
 });

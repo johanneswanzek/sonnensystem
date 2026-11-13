@@ -1,5 +1,6 @@
-# Baut die Seite und veröffentlicht sie auf GitHub Pages.
+# Baut die Seite mit Node und Vite und veröffentlicht sie auf GitHub Pages.
 # Voraussetzung in den Repo-Einstellungen: Pages -> Build and deployment -> Source: "GitHub Actions".
+# Der Bau bricht ab, wenn im Ergebnis eine fremde Adresse steht (vite.config.js, tools/build/check-foreign.mjs).
 name: Seite veröffentlichen
 
 on:
@@ -21,8 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
       - name: Seite bauen
-        run: python3 tools/build.py
+        run: npm run build
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

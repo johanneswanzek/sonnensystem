@@ -11,7 +11,7 @@ export default defineConfig({
   timeout: 10 * 60 * 1000,
   workers: 1,
   retries: 0,
-  reporter: [['list']],
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
   use: {
     baseURL: 'http://127.0.0.1:4173/',
     locale: 'de-DE',
