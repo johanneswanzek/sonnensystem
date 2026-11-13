@@ -97,6 +97,11 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   Rippeln, Kies, großflächige Helligkeit) und leitet daraus das Relief ab. Der Schattenbereich folgt der Kamera
   (`fitShadow`, texelgerastert, PCF mit Radius), weiche Flecken (`blob`) verdunkeln den Boden unter Bauten und Fahrzeugen.
   Lichter, Triebwerksstrahl und Sonnenscheibe sind HDR-Werte über 1.
+  Bildstimmung (Art-Direction v9): Sonne tief (≈14°, `sunDir`), starkes warmes Streiflicht, schwaches kühles Fülllicht;
+  `haze()` halbiert dabei `envMapIntensity` (außer `userData.keepEnv`: Glas, Solarzellen). Dunst erst ab einigen hundert Metern
+  (`HZ.mbHzP`), Staubschleier am Boden nur als Akzent. Bauten tragen Canvas-Texturen aus `tech(0|1)` (Paneelfugen, Nieten,
+  Orange/Anthrazit-Streifen, Kennungen, Schmutz am Fuß; Leinwand unten = Fuß). Drei Ringe aus Tafelbergen (3,3/4,6/6,2 km)
+  bilden den Horizont, `mbAir` stuft sie ab. POST-Parameter der Marsszene in `MB.render`.
 - **Ton (`AU`):** Hauptstück `audio/music.mp3` für alle Halte, `music-earth.mp3` für die Erde, `music-mars.mp3` für den
   Mars (beide Abschnitte). `AU.place(i)` (aus `focus`) blendet auf der nächsten Zählzeit des Hauptstücks mit gleicher
   Leistung über (8 Schläge); das Hauptstück läuft stumm weiter und gibt das Raster, die Zusatzstücke starten auf einem
@@ -108,8 +113,8 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   (sun, mars_wind, base_hum) über `rumble`/`wind`. Knopfklicks: ein Hörer in `AU` (capture). Die Schleifen tragen 0,15 s
   zyklischen Vorlauf (`SFX.loop` = [Anfang, Ende]). `blip` und `ping` bleiben synthetisch. Prüfhaken: `window.__au.st`.
 - **Nachbearbeitung (`POST`, Abschnitt Szene):** `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})`
-  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit 4×MSAA, so groß
-  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 5 Stufen (Desktop 6) ab halber
+  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit MSAA, Desktop 4×, Handy 2×, so groß
+  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 4 Stufen (Desktop 6) ab halber
   Auflösung (Hell-Pass mit weichem Knie, Dual-Filter abwärts und aufwärts), zuletzt in einem Schritt Belichtung,
   Tonemapping, Vignette und Korn. Weltraum (`lin:0`): die Shader liefern Werte fürs Display, nur Lichter über 1 laufen
   weich aus; Sonne, Korona, Stadtlichter, Meeresglanz und der Erdkern liefern bewusst Werte über 1 und leuchten dadurch.
