@@ -45,10 +45,10 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
 | Sprache | `LANG` (aus `?lang=`, sonst letzte Wahl, sonst Browsersprache; unbekannt → Englisch), `TR` (Übersetzungen, Schlüssel ist der deutsche Text), `tr`, `fill`, `setLang` |
 | Daten | `BODIES` (Index 0 Übersicht, 1 Sonne, 2 Merkur, 3 Venus, 4 Erde, 5 Mars, 6 Asteroidengürtel/Vesta, 7 Jupiter, 8 Saturn, 9 Uranus, 10 Neptun), `VOICE_DE`/`VOICE_EN`/`VOICE_PL` (Dauer und Zeitmarken je Clip), `VOICE` (die der gewählten Sprache) |
 | DOM | Elemente, Übersetzen der festen Texte (`data-t`), Sprachwahl oben rechts, Leiste, Dialog „Quellen“ (`window.SITE` liefert Impressum und Datenschutz) |
-| Ton | `AU`: Web Audio, ein Musikstück als Schleife (`MUSIC`), Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme |
+| Ton | `AU`: Web Audio, drei Musikstücke als Schleife (`MUSIC`, `TRACKS`), Sprecher-Clips, Effekte als Samples (`SFX`), Absenken von Musik und Effekten unter der Stimme |
 | Oberflächen | `SURF`: prozedurale Texturen, auf der Grafikkarte gebacken |
 | Bahnmechanik | Kepler-Bahnen aus Bahnelementen für das angezeigte Datum |
-| Shader, Szene | Planeten, Ringe, Sterne, Bahnen, Erde mit Wolken und Schnitt |
+| Shader, Szene | Planeten, Ringe, Sterne, Milchstraße, Bahnen, Erde mit Wolken und Schnitt, Sonne mit Korona (`SUN_FS`, `CORONA_FS`); `POST`: Nachbearbeitung |
 | Mars-Basis | `MB`: eigene Szene auf der Oberfläche, Einheit Meter |
 | Zustand | Auflösungsregler `PR`/`govern`, `measure`, `desired`, `focus`, `setStage`, `narrate` |
 | Eingaben | Zeiger, Tastatur (Leertaste, Pfeile, F, M) |
@@ -85,8 +85,32 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   als Funktionen `(t, dt, clk)` in `anim[]`: Landefähre (zum Stichwort `pad`), Tankwagen, zwei Rover,
   Hubschrauber, laufende Astronauten, Bagger, Staubteufel. Staub und Dampf sind zustandslose Teilchen
   (`Puffs`, `puffs.put(...)`), ihre Zahl ist begrenzt.
-- **Tonemapping:** ACES und sRGB-Ausgabe gelten nur für die Marsszene; `MB.render` setzt sie und stellt sie
-  zurück. Die Weltraumszene rechnet ohne.
+  Bild der Marsszene: `haze(m,dust)` hängt an jedes Material (nach `build` per `traverse`, in `addModel` für die Modelle)
+  die Luftperspektive `mbAir` aus `MB_GLSL` (Dunst mit Höhenabfall, zur Sonne heller, Werte in `HZ`; vor dem Tonemapping,
+  ersetzt den `Fog` der Szene) und optional hellen Staub auf nach oben weisenden Flächen. Der Himmel geht am Horizont in
+  dieselbe Dunstfarbe über. Der Boden (`soilDetail`) legt Muster in Weltkoordinaten über die Textur (dunkle Sandfelder mit
+  Rippeln, Kies, großflächige Helligkeit) und leitet daraus das Relief ab. Der Schattenbereich folgt der Kamera
+  (`fitShadow`, texelgerastert, PCF mit Radius), weiche Flecken (`blob`) verdunkeln den Boden unter Bauten und Fahrzeugen.
+  Lichter, Triebwerksstrahl und Sonnenscheibe sind HDR-Werte über 1.
+- **Ton (`AU`):** Hauptstück `audio/music.mp3` für alle Halte, `music-earth.mp3` für die Erde, `music-mars.mp3` für den
+  Mars (beide Abschnitte). `AU.place(i)` (aus `focus`) blendet auf der nächsten Zählzeit des Hauptstücks mit gleicher
+  Leistung über (8 Schläge); das Hauptstück läuft stumm weiter und gibt das Raster, die Zusatzstücke starten auf einem
+  Schlag und werden nach der Überblendung gestoppt. Effekte laden im Hintergrund nach dem Hauptstück, die Zusatzstücke nur als komprimierte Bytes (`raw`); dekodiert wird erst beim Anflug (`AU.place`), nach dem Zurückblenden wird der Puffer freigegeben (höchstens ein Zusatzstück dekodiert);
+  fehlt etwas, läuft das Hauptstück weiter bzw. der alte synthetische Effekt. Effekte (`audio/sfx/*.mp3`, `tools/audio/sfx.py`):
+  `playS(name,{group,delay,...})` blendet laufende Effekte derselben Gruppe aus. Flug: whoosh (Höhepunkt in der Flugmitte),
+  `AU.flight(dur,'stage'|'dive')` für Kapitelwechsel und Sturzflug, Ankunft: arrive (dazu belt, rings), `AU.boom` = Erdschnitt,
+  Landung: in `say` zum Stichwort `pad` geplant (Motor-Ende der Aufnahme bei 8,0 s = Aufsetzen bei pad + 5,6 s), Schleifen
+  (sun, mars_wind, base_hum) über `rumble`/`wind`. Knopfklicks: ein Hörer in `AU` (capture). Die Schleifen tragen 0,15 s
+  zyklischen Vorlauf (`SFX.loop` = [Anfang, Ende]). `blip` und `ping` bleiben synthetisch. Prüfhaken: `window.__au.st`.
+- **Nachbearbeitung (`POST`, Abschnitt Szene):** `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})`
+  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit 4×MSAA, so groß
+  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 5 Stufen (Desktop 6) ab halber
+  Auflösung (Hell-Pass mit weichem Knie, Dual-Filter abwärts und aufwärts), zuletzt in einem Schritt Belichtung,
+  Tonemapping, Vignette und Korn. Weltraum (`lin:0`): die Shader liefern Werte fürs Display, nur Lichter über 1 laufen
+  weich aus; Sonne, Korona, Stadtlichter, Meeresglanz und der Erdkern liefern bewusst Werte über 1 und leuchten dadurch.
+  Marsoberfläche (`lin:1`): linear, ACES (wie `THREE.ACESFilmicToneMapping`) und sRGB, Belichtung .95. Ohne
+  HalfFloat-Ziele (Probe beim Start) oder unter 0,45 Bildpunkten je CSS-Pixel zeichnet `POST` direkt wie früher;
+  `POST.ok` sagt, ob der volle Weg läuft (Glanzsprites der Sonne werden dann schwächer gesetzt).
 
 ## Fallstricke
 

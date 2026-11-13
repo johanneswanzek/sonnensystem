@@ -91,6 +91,11 @@ def hooks(s, desk):
              "pr: x => { PR.v = [x,x]; PR.hi = [x,x]; PR.lo = x; PR.fix = true; setPR(); }, "
              "get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }};\n"
              "boot().catch")
+    # Ton: lesender Zustand von AU (aktive Musik, Pegel, laufende Effekte) für die Prüfung der Überblendungen
+    ease = "  const ease = s => s*s*(3-2*s);"
+    s = swap(s, ease, ease + "\n  window.__au = {get st(){ const n = ctx ? ctx.currentTime : 0; return {shown, want, live:live.length, liveNames:live.map(h => h.grp), "
+             "lv:{main:lvl('main',n), earth:lvl('earth',n), mars:lvl('mars',n)}, src:{earth:!!tk.earth.src, mars:!!tk.mars.src}, "
+             "buf:{main:!!track, earth:!!tk.earth.buf, mars:!!tk.mars.buf}, raw:{earth:!!tk.earth.raw, mars:!!tk.mars.raw}, smp:Object.keys(smp).length, loops:Object.keys(loops), started, playing}; }};")
     # Marsbasis: freie Kamera (window.__cam = [x,y,z, lx,ly,lz]), feste Erzählzeit (window.__mbt) und feste Uhr (window.__clk)
     a = "cam.lookAt(v1.x+Math.sin(v2.x)*cp*50,v1.y+Math.sin(v2.y)*50,v1.z+Math.cos(v2.x)*cp*50);"
     s = swap(s, a, a + " if (window.__cam) { const c = window.__cam; cam.position.set(c[0],c[1],c[2]); cam.lookAt(c[3],c[4],c[5]); }")
