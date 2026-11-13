@@ -877,6 +877,15 @@ const SURF = {
     col=mix(col,vec3(dot(col,vec3(0.33))),0.18);
     col=mix(col,vec3(0.46,0.40,0.36),smoothstep(1.05,1.45,abs(lat))*0.8);
     return vec4(clamp(col,0.0,1.0),0.5); }`,
+  // Milchstraße als Himmelshintergrund (Breite 0 = galaktische Ebene): diffuses Band, helleres Zentrum, dunkle Staubbahnen
+  milky: `vec4 surf(vec3 p,float lat,float lon){
+    float w=fbm(p*3.0+1.0,5);
+    float band=exp(-pow(lat/(0.11+0.05*w),2.0));
+    float core=exp(-pow(lat/0.28,2.0))*pow(max(cos(lon-3.14159),0.0),3.0);
+    float cl=fbm(p*9.0+w*1.5,7); float dust=smoothstep(0.48,0.64,fbm(p*6.0+vec3(3.0,w,1.0),6))*exp(-pow(lat/0.07,2.0));
+    float I=(band*smoothstep(0.25,0.85,cl)*1.2+core*0.9*(0.5+cl))*(1.0-0.85*dust);
+    vec3 col=mix(vec3(0.62,0.70,0.95),vec3(1.0,0.86,0.68),clamp(core*1.4+0.2*cl,0.0,1.0))*I;
+    return vec4(col,1.0); }`,
   // Marsboden aus der Nähe: Staub, dunklere Flecken, Kiesel
   ground: `vec4 surf2(vec2 uv){
     vec3 p=vec3(uv*7.0,1.7);
@@ -984,11 +993,12 @@ function vnoise(x,y,z){
   return y1+(y2-y1)*w;
 }
 function ringTex(){
-  const w = 2048, c = document.createElement('canvas'); c.width = w; c.height = 4;
+  const w = 4096, c = document.createElement('canvas'); c.width = w; c.height = 4;
   const ctx = c.getContext('2d'), img = ctx.createImageData(w,4), d = img.data, c1 = [168,146,106], c2r = [236,224,196];
   for (let x = 0; x < w; x++) {
-    const r = x/(w-1), n = vnoise(r*70,1.5,2.5)*.5+vnoise(r*260,4.5,.5)*.3+vnoise(r*900,7.5,3.5)*.2;
+    const r = x/(w-1), n = vnoise(r*70,1.5,2.5)*.45+vnoise(r*260,4.5,.5)*.27+vnoise(r*900,7.5,3.5)*.16+vnoise(r*2800,2.5,9.5)*.12;
     let a = .42+.58*n;
+    if (r > .3 && r < .6) a = Math.min(1,a*1.25);                 // dichter, heller B-Ring
     if (r < .22) a *= .25+r*1.5;                              // schwacher C-Ring
     a *= 1-.94*ss(.6,.615,r)*(1-ss(.66,.675,r));             // Cassinische Teilung
     a *= 1-.7*ss(.9,.905,r)*(1-ss(.915,.92,r));              // Encke-Lücke
@@ -1082,7 +1092,7 @@ void main(){
     }
   }
 #ifdef EARTH
-  float ocean=texture2D(aux,vUv).g; vec3 night=max(texture2D(nmap,vUv).rgb-0.05,0.0)*1.8; vec3 base=tx.rgb*1.25;
+  float ocean=texture2D(aux,vUv).g; vec3 night=max(texture2D(nmap,vUv).rgb-0.05,0.0)*vec3(3.4,3.0,2.5); vec3 base=tx.rgb*1.25;
   // Schatten der Wolkendecke: die Wolke, die diesen Punkt verdeckt, liegt ein Stück in Richtung Sonne
   vec2 cuv=vec2(vUv.x+cloud.x,vUv.y)+vec2(dot(L,T)/max(cl,0.2),dot(L,B))*0.006;
   sh*=1.0-0.5*texture2D(aux,cuv).b*cloud.y;
@@ -1092,10 +1102,15 @@ void main(){
 #endif
   vec3 col=base*(0.02+1.08*day*relief*sh);
   col*=mix(1.0,0.55+0.45*pow(max(dot(N,V),0.0),0.45),gas);
-  col+=vec3(1.0,0.93,0.78)*pow(max(dot(N,normalize(L+V)),0.0),70.0)*ocean*specK*day*0.6;
-  float rim=pow(1.0-max(dot(N,V),0.0),2.5);
-  vec3 ac=mix(vec3(1.0,0.42,0.18),atmo.rgb,smoothstep(-0.08,0.3,d0));
-  col+=ac*atmo.a*rim*0.7*(0.06+0.94*smoothstep(-0.25,0.35,d0));
+  // Sonnenglanz auf dem Wasser: scharfer heller Kern und breiter Schimmer, zum Rand hin stärker (Fresnel); hell genug für den Bloom
+  float nh=max(dot(N,normalize(L+V)),0.0); float mu=max(dot(N,V),0.0); float fr=0.25+0.75*pow(1.0-mu,4.0);
+  col+=vec3(1.0,0.90,0.74)*(pow(nh,160.0)*1.1+pow(nh,22.0)*0.10)*fr*ocean*specK*day;
+  // Atmosphäre: Streulicht wächst mit dem Weg durch die Lufthülle; am Terminator rötlich, auf der Nachtseite fast nichts
+  float path=1.0-mu; float rim=pow(path,2.6)+0.10*path;
+  float sunLit=smoothstep(-0.22,0.35,d0);
+  vec3 ac=mix(vec3(1.0,0.36,0.12),atmo.rgb,smoothstep(-0.05,0.32,d0));
+  col=mix(col,col*(1.0-0.35*atmo.a),rim*sunLit);
+  col+=ac*atmo.a*rim*0.85*(0.03+0.97*sunLit);
   col+=night*nightK*(1.0-smoothstep(-0.14,0.06,d0));
   gl_FragColor=vec4(col,1.0);
 }`;
@@ -1110,7 +1125,11 @@ void main(){
 #else
   float a=texture2D(map,vUv).a;
 #endif
-  gl_FragColor=vec4(c*(0.03+0.97*day),a*0.95*op); }`;
+  // dichte Wolken heller, dünne Schleier etwas grauer; zum Rand hin flacher Blick, also dichter
+  float mu=max(dot(N,normalize(cameraPosition-vW)),0.0);
+  c*=0.78+0.32*smoothstep(0.2,0.9,a);
+  a=clamp(a*(1.0+0.6*pow(1.0-mu,3.0)),0.0,1.0);
+  gl_FragColor=vec4(c*(0.03+1.0*day),a*0.95*op); }`;
 // Schnittfläche durch die Erde: Schichten nach ihrem Radius, selbstleuchtend, mit strömender Konvektion.
 // Grenzen als Anteil des Erdradius: innerer Kern 0,19 · äußerer Kern 0,545 · unterer Mantel 0,895 · Kruste ab 0,975 (überhöht)
 const LAYER_FS = `
@@ -1135,6 +1154,9 @@ void main(){
   col*=0.5+0.5*smoothstep(0.0,0.007,bl);
   float L=lit.x*(1.0-step(0.19,r))+lit.y*step(0.19,r)*(1.0-step(0.545,r))+lit.z*step(0.545,r)*(1.0-step(0.975,r))+lit.w*step(0.975,r);
   col*=0.3+0.8*L;
+  // Kern glüht über den Bloom: innen am hellsten, Mantel nur schwach
+  float heat=1.0-smoothstep(0.17,0.62,r)*0.75-smoothstep(0.85,0.92,r)*0.2;
+  col*=1.0+2.2*L*heat*heat;
   gl_FragColor=vec4(col,1.0);
 }`;
 // Leuchtender Saum: Rückseite einer etwas größeren Kugel, hell am Planetenrand, nach außen auslaufend
@@ -1145,34 +1167,83 @@ void main(){ vec3 N=normalize(vN); vec3 V=normalize(cameraPosition-vW); vec3 L=n
   float f=pow(clamp(-dot(N,V)/edge,0.0,1.0),2.6);
   float lit=mix(0.05+0.95*smoothstep(-0.35,0.3,dot(N,L)),1.0,self);
   gl_FragColor=vec4(color*f*k*lit,1.0); }`;
-// Sonnenoberfläche: fließende Granulation aus 3D-Rauschen, Randverdunkelung
-const SUN_FS = `
-uniform float time; varying vec3 vP; varying vec3 vN; varying vec3 vW;
-float h(vec3 p){ return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
+// Sonnenoberfläche (HDR, leuchtet über den Bloom): Granulation als fließende Zellen mit dunklen Zwischenräumen, Supergranulation,
+// Fleckengruppen mit Umbra und Penumbra in den Aktivitätsgürteln, Fackeln am Rand, Randverdunkelung nach dem Polynom der Sonnenphysik
+const SUN_NOISE = `
+float h(vec3 p){ p=fract(p*0.1031); p+=dot(p,p.zyx+31.32); return fract((p.x+p.y)*p.z); }
+vec3 h3(vec3 p){ p=fract(p*vec3(0.1031,0.1030,0.0973)); p+=dot(p,p.yxz+33.33); return fract((p.xxy+p.yxx)*p.zyx); }
 float n3(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
   return mix(mix(mix(h(i),h(i+vec3(1.0,0.0,0.0)),f.x),mix(h(i+vec3(0.0,1.0,0.0)),h(i+vec3(1.0,1.0,0.0)),f.x),f.y),
              mix(mix(h(i+vec3(0.0,0.0,1.0)),h(i+vec3(1.0,0.0,1.0)),f.x),mix(h(i+vec3(0.0,1.0,1.0)),h(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z); }
-float fbm(vec3 p){ float a=0.5; float s=0.0; for(int i=0;i<6;i++){ s+=a*n3(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s; }
+float fbm(vec3 p){ float a=0.5; float s=0.0; for(int i=0;i<5;i++){ s+=a*n3(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s/0.97; }`;
+const SUN_FS = `
+uniform float time; varying vec3 vP; varying vec3 vN; varying vec3 vW;
+` + SUN_NOISE + `
+// Abstand zum nächsten und zweitnächsten Zellmittelpunkt; die Mittelpunkte wandern langsam
+vec2 cells(vec3 p,float t){ vec3 i=floor(p); vec3 f=fract(p); float d1=8.0; float d2=8.0;
+  for(int x=-1;x<=1;x++) for(int y=-1;y<=1;y++) for(int z=-1;z<=1;z++){
+    vec3 g=vec3(float(x),float(y),float(z)); vec3 o=h3(i+g); o=0.5+0.42*sin(t+6.2831*o);
+    vec3 r=g+o-f; float d=dot(r,r); if(d<d1){ d2=d1; d1=d; } else if(d<d2) d2=d; }
+  return sqrt(vec2(d1,d2)); }
 void main(){
-  vec3 p=normalize(vP); float t=time*0.06;
-  float a=fbm(p*2.2+vec3(0.0,t,0.0));
-  float b=fbm(p*6.0+vec3(a*2.0)+vec3(t*1.3,0.0,-t));
-  float g=fbm(p*22.0-vec3(0.0,t*2.5,t));
-  float v=b*0.7+g*0.45;
-  vec3 col=mix(vec3(0.80,0.20,0.02),vec3(1.0,0.60,0.10),smoothstep(0.35,0.58,v));
-  col=mix(col,vec3(1.0,0.93,0.66),smoothstep(0.55,0.80,v));
-  col=mix(col,vec3(0.35,0.06,0.0),smoothstep(0.30,0.22,a)*0.75);
-  vec3 N=normalize(vN); vec3 V=normalize(cameraPosition-vW); float mu=max(dot(N,V),0.0);
-  col*=0.5+0.62*pow(mu,0.4);
-  col+=vec3(1.0,0.45,0.12)*pow(1.0-mu,3.0)*0.55;
-  gl_FragColor=vec4(col,1.0);
+  vec3 p=normalize(vP); float t=time;
+  vec3 wq=vec3(fbm(p*5.0+vec3(0.0,t*0.015,0.0)),fbm(p*5.0+vec3(5.2,1.3,-t*0.015)),fbm(p*5.0+vec3(2.8,7.1,t*0.01)))-0.5;
+  vec2 c=cells(p*20.0+wq*2.2,t*0.35);
+  float gran=smoothstep(0.0,0.42,c.y-c.x);                       // helle Zellen, dunkle Fugen
+  float sup=fbm(p*3.2+vec3(t*0.004));
+  float fine=n3(p*90.0+vec3(t*0.05));
+  float lat=abs(p.y);
+  float belt=smoothstep(0.06,0.16,lat)*(1.0-smoothstep(0.42,0.58,lat));
+  float sn=fbm(p*vec3(5.5,7.5,5.5)+vec3(11.0,0.0,3.0)+wq*0.4);
+  float pen=smoothstep(0.69,0.73,sn)*belt; float um=smoothstep(0.745,0.765,sn)*belt;
+  vec3 N=normalize(vN); vec3 V=normalize(cameraPosition-vW); float mu=clamp(dot(N,V),0.0,1.0);
+  float mot=fbm(p*9.0+wq+vec3(0.0,0.0,t*0.008));
+  float I=0.78+0.30*gran+0.22*(sup-0.5)+0.16*(mot-0.5)+0.05*(fine-0.5);
+  float fil=0.6+0.4*n3(p*vec3(160.0,160.0,160.0)+wq*8.0);
+  I*=mix(1.0,0.50*fil,pen); I*=mix(1.0,0.35,um);
+  I+=0.35*smoothstep(0.55,0.72,fbm(p*12.0+vec3(3.0,t*0.01,0.0)))*belt*pow(1.0-mu,1.5)*(1.0-pen);   // Fackeln, nur am Rand sichtbar
+  float ld=0.30+0.93*mu-0.23*mu*mu;                                // Randverdunkelung
+  vec3 hot=vec3(1.0,0.78,0.48); vec3 limb=vec3(1.0,0.40,0.09);
+  vec3 col=mix(limb,hot,smoothstep(0.0,0.85,mu))*I*ld;
+  col=mix(col,col*vec3(1.0,0.78,0.6),(1.0-gran)*0.35);           // Fugen etwas kühler
+  gl_FragColor=vec4(col*1.55,1.0);
+}`;
+// Korona, Chromosphäre und Protuberanzen: eine Fläche um die Sonne, die stets zur Kamera zeigt (additiv, HDR)
+const CORONA_VS = `varying vec2 vQ; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
+const CORONA_FS = `
+uniform float time; uniform float R; uniform float k; varying vec2 vQ;
+` + SUN_NOISE + `
+void main(){
+  float r=length(vQ)/R; if(r<0.985 || r>6.0) discard;
+  vec2 d=vQ/(r*R); float hgt=r-1.0; float t=time;
+  // Strahlen der Korona: langsam veränderliche Helligkeit je Richtung, nach außen gekämmt
+  float st=fbm(vec3(d*2.2,t*0.006)); float st2=fbm(vec3(d*7.0,1.7+t*0.01));
+  float rays=0.35+1.3*pow(st,2.2)+0.45*pow(st2,3.0);
+  float cor=0.55*pow(r,-9.0)+0.22*rays*pow(r,-3.2)*(1.0-smoothstep(3.0,6.0,r));
+  vec3 col=vec3(1.0,0.82,0.58)*cor;
+  col+=vec3(1.0,0.36,0.12)*exp(-hgt*95.0)*1.6;                      // Chromosphäre: dünner roter Saum
+  // Protuberanzen: Bögen und Fontänen über dem Rand, nur an einigen Stellen, langsam aufsteigend
+  if(hgt<0.22){
+    float site=smoothstep(0.58,0.72,fbm(vec3(d*1.6,4.0+t*0.002)));
+    if(site>0.0){
+      float pr=fbm(vec3(d*9.0,hgt*7.0-t*0.03)+vec3(0.0,0.0,n3(vec3(d*4.0,t*0.01))*1.5));
+      float top=0.05+0.16*n3(vec3(d*3.0,9.0+t*0.004));
+      float pm=smoothstep(0.55,0.68,pr)*(1.0-smoothstep(top*0.5,top,hgt))*site;
+      col+=vec3(1.0,0.34,0.14)*pm*2.4;
+    }
+  }
+  gl_FragColor=vec4(col*k,1.0);
 }`;
 // Saturnringe mit Schatten des Planeten
 const RING_FS = `
-uniform sampler2D map; uniform vec3 center; uniform float R; varying vec2 vUv; varying vec3 vW;
+uniform sampler2D map; uniform vec3 center; uniform float R; varying vec2 vUv; varying vec3 vW; varying vec3 vN;
 void main(){ vec4 t=texture2D(map,vUv); vec3 L=normalize(-vW); vec3 oc=center-vW; float tca=dot(oc,L); float sh=1.0;
-  if(tca>0.0){ float d=sqrt(max(dot(oc,oc)-tca*tca,0.0)); sh=0.08+0.92*smoothstep(R*0.96,R*1.04,d); }
-  gl_FragColor=vec4(t.rgb*sh,t.a); }`;
+  if(tca>0.0){ float d=sqrt(max(dot(oc,oc)-tca*tca,0.0)); sh=0.06+0.94*smoothstep(R*0.97,R*1.03,d); }
+  // Schaut man auf die unbeleuchtete Seite, scheinen nur die dünnen Teile durch; die dichten B-Ringe bleiben dunkel
+  vec3 N=normalize(vN); vec3 V=normalize(cameraPosition-vW); float lv=dot(N,L)*dot(N,V);
+  float back=1.0-smoothstep(-0.02,0.02,lv);
+  vec3 col=t.rgb*mix(1.0,0.12+0.9*(1.0-t.a),back);
+  gl_FragColor=vec4(col*sh,t.a); }`;
 // Bahnlinie mit Leuchtspur hinter dem Körper
 const ORBIT_VS = `attribute float u; varying float vU; varying float vD; void main(){ vU=u; vec4 mv=modelViewMatrix*vec4(position,1.0); vD=-mv.z; gl_Position=projectionMatrix*mv; }`;
 const ORBIT_FS = `uniform float head; uniform vec3 color; uniform float base; uniform float trail; uniform float gap; uniform float nearF; varying float vU; varying float vD;
@@ -1186,9 +1257,114 @@ const camera = new THREE.PerspectiveCamera(40,1,.05,5000);
 scene.add(new THREE.AmbientLight(0xffffff,.05));
 scene.add(new THREE.PointLight(0xfff3dc,1.15,0,0));
 const add = THREE.AdditiveBlending;
-let sunMat, rays = [], belt, kuiper, pulse, halleyTail, moonTex;
+let sunMat, rays = [], belt, kuiper, pulse, halleyTail, moonTex, milkyTex = null;
 const blackTex = new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1,THREE.RGBAFormat); blackTex.needsUpdate = true;
 const dotTex = radialTex([[0,'rgba(255,255,255,1)'],[.25,'rgba(255,255,255,.55)'],[.6,'rgba(255,255,255,.1)'],[1,'rgba(255,255,255,0)']]);
+
+// Nachbearbeitung: Szene in ein HDR-Ziel (HalfFloat, mit MSAA unter WebGL2), Bloom über eine Kette halbierter Stufen
+// (Dual-Filter: Hell-Pass, Abwärts- und Aufwärtsfiltern), dann Tonemapping, sRGB, Vignette und Korn in einem Schritt.
+// lin:0 Weltraum (Werte wie bisher fürs Display gedacht, nur Lichter über 1 laufen weich aus), lin:1 Marsoberfläche (linear, ACES, sRGB).
+// Ohne HalfFloat-Ziele oder bei sehr niedriger Auflösung zeichnet POST direkt wie früher.
+const POST = (() => {
+  const gl = renderer.getContext(), wgl2 = renderer.capabilities.isWebGL2;
+  const VSQ = `varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }`;
+  const mk = (fs,u) => new THREE.ShaderMaterial({uniforms:u, vertexShader:VSQ, fragmentShader:fs, depthTest:false, depthWrite:false, blending:THREE.NoBlending});
+  const sc = new THREE.Scene(), cm = new THREE.Camera(), quad = new THREE.Mesh(new THREE.PlaneGeometry(2,2)); quad.frustumCulled = false; sc.add(quad);
+  // Hell-Pass mit weichem Knie, 4 Abtastungen (halbe Auflösung)
+  const pre = mk(`uniform sampler2D t; uniform vec2 px; uniform vec3 thr; varying vec2 vUv;
+    vec3 q(vec2 o){ vec3 c=texture2D(t,vUv+o*px).rgb; float b=max(c.r,max(c.g,c.b)); float s=clamp(b-thr.x+thr.y,0.0,2.0*thr.y); s=s*s/(4.0*thr.y+1e-4);
+      return c*max(s,b-thr.x)/max(b,1e-4); }
+    void main(){ vec3 c=q(vec2(-0.5,-0.5))+q(vec2(0.5,-0.5))+q(vec2(-0.5,0.5))+q(vec2(0.5,0.5)); gl_FragColor=vec4(min(c*0.25*thr.z,vec3(60.0)),1.0); }`,
+    {t:{value:null}, px:{value:new THREE.Vector2()}, thr:{value:new THREE.Vector3(1,.5,1)}});
+  const down = mk(`uniform sampler2D t; uniform vec2 px; varying vec2 vUv;
+    void main(){ vec3 c=texture2D(t,vUv).rgb*4.0+texture2D(t,vUv+px*vec2(-1.0,-1.0)).rgb+texture2D(t,vUv+px*vec2(1.0,-1.0)).rgb
+      +texture2D(t,vUv+px*vec2(-1.0,1.0)).rgb+texture2D(t,vUv+px).rgb; gl_FragColor=vec4(c/8.0,1.0); }`,
+    {t:{value:null}, px:{value:new THREE.Vector2()}});
+  const up = mk(`uniform sampler2D t; uniform sampler2D b; uniform vec2 px; uniform float k; varying vec2 vUv;
+    void main(){ vec3 c=(texture2D(t,vUv+px*vec2(-2.0,0.0)).rgb+texture2D(t,vUv+px*vec2(2.0,0.0)).rgb+texture2D(t,vUv+px*vec2(0.0,-2.0)).rgb+texture2D(t,vUv+px*vec2(0.0,2.0)).rgb
+      +2.0*(texture2D(t,vUv+px*vec2(-1.0,-1.0)).rgb+texture2D(t,vUv+px*vec2(1.0,-1.0)).rgb+texture2D(t,vUv+px*vec2(-1.0,1.0)).rgb+texture2D(t,vUv+px).rgb))/12.0;
+      gl_FragColor=vec4(texture2D(b,vUv).rgb+c*k,1.0); }`,
+    {t:{value:null}, b:{value:null}, px:{value:new THREE.Vector2()}, k:{value:.85}});
+  // Zusammensetzen: Bloom dazu, Belichtung, Tonemapping, sRGB, Vignette, Korn gegen Farbstufen
+  const fin = mk(`uniform sampler2D t; uniform sampler2D bl; uniform float bk; uniform float ex; uniform float lin; uniform float vig; uniform float grn; uniform float seed; uniform vec2 asp; varying vec2 vUv;
+    vec3 rrt(vec3 v){ vec3 a=v*(v+0.0245786)-0.000090537; vec3 b=v*(0.983729*v+0.4329510)+0.238081; return a/b; }
+    vec3 aces(vec3 c){ const mat3 mi=mat3(vec3(0.59719,0.07600,0.02840),vec3(0.35458,0.90834,0.13383),vec3(0.04823,0.01566,0.83777));
+      const mat3 mo=mat3(vec3(1.60475,-0.10208,-0.00327),vec3(-0.53108,1.10813,-0.07276),vec3(-0.07367,-0.00605,1.07602));
+      c*=1.0/0.6; return clamp(mo*rrt(mi*c),0.0,1.0); }
+    vec3 srgb(vec3 c){ return mix(c*12.92,1.055*pow(c,vec3(0.41666))-0.055,step(0.0031308,c)); }
+    float sh(float x){ const float k=0.72; return x<k ? x : k+(1.0-k)*(1.0-exp(-(x-k)/(1.0-k))); }
+    float hh(vec2 p){ vec3 q=fract(vec3(p.xyx)*0.1031); q+=dot(q,q.yzx+33.33); return fract((q.x+q.y)*q.z); }
+    void main(){
+      vec3 c=texture2D(t,vUv).rgb+texture2D(bl,vUv).rgb*bk; c*=ex;
+      if(lin>0.5){ c=srgb(aces(c)); }
+      else { float m=max(c.r,max(c.g,c.b)); if(m>0.72){ float s=sh(m); c=mix(c*s/m,vec3(s),smoothstep(1.6,9.0,m)*0.6); } }
+      vec2 d=(vUv-0.5)*asp; c*=1.0-vig*smoothstep(0.2,1.0,dot(d,d)*2.6);
+      float n=hh(gl_FragCoord.xy+seed*vec2(71.3,113.7))+hh(gl_FragCoord.xy*1.37+seed*vec2(19.1,7.3))-1.0;
+      c+=n*grn/255.0;
+      gl_FragColor=vec4(c,1.0); }`,
+    {t:{value:null}, bl:{value:null}, bk:{value:.5}, ex:{value:1}, lin:{value:0}, vig:{value:.22}, grn:{value:1.6}, seed:{value:0}, asp:{value:new THREE.Vector2(1,1)}});
+  const opt = {minFilter:THREE.LinearFilter, magFilter:THREE.LinearFilter, format:THREE.RGBAFormat, type:THREE.HalfFloatType, depthBuffer:false, stencilBuffer:false};
+  let ok = false, main = null, bd = [], bu = [], w = 0, h = 0, frameN = 0;
+  // Probe: lässt sich in ein HalfFloat-Ziel zeichnen?
+  try {
+    if (wgl2 ? renderer.extensions.has('EXT_color_buffer_float') : (renderer.extensions.has('OES_texture_half_float') && renderer.extensions.has('OES_texture_half_float_linear') && renderer.extensions.has('EXT_color_buffer_half_float'))) {
+      const t = new THREE.WebGLRenderTarget(4,4,opt);
+      renderer.setRenderTarget(t); ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE; renderer.setRenderTarget(null); t.dispose();
+    }
+  } catch (e) { ok = false; }
+  const _v = new THREE.Vector2();
+  function size(){
+    renderer.getDrawingBufferSize(_v); const nw = Math.max(1,_v.x|0), nh = Math.max(1,_v.y|0);
+    if (nw === w && nh === h && main) return;
+    w = nw; h = nh;
+    if (main) main.dispose(); bd.forEach(t => t.dispose()); bu.forEach(t => t.dispose()); bd = []; bu = [];
+    const o = Object.assign({}, opt, {depthBuffer:true});
+    if (wgl2 && THREE.WebGLMultisampleRenderTarget) { main = new THREE.WebGLMultisampleRenderTarget(w,h,o); main.samples = 4; }
+    else main = new THREE.WebGLRenderTarget(w,h,o);
+    // Bloom ab halber Auflösung, Stufen bis etwa 16 Bildpunkte
+    const n = DESKTOP ? 6 : 5;
+    let lw = w, lh = h;
+    for (let i = 0; i < n; i++) { lw = Math.max(1,lw >> 1); lh = Math.max(1,lh >> 1); if (i > 2 && Math.min(lw,lh) < 12) break; bd.push(new THREE.WebGLRenderTarget(lw,lh,opt)); bu.push(new THREE.WebGLRenderTarget(lw,lh,opt)); }
+  }
+  function pass(m,target){ quad.material = m; renderer.setRenderTarget(target); renderer.render(sc,cm); }
+  const P = {
+    get ok(){ return ok; },
+    // o: {lin, exposure, bloom (Stärke), thr (Schwelle), knee, vig, scatter}
+    render(scene_,cam_,o){
+      o = o || {};
+      const lin = o.lin ? 1 : 0;
+      if (!ok || renderer.getPixelRatio() < .45) {
+        const tm = renderer.toneMapping, oe = renderer.outputEncoding;
+        if (lin) { renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = o.exposure || 1; renderer.outputEncoding = THREE.sRGBEncoding; }
+        renderer.setRenderTarget(null); renderer.render(scene_,cam_);
+        renderer.toneMapping = tm; renderer.outputEncoding = oe;
+        return;
+      }
+      size();
+      const tm = renderer.toneMapping, oe = renderer.outputEncoding;
+      renderer.toneMapping = THREE.NoToneMapping; renderer.outputEncoding = THREE.LinearEncoding;
+      renderer.setRenderTarget(main); renderer.render(scene_,cam_);
+      const bk = o.bloom == null ? .5 : o.bloom;
+      if (bk > 0 && bd.length) {
+        pre.uniforms.t.value = main.texture; pre.uniforms.px.value.set(1/w,1/h); pre.uniforms.thr.value.set(o.thr == null ? 1 : o.thr, o.knee == null ? .5 : o.knee, o.pre == null ? 1 : o.pre);
+        pass(pre,bd[0]);
+        for (let i = 1; i < bd.length; i++) { down.uniforms.t.value = bd[i-1].texture; down.uniforms.px.value.set(1/bd[i-1].width,1/bd[i-1].height); pass(down,bd[i]); }
+        let src = bd[bd.length-1];
+        for (let i = bd.length-2; i >= 0; i--) {
+          up.uniforms.t.value = src.texture; up.uniforms.b.value = bd[i].texture; up.uniforms.px.value.set(.5/src.width,.5/src.height); up.uniforms.k.value = o.scatter == null ? .85 : o.scatter;
+          pass(up,bu[i]); src = bu[i];
+        }
+        fin.uniforms.bl.value = src.texture;
+      } else fin.uniforms.bl.value = blackTex;
+      const u = fin.uniforms;
+      u.t.value = main.texture; u.bk.value = bk/Math.max(1,bd.length*.5); u.ex.value = o.exposure == null ? 1 : o.exposure; u.lin.value = lin;
+      u.vig.value = o.vig == null ? .22 : o.vig; u.seed.value = (frameN++ % 64); u.asp.value.set(w/Math.max(w,h),h/Math.max(w,h));
+      pass(fin,null);
+      renderer.toneMapping = tm; renderer.outputEncoding = oe;
+    }
+  };
+  return P;
+})();
 
 function points(n,fn,size,color,opacity){
   const p = new Float32Array(n*3), c = new Float32Array(n*3), o = [0,0,0,1,1,1];
@@ -1228,16 +1404,23 @@ function buildBackdrop(){
   // Sterne, dazu das Band der Milchstraße (rund 60° gegen die Ekliptik geneigt)
   scene.add(points(2400,(i,o) => {
     const u = hash(i,1,7)*2-1, a = hash(i,2,7)*TAU, s = Math.sqrt(1-u*u), k = .2+.8*Math.pow(hash(i,3,7),3), w = hash(i,4,7);
-    o[0] = 2000*s*Math.cos(a); o[1] = 2000*u; o[2] = 2000*s*Math.sin(a); o[3] = k*(.85+.15*w); o[4] = k*.9; o[5] = k*(1-.15*w);
+    // Farbe nach Spektralklasse: wenige blauweiße, viele gelbliche und orange Sterne
+    const t = w < .12 ? [.72,.82,1] : w < .3 ? [.9,.94,1] : w < .7 ? [1,.95,.86] : w < .9 ? [1,.85,.66] : [1,.72,.5];
+    o[0] = 2000*s*Math.cos(a); o[1] = 2000*u; o[2] = 2000*s*Math.sin(a); o[3] = k*t[0]; o[4] = k*t[1]; o[5] = k*t[2];
   },1.7));
   const band = points(3600,(i,o) => {
     const a = hash(i,5,9)*TAU, g = (hash(i,6,9)+hash(i,7,9)+hash(i,8,9)-1.5)*.24, s = Math.cos(g), k = .12+.3*hash(i,9,9);
     o[0] = 2000*s*Math.cos(a); o[1] = 2000*Math.sin(g); o[2] = 2000*s*Math.sin(a); o[3] = k; o[4] = k*.95; o[5] = k*1.1;
   },1.2);
   band.rotation.set(60*DEG,0,.5); scene.add(band);
+  if (milkyTex) {
+    const sky = new THREE.Mesh(new THREE.SphereGeometry(1900,64,32), new THREE.MeshBasicMaterial({map:milkyTex, side:THREE.BackSide, blending:add, transparent:true, opacity:.075, depthWrite:false}));
+    sky.rotation.copy(band.rotation); sky.renderOrder = -1; scene.add(sky);
+  }
   scene.add(points(70,(i,o) => {
     const u = hash(i,11,3)*2-1, a = hash(i,12,3)*TAU, s = Math.sqrt(1-u*u), w = hash(i,13,3);
-    o[0] = 2000*s*Math.cos(a); o[1] = 2000*u; o[2] = 2000*s*Math.sin(a); o[3] = .8+.2*w; o[4] = .9; o[5] = 1-.25*w;
+    const k = POST.ok ? 1.5 : 1;                               // die hellsten Sterne strahlen leicht über den Bloom
+    o[0] = 2000*s*Math.cos(a); o[1] = 2000*u; o[2] = 2000*s*Math.sin(a); o[3] = (.8+.2*w)*k; o[4] = .9*k; o[5] = (1-.25*w)*k;
   },2.6));
   // Asteroidengürtel (2,1 bis 3,3 AE) und Kuipergürtel (39 bis 50 AE)
   belt = points(1400,(i,o) => {
@@ -1257,13 +1440,19 @@ function buildSun(b){
   b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,64,48), sunMat);
   b.fitR = b.R;
   scene.add(b.mesh);
-  scene.add(halo(b.R*1.55,b.R,[1,.5,.14],1.15,1));
-  const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex([[0,'rgba(255,214,130,.9)'],[.28,'rgba(255,170,60,.42)'],[.55,'rgba(255,130,30,.12)'],[1,'rgba(255,110,20,0)']]), blending:add, depthWrite:false, transparent:true}));
+  scene.add(halo(b.R*1.55,b.R,[1,.5,.14],.5,1));
+  // Korona mit Protuberanzen; sie leuchtet über den Bloom, deshalb sind Schein und Strahlen nur noch ein Hauch
+  b.corona = new THREE.Mesh(new THREE.PlaneGeometry(b.R*12,b.R*12), new THREE.ShaderMaterial({uniforms:{time:{value:0}, R:{value:b.R}, k:{value:POST.ok ? 1 : .6}},
+    vertexShader:CORONA_VS, fragmentShader:CORONA_FS, blending:add, transparent:true, depthWrite:false}));
+  b.corona.frustumCulled = false; b.corona.onBeforeRender = () => { b.corona.material.uniforms.time.value = sunMat.uniforms.time.value; };
+  scene.add(b.corona);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex([[0,'rgba(255,214,130,.9)'],[.28,'rgba(255,170,60,.42)'],[.55,'rgba(255,130,30,.12)'],[1,'rgba(255,110,20,0)']]), blending:add, depthWrite:false, transparent:true, opacity:POST.ok ? .35 : 1}));
   glow.scale.set(13,13,1); scene.add(glow);
-  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = 1; scene.add(wide); rays.push(wide);
+  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = POST.ok ? .4 : 1; scene.add(wide); rays.push(wide);
   [1,2].forEach(k => {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({map:raysTex(k), blending:add, depthWrite:false, transparent:true, opacity:k === 1 ? .5 : .35}));
-    s.scale.set(30+k*5,30+k*5,1); s.userData.op = k === 1 ? .5 : .35; scene.add(s); rays.push(s);
+    const op = (k === 1 ? .5 : .35)*(POST.ok ? .45 : 1);
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({map:raysTex(k), blending:add, depthWrite:false, transparent:true, opacity:op}));
+    s.scale.set(30+k*5,30+k*5,1); s.userData.op = op; scene.add(s); rays.push(s);
   });
 }
 
@@ -2051,10 +2240,7 @@ const MB = (function(){
     },
     render(shiftY){
       cam.aspect = W/H; cam.fov = 46-11*ss(1,1.7,W/H); cam.setViewOffset(W,H,0,shiftY,W,H);
-      const tm = renderer.toneMapping, oe = renderer.outputEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .95; renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.render(sc,cam);
-      renderer.toneMapping = tm; renderer.outputEncoding = oe;
+      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.35, thr:1.6, knee:.8, vig:.18});
     },
     project(v,out){ v2.copy(v).project(cam); out.x = (v2.x*.5+.5)*W; out.y = (-v2.y*.5+.5)*H; out.z = v2.z; return out; }
   };
@@ -2917,7 +3103,7 @@ function frame(now){
   shiftCur += (shiftTarget-shiftCur)*Math.min(1,dt*4);
   shiftX += (shiftXT-shiftX)*Math.min(1,dt*3);
   if (surfOn) { MB.update(mbT,dt,clock,reduced); MB.render(shiftCur); }
-  else { camera.setViewOffset(W,H,shiftX,shiftCur,W,H); renderer.render(scene,camera); }
+  else { camera.setViewOffset(W,H,shiftX,shiftCur,W,H); POST.render(scene,camera,{exposure:1, bloom:.9, thr:1.05, knee:.45, vig:.24}); }
   drawHUD(dt);
 }
 
@@ -2948,6 +3134,7 @@ async function boot(){
   const real = maps[0] && maps[1] && maps[2] ? maps : null;
   loader.textContent = tr('Oberflächen werden berechnet …');
   moonTex = await bake(512,SURF.moon);
+  try { milkyTex = await bake(DESKTOP ? 2048 : 1024,SURF.milky); } catch (e) { milkyTex = null; }
   for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
     if (b.minor) continue;

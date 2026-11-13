@@ -48,7 +48,7 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
 | Ton | `AU`: Web Audio, drei Musikstücke als Schleife (`MUSIC`, `TRACKS`), Sprecher-Clips, Effekte als Samples (`SFX`), Absenken von Musik und Effekten unter der Stimme |
 | Oberflächen | `SURF`: prozedurale Texturen, auf der Grafikkarte gebacken |
 | Bahnmechanik | Kepler-Bahnen aus Bahnelementen für das angezeigte Datum |
-| Shader, Szene | Planeten, Ringe, Sterne, Bahnen, Erde mit Wolken und Schnitt |
+| Shader, Szene | Planeten, Ringe, Sterne, Milchstraße, Bahnen, Erde mit Wolken und Schnitt, Sonne mit Korona (`SUN_FS`, `CORONA_FS`); `POST`: Nachbearbeitung |
 | Mars-Basis | `MB`: eigene Szene auf der Oberfläche, Einheit Meter |
 | Zustand | Auflösungsregler `PR`/`govern`, `measure`, `desired`, `focus`, `setStage`, `narrate` |
 | Eingaben | Zeiger, Tastatur (Leertaste, Pfeile, F, M) |
@@ -102,8 +102,15 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   Landung: in `say` zum Stichwort `pad` geplant (Motor-Ende der Aufnahme bei 8,0 s = Aufsetzen bei pad + 5,6 s), Schleifen
   (sun, mars_wind, base_hum) über `rumble`/`wind`. Knopfklicks: ein Hörer in `AU` (capture). Die Schleifen tragen 0,15 s
   zyklischen Vorlauf (`SFX.loop` = [Anfang, Ende]). `blip` und `ping` bleiben synthetisch. Prüfhaken: `window.__au.st`.
-- **Tonemapping:** ACES und sRGB-Ausgabe gelten nur für die Marsszene; `MB.render` setzt sie und stellt sie
-  zurück. Die Weltraumszene rechnet ohne.
+- **Nachbearbeitung (`POST`, Abschnitt Szene):** `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})`
+  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit 4×MSAA, so groß
+  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 5 Stufen (Desktop 6) ab halber
+  Auflösung (Hell-Pass mit weichem Knie, Dual-Filter abwärts und aufwärts), zuletzt in einem Schritt Belichtung,
+  Tonemapping, Vignette und Korn. Weltraum (`lin:0`): die Shader liefern Werte fürs Display, nur Lichter über 1 laufen
+  weich aus; Sonne, Korona, Stadtlichter, Meeresglanz und der Erdkern liefern bewusst Werte über 1 und leuchten dadurch.
+  Marsoberfläche (`lin:1`): linear, ACES (wie `THREE.ACESFilmicToneMapping`) und sRGB, Belichtung .95. Ohne
+  HalfFloat-Ziele (Probe beim Start) oder unter 0,45 Bildpunkten je CSS-Pixel zeichnet `POST` direkt wie früher;
+  `POST.ok` sagt, ob der volle Weg läuft (Glanzsprites der Sonne werden dann schwächer gesetzt).
 
 ## Fallstricke
 
