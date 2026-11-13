@@ -1,0 +1,45 @@
+name: Inhalt oder Übersetzung
+description: Ein sachlicher Fehler, ein falscher Text oder eine bessere Übersetzung.
+title: "Inhalt: "
+labels: ["inhalt"]
+body:
+  - type: dropdown
+    id: sprache
+    attributes:
+      label: Sprache
+      options:
+        - Deutsch
+        - Englisch
+        - Polnisch
+        - Neue Sprache vorschlagen
+    validations:
+      required: true
+  - type: dropdown
+    id: art
+    attributes:
+      label: Wo steht der Text?
+      options:
+        - Sichtbarer Text (Beschriftung, Beschreibung)
+        - Sprecher (gesprochener Text)
+        - Zahl oder Fakt
+    validations:
+      required: true
+  - type: input
+    id: stelle
+    attributes:
+      label: Halt und Abschnitt
+      placeholder: z. B. Erde, Abschnitt „Aufbau“
+    validations:
+      required: true
+  - type: textarea
+    id: ist
+    attributes:
+      label: Aktueller Text
+    validations:
+      required: true
+  - type: textarea
+    id: soll
+    attributes:
+      label: Vorschlag, mit Quelle bei Fakten
+    validations:
+      required: true

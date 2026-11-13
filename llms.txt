@@ -1,0 +1,33 @@
+# Sonnensystem – eine Kamerafahrt
+
+> Animierte 3D-Reise durch das Sonnensystem im Browser (three.js r128, WebGL2) mit Sprecher und Musik in Deutsch, Englisch und
+> Polnisch. Statische Seite ohne Server-Code, live unter https://sonnensystem.johannes-wanzek.de/ (GitHub Pages). Dieselbe Quelle
+> wird zusätzlich als claude.ai-Artefakt gebaut. Sprache von Quelltext-Kommentaren und Doku: Deutsch.
+
+## Einstieg
+
+- [AGENTS.md](AGENTS.md): Arbeitsanleitung mit Befehlen, Grundsätzen, „fertig heißt“ und Fallstricken
+- [README.md](README.md): Überblick, Starten, Bauen, Veröffentlichen
+- [CONTRIBUTING.md](CONTRIBUTING.md): Einrichten, Commits, Pull Requests, Umgang mit ElevenLabs-Credits
+
+## Architektur und Entscheidungen
+
+- [docs/adr/README.md](docs/adr/README.md): Index der Entscheidungsprotokolle
+- [docs/adr/0001-three-js-behalten.md](docs/adr/0001-three-js-behalten.md): warum three.js r128 bleibt
+- [docs/adr/0002-es-module-und-vite.md](docs/adr/0002-es-module-und-vite.md): Aufteilung in ES-Module mit Vite
+- [docs/adr/0003-zwei-auslieferungen.md](docs/adr/0003-zwei-auslieferungen.md): Website und claude.ai-Artefakt
+- [docs/adr/0004-mehrsprachigkeit.md](docs/adr/0004-mehrsprachigkeit.md): Sprachen, Übersetzungstabelle, Sprecher
+- [docs/adr/0005-bild-folgt-ton.md](docs/adr/0005-bild-folgt-ton.md): Zeitmarken steuern Einblendungen und Kamerafahrt
+- [docs/adr/0006-tests.md](docs/adr/0006-tests.md): Teststrategie
+- [docs/glossar.md](docs/glossar.md): deutsche Fachbegriffe und Bezeichner im Code
+
+## Medien
+
+- [docs/produktion.md](docs/produktion.md): Entstehung von Sprecher, Musik, Modellen und Karten; Aufbereitung; Lizenzen
+- [public/LIZENZEN.txt](public/LIZENZEN.txt): Quellen und Lizenztexte
+
+## Optional
+
+- [CHANGELOG.md](CHANGELOG.md): Änderungen je Stand
+- [SECURITY.md](SECURITY.md): Sicherheitslücken melden
+- [docs/README.md](docs/README.md): Inhaltsverzeichnis der Doku

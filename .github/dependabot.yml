@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm-abhaengigkeiten:
+        patterns: ["*"]
+    ignore:
+      # three.js bleibt bewusst auf r128 (0.128.0); ein Upgrade ist ein eigener Schritt
+      # mit visueller Abnahme, siehe docs/adr/0001-three-js-behalten.md.
+      - dependency-name: three
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
