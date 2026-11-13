@@ -1,0 +1,20 @@
+{
+  "clips": {
+    "overview": {"d":18.47,"cues":{}},
+    "sun": {"d":13.76,"cues":{}},
+    "mercury": {"d":12.57,"cues":{}},
+    "venus": {"d":15.03,"cues":{}},
+    "earth": {"d":8.8,"cues":{}},
+    "earth_geo": {"d":29.19,"cues":{"water":8.23,"oceans":12.1,"land":18.38,"continents":22.22}},
+    "earth_core": {"d":38.48,"cues":{"open":4.01,"inner":6.57,"outer":14.12,"mantle":22.89,"crust":30.44}},
+    "mars": {"d":18.07,"cues":{}},
+    "mars_base": {"d":75.52,"cues":{"intro":2.06,"hab":7.21,"berm":12.17,"green":17.96,"solar":26.86,"reactor":29.93,"isru":36.39,"pad":46.25,"rover":52.55,"comm":57.74,"end":68.07}},
+    "belt": {"d":30.54,"cues":{"count":3.91,"mass":9.74,"vesta":15.3,"crater":21.48,"jupiter":26.54}},
+    "jupiter": {"d":13.76,"cues":{}},
+    "saturn": {"d":14.37,"cues":{}},
+    "uranus": {"d":12.89,"cues":{}},
+    "neptune": {"d":15.04,"cues":{}},
+    "outro": {"d":8.02,"cues":{}}
+  },
+  "geo": [0.15,1.04,2.14,4.04,4.54,0,0.58,1.54,2.66,4.01,5.13,6.13]
+}

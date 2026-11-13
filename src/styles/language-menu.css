@@ -1,0 +1,17 @@
+/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* Sprachwahl: Knopf mit dem Kürzel der Sprache, darunter klappt die Liste auf */
+.langbox{position:relative;flex:none}
+#lang{font:500 calc(11*var(--u))/1 var(--mono);letter-spacing:.06em}
+.langmenu{
+  position:absolute;right:0;top:calc(46*var(--u));z-index:5;display:flex;flex-direction:column;gap:2px;min-width:calc(124*var(--u));padding:calc(5*var(--u));
+  border:1px solid var(--line);border-radius:calc(14*var(--u));background:#0a0e1a;box-shadow:0 calc(10*var(--u)) calc(30*var(--u)) rgba(0,0,0,.5);
+}
+.langmenu[hidden]{display:none}
+.langmenu button{
+  display:flex;align-items:center;gap:calc(9*var(--u));height:calc(38*var(--u));padding:0 calc(12*var(--u)) 0 calc(10*var(--u));border:0;border-radius:calc(9*var(--u));background:none;
+  font:500 calc(13*var(--u))/1 var(--body);color:var(--dim);cursor:pointer;white-space:nowrap;text-align:left;
+}
+.langmenu button::before{content:"";width:calc(6*var(--u));height:calc(6*var(--u));border-radius:50%;background:transparent;flex:none}
+.langmenu button[aria-checked="true"]{color:var(--ink)}
+.langmenu button[aria-checked="true"]::before{background:var(--sun)}
+@media (hover:hover){.langmenu button:hover{background:rgba(144,151,171,.14);color:var(--ink)}}

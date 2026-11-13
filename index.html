@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- Kopfangaben (Titel, Beschreibung, canonical, hreflang, og:*, Favicon, Schriften) setzt vite.config.js aus site.json -->
+</head>
+<body>
+<noscript><p style="margin:24px;font:16px system-ui;color:#ece8dc">Diese Seite braucht JavaScript und WebGL.</p></noscript>
+<div id="app" lang="de">
+  <canvas id="stage" aria-label="3D-Ansicht des Sonnensystems mit Umlaufbahnen"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div id="labels" aria-hidden="true"></div>
+  <p id="loader" data-t>Karten werden geladen …</p>
+  <p class="toast" id="toast" role="status"></p>
+
+  <div class="hud">
+    <div class="clock">
+      <p class="eyebrow" data-t>Simuliertes Datum</p>
+      <p id="date">–</p>
+      <div class="stepper" role="group" aria-label="Zeitraffer">
+        <button id="slower" type="button" aria-label="Langsamer">−</button>
+        <span id="speed">20 Tage/s</span>
+        <button id="faster" type="button" aria-label="Schneller">+</button>
+      </div>
+      <p id="eff" aria-live="polite"></p>
+    </div>
+    <div class="hudr">
+      <button id="tour" class="tour" type="button" aria-pressed="false">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path id="tourIcon" d="M2.5 1l8 5-8 5z"/></svg>
+        <span data-t>Tour</span>
+      </button>
+      <button id="sound" class="icon" type="button" aria-pressed="false" aria-label="Ton einschalten">
+        <svg viewBox="0 0 14 12" aria-hidden="true"><path id="soundIcon" d="M1.5 4.5h2l3-2.5v8l-3-2.5h-2zM9.5 4.5l3 3M12.5 4.5l-3 3"/></svg>
+      </button>
+      <button id="full" class="icon" type="button" aria-pressed="false" aria-label="Vollbild">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path id="fullIcon" d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8"/></svg>
+      </button>
+      <div class="langbox">
+        <button id="lang" class="icon" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Sprache">DE</button>
+        <div id="langMenu" class="langmenu" role="menu" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom" id="bottom">
+    <div class="start" id="start" hidden>
+      <button class="go" id="go" type="button">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1l8 5-8 5z"/></svg>
+        <span data-t>Reise starten</span>
+      </button>
+      <button class="quiet" id="goQuiet" type="button" data-t>Ohne Ton starten</button>
+    </div>
+    <div class="caption in" id="caption">
+      <p id="kind">Übersicht</p>
+      <div class="titlerow">
+        <h1 id="name">Sonnensystem</h1>
+        <div class="nav">
+          <button id="prev" class="icon" type="button" aria-label="Vorheriger Halt"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2L3.5 6l4 4"/></svg></button>
+          <button id="next" class="icon" type="button" aria-label="Nächster Halt"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+      <p id="blurb"></p>
+      <p class="sr" id="sr"></p>
+    </div>
+    <nav class="rail" id="rail" aria-label="Himmelskörper"></nav>
+  </div>
+
+  <dialog id="credits" aria-labelledby="creditsT">
+    <h2 id="creditsT" data-t>Quellen und Lizenzen</h2>
+    <p data-t>Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.</p>
+    <p data-t><b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.</p>
+    <p data-t><b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.</p>
+    <p data-t><b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.</p>
+    <p data-t><b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).</p>
+    <p data-t>Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.</p>
+    <p id="legal" hidden></p>
+    <form method="dialog"><button class="chip" type="submit" data-t>Schließen</button></form>
+  </dialog>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

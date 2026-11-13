@@ -6,10 +6,13 @@
 # Deutsch: liest work/res1.json und work/res2.json (Ausgaben von proc.py). Die Einleitung gibt es dort in zwei Fassungen
 # (overview_a, overview_b); die besser erkannte wird zu public/voice/overview.mp3.
 # Andere Sprachen: liest alle Dateien work/res.<Sprache>*.json (Ausgaben von proc.py --lang <Sprache>).
-# Geschrieben wird jeweils nur die Zeile der gewählten Sprache in src/sonnensystem.html.
+# Geschrieben wird src/data/voice.<Sprache>.json ({"clips": Dauer und Zeitmarken je Clip, "geo": Einblendzeiten}).
+# Solange der Monolith src/sonnensystem.html noch besteht (Umbau auf Module), wird dort zusätzlich die Zeile der
+# gewählten Sprache ersetzt, damit tools/refactor/split.mjs dieselben Werte übernimmt.
 import glob, json, os, shutil, sys
 R=(os.environ.get('SONNENSYSTEM_ROOT') or os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+os.sep
 SRC=R+'src/sonnensystem.html'
+JSN=R+'src/data/voice.'+LANG+'.json'
 LANG=sys.argv[2] if len(sys.argv)>2 and sys.argv[1]=='--lang' else 'de'
 res={}
 for f in ([R+'work/res1.json',R+'work/res2.json'] if LANG=='de' else sorted(glob.glob(R+'work/res.'+LANG+'*.json'))):
@@ -26,10 +29,11 @@ for k in ids:
     ts=list(cues.values()); assert ts==sorted(ts),(k,cues)
     V[k]={'d':r['d'],'cues':cues}
     print('%-11s %6.2fs  Übereinstimmung %.3f  %s'%(k,r['d'],r['ratio'],cues if cues else ''))
-s=open(SRC,encoding='utf-8').read()
+s=open(SRC,encoding='utf-8').read() if os.path.exists(SRC) else None
 def line(name,value):
-    """Ersetzt die Zeile 'const <name> = ...;' in der Seite."""
+    """Ersetzt die Zeile 'const <name> = ...;' im Monolithen (solange es ihn gibt)."""
     global s
+    if s is None: return
     i=s.index('const '+name+' = '); j=s.index('\n',i)
     s=s[:i]+'const '+name+' = '+value+';'+s[j:]
 line('VOICE_'+LANG.upper(),json.dumps(V,separators=(',',':')))
@@ -41,4 +45,7 @@ off=lambda t,base,lead=.15: round(max(0,t-base-lead),2)
 sea=[off(t,co) for t in w[:4]]; geo=sea+[round(sea[3]+.5,2)]+[off(t,cc) for t in w[4:]]
 print('Namen:',geo)
 line('GEO_T_'+LANG.upper(),json.dumps(geo,separators=(',',':')))
-open(SRC,'w',encoding='utf-8',newline='\n').write(s); print('Seite aktualisiert',len(s))
+# JSON wie tools/refactor/split.mjs: je Clip eine Zeile, damit Diffs lesbar bleiben
+out='{\n  "clips": {\n'+',\n'.join('    %s: %s'%(json.dumps(k),json.dumps(v,separators=(',',':'))) for k,v in V.items())+'\n  },\n  "geo": '+json.dumps(geo,separators=(',',':'))+'\n}\n'
+open(JSN,'w',encoding='utf-8',newline='\n').write(out); print('geschrieben',JSN)
+if s is not None: open(SRC,'w',encoding='utf-8',newline='\n').write(s); print('Monolith aktualisiert',len(s))

@@ -1,0 +1,19 @@
+/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* Querformat (Monitor, Tablet quer): Uhr und Titel rücken in die Ecken, der Himmelskörper nutzt die volle Bildhöhe */
+.wide .caption{max-width:clamp(300px,36vw,calc(600*var(--u)))}
+.wide .titlerow{justify-content:flex-start;gap:calc(22*var(--u))}
+.wide .titlerow h1{flex:none}
+.wide #name{font-size:calc(64*var(--u))}
+.wide #name.long{font-size:calc(50*var(--u))}
+.wide .bottom{
+  padding-block:calc(40*var(--u)) calc(14*var(--u));
+  background:radial-gradient(ellipse 64% 100% at 0 100%,rgba(4,6,12,.92) 0%,rgba(4,6,12,.7) 46%,rgba(4,6,12,0) 100%),linear-gradient(to top,rgba(4,6,12,.9) 0%,rgba(4,6,12,0) calc(120*var(--u)));
+}
+.wide.cine .bottom{padding-block:calc(40*var(--u)) calc(22*var(--u));background:radial-gradient(ellipse 52% 100% at 0 100%,rgba(4,6,12,.78) 0%,rgba(4,6,12,0) 100%)}
+.wide.cine #name{font-size:calc(56*var(--u))}
+.wide.cine #name.long{font-size:calc(46*var(--u))}
+/* Niedriges Querformat (Handy quer): nur Datum, Name und Leiste */
+.short #blurb,.short .eyebrow,.short #eff{display:none}
+.short #name{font-size:40px}
+.short #name.long{font-size:32px}
+.short .bottom{padding-block:20px 10px}

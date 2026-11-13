@@ -1,0 +1,7 @@
+/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* Weiter und Zurück: klein, neben dem Namen, mit dem Daumen erreichbar */
+.nav{display:flex;gap:calc(6*var(--u));flex:none;pointer-events:auto;padding-bottom:calc(6*var(--u))}
+.nav .icon{background:rgba(8,11,20,.45);opacity:.8}
+.nav .icon svg{width:calc(11*var(--u));height:calc(11*var(--u))}
+.toast{position:absolute;right:max(var(--g),env(safe-area-inset-right,0px));top:calc(62*var(--u));margin:0;font:500 calc(11*var(--u))/1.3 var(--mono);color:var(--sun);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}

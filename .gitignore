@@ -2,11 +2,12 @@
 dist/
 .test/
 .artifact/
+.shots/
+dist-artifact/
 # Rohmaterial und Modelle der Tonaufbereitung
 work/
 # Abhängigkeiten und Zwischendateien
 node_modules/
-package-lock.json
 __pycache__/
 *.pyc
 .DS_Store
