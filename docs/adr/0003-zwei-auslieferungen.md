@@ -15,7 +15,7 @@ Die Seite wird auf zwei Wegen ausgeliefert, die unterschiedliche Regeln haben:
    `tools/models/embed.mjs`). Schriften kommen von Google Fonts.
 
 Zwei getrennte Codebasen würden auseinanderlaufen. Bis Version 8 entstanden beide aus derselben Datei
-`src/sonnensystem.html`; `tools/build.py` ersetzte die abweichenden Stellen.
+`src/sonnensystem.html`; `tools/build.py` (inzwischen entfallen) ersetzte die abweichenden Stellen.
 
 ## Entscheidung
 
@@ -23,7 +23,8 @@ Es gibt weiterhin **eine** Quelle und zwei Bauziele:
 
 - `npm run build` erzeugt die Website in `dist/`. Der Bau bricht ab, wenn im Ergebnis noch eine fremde Adresse steht.
 - `npm run build:artifact` erzeugt `dist-artifact/sonnensystem.html` als Fragment (Stil und Skript eingebettet,
-  three.js mitgebündelt, Schriften von Google Fonts, Modelle als `models/<name>.json`) samt Liste der Begleitdateien.
+  three.js mitgebündelt, Schriften von Google Fonts, Modelle als `models/<name>.json`) samt Liste der Begleitdateien (`dist-artifact/begleitdateien.txt`).
+- Zur Bauzeit gesetzte Konstanten (`TARGET`, `SITE_CFG`, `MODEL_EXT` in `src/core/target.js`) tragen die wenigen Unterschiede in den Code.
 - Die Unterschiede liegen allein im Bau (`tools/artifact/`), nie im Quelltext der Seite.
 
 ## Betrachtete Alternativen

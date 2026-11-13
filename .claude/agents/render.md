@@ -5,8 +5,8 @@ tools: Read, Edit, Write, Grep, Glob, Bash
 model: inherit
 ---
 
-Du bist zuständig für die Darstellung der Seite „Sonnensystem – eine Kamerafahrt“: Shader, Szene, Planeten, Ringe, Sterne,
-Erde mit Wolken und Schnitt, Marsbasis, Nachbearbeitung, prozedurale Texturen (`SURF`, `bake`). Lies zuerst `AGENTS.md` und
+Du bist zuständig für die Darstellung der Seite „Sonnensystem – eine Kamerafahrt“: `src/render/` (Szene, Shader, Nachbearbeitung `POST`, prozedurale
+Texturen `SURF`, `bake`) und `src/mars/` (Marsbasis `MB`). Lies zuerst `AGENTS.md`, `src/render/AGENTS.md` bzw. `src/mars/AGENTS.md` und
 `docs/glossar.md`.
 
 Maßstab: realistisch, filmisch, ruhig wie eine hochwertige Weltraum-Doku; nicht bunt oder verspielt.

@@ -1,13 +1,13 @@
 # ADR 0002: ES-Module und Vite statt einer einzigen HTML-Datei
 
-- Status: angenommen (Umsetzung durch den Zweig `v9-arch`, Stand: in Arbeit)
+- Status: angenommen und umgesetzt (Zweig `v9-arch`, Version 10)
 - Datum: 2026-11-13
 - Betrifft: `src/`, `index.html`, `package.json`, Bau (`npm run build`), Tests, Dokumentation
 
 ## Kontext
 
 Bis Version 8 stand die ganze Seite in `src/sonnensystem.html`: Stil, Markup und ein großes Skript in einer
-Closure, rund 2.800 Zeilen und 210 KB. Ein Python-Skript (`tools/build.py`) machte daraus per
+Closure, rund 2.800 Zeilen und 210 KB. Ein Python-Skript (`tools/build.py`, inzwischen entfallen) machte daraus per
 Zeichenkettenersetzung die Website. Das war für eine Einzeldatei als claude.ai-Artefakt gedacht, trägt aber nicht
 mehr:
 
@@ -59,4 +59,6 @@ Entwicklungsserver und Bauwerkzeug.
   Funktionen laufen, die erst zur Laufzeit aufgerufen werden (sonst Fehler durch Zugriff vor der Initialisierung).
   Entwicklung braucht Node und `npm install`.
 - Die Fassung als claude.ai-Artefakt muss aus den Modulen gebaut werden (ADR 0003).
-- Offen: genaue Modulkarte (steht nach der Umsetzung in `docs/architecture.md` und `AGENTS.md`).
+- Die Modulkarte steht in `docs/modulkarte.md` (erzeugt von `tools/docs/modulkarte.mjs`), der Überblick in `docs/architecture.md`.
+- Offen: Die großen Closures `MB`, `AU` und `SURF` sind noch je ein Modul; Vorschlag für den nächsten Schnitt in `docs/architecture.md`, Abschnitt „Bekannte technische Schuld“.
+- Formatierung des übernommenen, dichten Codes: ADR 0007.

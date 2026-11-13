@@ -1,6 +1,6 @@
 # Sonnensystem – eine Kamerafahrt
 
-> Animierte 3D-Reise durch das Sonnensystem im Browser (three.js r128, WebGL2) mit Sprecher und Musik in Deutsch, Englisch und
+> Animierte 3D-Reise durch das Sonnensystem im Browser (three.js r128, WebGL2, ES-Module mit Vite) mit Sprecher und Musik in Deutsch, Englisch und
 > Polnisch. Statische Seite ohne Server-Code, live unter https://sonnensystem.johannes-wanzek.de/ (GitHub Pages). Dieselbe Quelle
 > wird zusätzlich als claude.ai-Artefakt gebaut. Sprache von Quelltext-Kommentaren und Doku: Deutsch.
 
@@ -12,6 +12,8 @@
 
 ## Architektur und Entscheidungen
 
+- [docs/architecture.md](docs/architecture.md): Schichten, Datenfluss, Bau-Ziele, Was ändere ich wo
+- [docs/modulkarte.md](docs/modulkarte.md): alle Module mit Zweck, Exporten, Abhängigkeiten
 - [docs/adr/README.md](docs/adr/README.md): Index der Entscheidungsprotokolle
 - [docs/adr/0001-three-js-behalten.md](docs/adr/0001-three-js-behalten.md): warum three.js r128 bleibt
 - [docs/adr/0002-es-module-und-vite.md](docs/adr/0002-es-module-und-vite.md): Aufteilung in ES-Module mit Vite
@@ -19,7 +21,18 @@
 - [docs/adr/0004-mehrsprachigkeit.md](docs/adr/0004-mehrsprachigkeit.md): Sprachen, Übersetzungstabelle, Sprecher
 - [docs/adr/0005-bild-folgt-ton.md](docs/adr/0005-bild-folgt-ton.md): Zeitmarken steuern Einblendungen und Kamerafahrt
 - [docs/adr/0006-tests.md](docs/adr/0006-tests.md): Teststrategie
+- [docs/adr/0007-formatierung-mit-prettier.md](docs/adr/0007-formatierung-mit-prettier.md): Formatierung als eigener Commit
 - [docs/glossar.md](docs/glossar.md): deutsche Fachbegriffe und Bezeichner im Code
+
+## Lokale Anleitungen
+
+- [src/mars/AGENTS.md](src/mars/AGENTS.md): Marsbasis
+- [src/audio/AGENTS.md](src/audio/AGENTS.md): Ton
+- [src/render/AGENTS.md](src/render/AGENTS.md): Nachbearbeitung, Shader, Karten
+- [src/hud/AGENTS.md](src/hud/AGENTS.md): Messmarken
+- [src/i18n/AGENTS.md](src/i18n/AGENTS.md): Sprachen
+- [tools/audio/AGENTS.md](tools/audio/AGENTS.md): Aufbereitung von Ton
+- [tests/AGENTS.md](tests/AGENTS.md): Tests
 
 ## Medien
 

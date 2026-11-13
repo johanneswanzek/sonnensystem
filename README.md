@@ -10,60 +10,67 @@ dem Mars und der Asteroidengürtel. Läuft auf dem Handy wie auf einem großen M
 
 ## Schnellstart
 
-Es braucht nur Python 3, sonst nichts.
+Es braucht Node.js ab Version 20 (siehe `.nvmrc`) und Git.
 
 ```
-python tools/serve.py
+npm install
+npm run dev
 ```
 
-Dann http://localhost:8080 öffnen. Die Seite wird bei jedem Neuladen frisch aus `src/sonnensystem.html`
-gebaut: ändern, speichern, neu laden. Ein Doppelklick auf eine HTML-Datei reicht nicht, weil Browser Ton,
-Karten und Modelle nicht von der Festplatte laden.
+Dann http://localhost:8080 öffnen. Vite lädt bei jeder Änderung neu. Ein Doppelklick auf `index.html` reicht nicht, weil Browser
+Module, Ton, Karten und Modelle nicht von der Festplatte laden. Python 3 wird nur gebraucht, um Sprecher und Musik aufzubereiten
+(`tools/audio/`).
+
+Wer mit einem KI-Assistenten arbeitet: Die Arbeitsanleitung steht in [`AGENTS.md`](AGENTS.md), das Inhaltsverzeichnis der Doku in
+[`docs/README.md`](docs/README.md).
 
 ## Aufbau
 
 ```
-src/sonnensystem.html    die ganze Seite in einer Datei: Stil, Markup, Programm (three.js r128, kein Framework)
-site.json                Adresse, Titel, Beschreibung, Verweise auf Impressum und Datenschutz
+index.html               Markup der Seite, Einstieg für Vite
+src/                     ES-Module (three.js r128 aus npm, kein Framework); Karte aller Module: docs/modulkarte.md
+  main.js                  Start: init…()-Funktionen in fester Reihenfolge
+  core/ data/ i18n/ orbit/   Zustand und Hilfen, Himmelskörper und Zeitmarken, Sprachen, Bahnmechanik
+  render/ mars/ audio/       Weltraumszene mit Nachbearbeitung, Marsbasis, Ton
+  ui/ hud/ app/              Bedienung, Messmarken, Tour/Kamera/Schleife
+  styles/ testing/           CSS, Prüfhaken (nur Testmodus)
 public/                  wird unverändert veröffentlicht
   voice/, audio/           Sprecher (15 Clips je Sprache; voice/en/, voice/pl/), Musik (drei Stücke) und audio/sfx/ (13 Effekte) als MP3
-  img/                     Karten von Erde, Mars und Jupiter
+  img/                     Karten von Erde, Mars, Jupiter, Saturn, Neptun und den Marsmonden
   models/                  3D-Modelle (GLB)
-  vendor/                  three.js, GLTFLoader, Schriften – alles lokal, nichts kommt von fremden Servern
-  LIZENZEN.txt             Quellen und Lizenztexte
-tools/
-  build.py                 baut dist/ (und die Testseite)
-  serve.py                 lokaler Entwicklungsserver
-  test/run.js              Prüfung im Browser ohne Fenster, mit Bildschirmfotos
-  test/e2e/                E2E-Suite (Playwright-Testrunner), Konfiguration in test/playwright.config.js
-  audio/                   Aufbereitung von Sprecher und Musik (Lautheit, Zeitmarken, Schleife)
-  models/                  Modelle verkleinern und für claude.ai-Artefakte umwandeln
-docs/
-  produktion.md            wie Sprecher, Musik und Modelle entstanden sind
-  sprechertext.<Sprache>.json   der Sprechertext (de, en, pl) mit den Stichworten für die Kamerafahrt
-.github/workflows/pages.yml   baut und veröffentlicht bei jedem Push auf main
-CLAUDE.md                Projektnotizen für die Arbeit mit einem KI-Assistenten
+  vendor/fonts/            Schriften (lokal, nichts kommt von fremden Servern)
+  LIZENZEN.txt, .htaccess  Quellen und Lizenztexte; Einstellungen für einen Apache-Webspace
+site.json                Adresse, Titel, Beschreibung, Verweise auf Impressum und Datenschutz
+tests/                   unit/ (Vitest) und e2e/ (Playwright)
+tools/                   audio/ (Python, Sprecher und Musik), models/, artifact/ (Bau der Artefakt-Fassung), build/, shots/, docs/
+docs/                    architecture.md, modulkarte.md, adr/, glossar.md, produktion.md, sprechertext.<Sprache>.json
+.github/                 Workflows (CI, Veröffentlichung), Vorlagen, CODEOWNERS, Dependabot
+AGENTS.md, CLAUDE.md, .claude/   Anleitung für KI-Agenten
 ```
 
 ## Bauen und veröffentlichen
 
 ```
-python tools/build.py            # -> dist/
-python tools/build.py --apache   # -> dist/ mit .htaccess für einen Apache-Webspace (z. B. STRATO)
+npm run build            # Website -> dist/
+npm run preview          # dist/ lokal ansehen
+npm run build:artifact   # Fassung als claude.ai-Artefakt -> dist-artifact/
 ```
 
-**GitHub Pages:** Ein Push auf `main` genügt. Die Action in `.github/workflows/pages.yml` baut `dist/` und
-veröffentlicht es. In den Repo-Einstellungen unter *Pages* steht als Quelle „GitHub Actions“ und als eigene
-Domain `sonnensystem.johannes-wanzek.de`.
+**GitHub Pages:** Ein Push auf `main` genügt. Die Action in `.github/workflows/pages.yml` baut mit Node (`npm ci`, `npm run build`) und
+veröffentlicht `dist/`. In den Repo-Einstellungen unter *Pages* steht als Quelle „GitHub Actions“ und als eigene Domain
+`sonnensystem.johannes-wanzek.de`. Der Bau bricht ab, wenn im Ergebnis eine Adresse eines fremden Servers steht.
 
 **Domain:** Bei STRATO zeigt die Subdomain per CNAME auf `johanneswanzek.github.io`
 (Domainverwaltung → Subdomain → DNS → CNAME-Record). Das Zertifikat für HTTPS stellt GitHub aus.
 
-**Eigener Webspace statt GitHub Pages:** `python tools/build.py --apache` und den Inhalt von `dist/` per SFTP
-hochladen. Die Seite besteht nur aus statischen Dateien.
+**Eigener Webspace statt GitHub Pages:** `npm run build` ausführen und den Inhalt von `dist/` per SFTP hochladen. Die Seite besteht nur aus
+statischen Dateien; die `.htaccess` für einen Apache-Webspace (z. B. STRATO) liegt in `public/` und damit in `dist/`.
 
 **Einstellungen** stehen in `site.json`. Wer dort `impressum` und `datenschutz` einträgt (Adresse oder Pfad),
 bekommt die Verweise im Dialog „Quellen“ (letzter Knopf der Leiste unten).
+
+**Artefakt:** `npm run build:artifact` schreibt `dist-artifact/sonnensystem.html` (ein Fragment) und `dist-artifact/begleitdateien.txt`; Einzelheiten in
+[`CLAUDE.md`](CLAUDE.md) und ADR 0003.
 
 ## Sprachen
 
@@ -71,8 +78,8 @@ Die Seite gibt es in Deutsch, Englisch und Polnisch. Beim ersten Besuch entschei
 (alles andere als Deutsch oder Polnisch bekommt Englisch), danach die letzte Wahl über den Knopf oben rechts.
 Eine Adresse mit `?lang=de`, `?lang=en` oder `?lang=pl` legt die Sprache fest und eignet sich zum Verlinken.
 
-Alle Texte stehen deutsch in `src/sonnensystem.html`; die Übersetzungen liegen daneben in der Tabelle `TR`
-(Schlüssel ist der deutsche Text). Titel und Beschreibung der Seite je Sprache stehen in `site.json` unter `i18n`.
+Alle Texte stehen deutsch im Quelltext; die Übersetzungen liegen in `src/i18n/en.json` und `src/i18n/pl.json` (Schlüssel ist der deutsche Text).
+Titel und Beschreibung der Seite je Sprache stehen in `site.json` unter `i18n`. Hintergrund: [`docs/adr/0004-mehrsprachigkeit.md`](docs/adr/0004-mehrsprachigkeit.md).
 
 ## Bedienung
 
@@ -86,45 +93,36 @@ Alle Texte stehen deutsch in `src/sonnensystem.html`; die Übersetzungen liegen 
 
 ## Testen
 
-Zwei Werkzeuge, beide mit Playwright in einem Chrome ohne Fenster:
-
-**E2E-Suite** (`tools/test/e2e/`): prüft alle Abläufe und Knöpfe der Seite (Laden, Start mit und ohne Ton, Tour, Navigation,
-Zeitraffer, Ton, Vollbild, Sprachen, Dialog „Quellen“, Erde und Mars, Layout in vier Formaten, Robustheit ohne WebGL, Build).
-Sie prüft Zustände, DOM, ARIA, Netz und Konsole, keine Bildvergleiche. Jede Anfrage an eine fremde Adresse, jede
-fehlgeschlagene Anfrage und jeder Konsolenfehler gilt als Fehler.
-
 ```
-cd tools/test
-npm install && npx playwright install chromium     # einmalig
-npm test                                           # alles: Testseite mit Prüfhaken und dist/
-npm run test:dist                                  # nur dist/, so wie es veröffentlicht wird
-npm run test:headed                                # mit sichtbarem Browser
-npx playwright test tour.spec.js                   # eine Datei
-npm run report                                     # HTML-Bericht (playwright-report/) öffnen
+npm run lint && npm run typecheck && npm run test:unit      # Prüfungen ohne Browser (Kepler, Übersetzungen, Zeitmarken, Bau)
+npm run test:e2e                                            # E2E-Suite (Playwright): Testseite mit Prüfhaken und dist/
+npm run shots -- 390 760 start focus:8 wait:8000 shot:saturn-handy
 ```
 
-Die Suite baut vorher selbst (`python tools/build.py --test` und `python tools/build.py`; Python über `PYTHON`
-wählbar) und startet lokale Server. Ohne Grafikkarte `SOFTWARE_GL=1` setzen (dann deutlich langsamer, die Zeitgrenzen
-wachsen mit); `CHROME_PATH` nimmt einen vorhandenen Chrome statt des von Playwright installierten.
+**E2E-Suite** (`tests/e2e/`): prüft alle Abläufe und Knöpfe der Seite (Laden, Start mit und ohne Ton, Tour, Navigation, Zeitraffer, Ton, Musik,
+Vollbild, Sprachen, Dialog „Quellen“, Erde und Mars, Layout, Robustheit ohne WebGL, Bau). Sie prüft Zustände, DOM, ARIA, Netz und Konsole,
+keine Bildvergleiche. Jede Anfrage an eine fremde Adresse, jede fehlgeschlagene Anfrage und jeder Konsolenfehler gilt als Fehler. Einmalig
+`npx playwright install --with-deps chromium`. Eine Datei: `npm run test:e2e -- tests/e2e/tour.spec.js`; nur `dist/`: `npm run test:e2e:dist`.
+Ohne Grafikkarte `SOFTWARE_GL=1` setzen (deutlich langsamer, die Zeitgrenzen wachsen mit); `CHROME_PATH` nimmt einen vorhandenen Chrome.
 
-**Bildschirmfotos** (`run.js`): legt Bilder nach `.test/shots/`.
+**Bildschirmfotos** (`tools/shots/run.js`, `npm run shots`): legt Bilder nach `.shots/`.
 
 ```
-node tools/test/run.js 390 760 start focus:8 wait:8000 shot:saturn-handy
-node tools/test/run.js 1920 1080 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:mars-landung
-node tools/test/run.js --dist 1280 720 go wait:6000 shot:start      # prüft dist/ so, wie es veröffentlicht wird
-node tools/test/run.js --lang=pl 390 760 start focus:4 wait:5000 shot:erde-polnisch
+npm run shots -- 390 760 start focus:8 wait:8000 shot:saturn-handy
+npm run shots -- 1920 1080 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:mars-landung
+npm run shots -- --dist 1280 720 go wait:6000 shot:start      # prüft dist/ so, wie es veröffentlicht wird (vorher npm run build)
+npm run shots -- --lang=pl 390 760 start focus:4 wait:5000 shot:erde-polnisch
 ```
 
-Alle Schritte stehen im Kopf von `tools/test/run.js`.
+Alle Schritte stehen im Kopf von `tools/shots/run.js`. Jeder Push läuft durch die CI (`.github/workflows/ci.yml`).
 
 ## Quellen und Lizenzen
 
-- **Karten und 3D-Modelle:** NASA (Blue Marble, Nachtlichter, Mars, Jupiter; Modelle aus „NASA 3D Resources“).
+- **Karten und 3D-Modelle:** NASA (Blue Marble, Nachtlichter, Mars, Jupiter, Saturn, Neptun, Phobos, Deimos; Modelle aus „NASA 3D Resources“).
   Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.
 - **Sprecher, Musik und Effekte:** mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit
   Eleven Music, die Effekte mit Sound Effects.
-- **Technik:** three.js r128 (MIT). Schriften: Instrument Serif, IBM Plex (SIL Open Font License).
+- **Technik:** three.js r128 (MIT, aus npm). Schriften: Instrument Serif, IBM Plex (SIL Open Font License).
 
 Die vollständigen Angaben und Lizenztexte stehen in [`public/LIZENZEN.txt`](public/LIZENZEN.txt), Einzelheiten
 zur Entstehung in [`docs/produktion.md`](docs/produktion.md).

@@ -2,7 +2,7 @@
 
 - Status: angenommen (eingeführt mit Version 8)
 - Datum: 2026-11-13
-- Betrifft: `src/i18n/` (Ziel; bis zur Aufteilung die Abschnitte „Sprache“ und „Daten“ in `src/sonnensystem.html`),
+- Betrifft: `src/i18n/`, `src/data/`,
   `public/voice/`, `site.json`, `tools/audio/finalize.py`
 
 ## Kontext
@@ -14,13 +14,12 @@ Die Seite gibt es in Deutsch, Englisch und Polnisch, mit gesprochenem Text. Die 
 ## Entscheidung
 
 - **Quellsprache Deutsch.** Alle sichtbaren Texte stehen deutsch im Programm.
-- **Übersetzungen als Tabelle**, deren Schlüssel der deutsche Text ist (`TR.en`, `TR.pl`; Ziel: JSON je Sprache,
-  `src/i18n/en.json`, `pl.json`). `tr('…')` schlägt nach; fehlt ein Eintrag, bleibt der deutsche Text sichtbar.
+- **Übersetzungen als Tabelle**, deren Schlüssel der deutsche Text ist (`src/i18n/en.json`, `src/i18n/pl.json`). `tr('…')` schlägt nach; fehlt ein Eintrag, bleibt der deutsche Text sichtbar.
   Texte im Markup tragen `data-t`; `aria-label` wird immer übersetzt. Zahlen und Datum richten sich nach `LOC`.
 - **Wahl der Sprache** in dieser Reihenfolge: Adressparameter `?lang=` → gemerkte letzte Wahl → Browsersprache →
   Englisch. Alles andere als Deutsch oder Polnisch bekommt Englisch.
 - **Sprecher je Sprache** mit eigenen Clips (`public/voice/` für Deutsch, `public/voice/en/`, `public/voice/pl/`)
-  und eigenen Zeitmarken (`VOICE_DE`, `VOICE_EN`, `VOICE_PL`, `GEO_T_*`), geschrieben von `tools/audio/finalize.py`.
+  und eigenen Zeitmarken (`src/data/voice.<sprache>.json` mit `clips` und `geo`), geschrieben von `tools/audio/finalize.py`.
   Die Stichworte stehen in allen Sprachen an derselben inhaltlichen Stelle.
 - **Ein Sprachwechsel lädt die Seite neu** (Website: `?lang=`, Artefakt: gemerkte Wahl). So bleibt der Zustand einfach.
 - Titel und Beschreibung der Seite je Sprache stehen in `site.json` unter `i18n`.
@@ -40,6 +39,6 @@ Die Seite gibt es in Deutsch, Englisch und Polnisch, mit gesprochenem Text. Die 
 
 - Positiv: Eine neue Sprache ist Daten und Medien, kein Umbau; fehlende Übersetzungen fallen auf Deutsch zurück statt zu brechen.
 - Negativ: Wer einen deutschen Text ändert, ändert zugleich den Schlüssel und muss `TR.en` und `TR.pl` mitziehen
-  (ein Unit-Test auf Vollständigkeit ist geplant, siehe ADR 0006). Jede Sprache kostet ElevenLabs-Credits für den Sprecher.
+  (`tests/unit/i18n.test.js` prüft die Vollständigkeit, siehe ADR 0006). Jede Sprache kostet ElevenLabs-Credits für den Sprecher.
 - Ablauf für eine weitere Sprache: `.claude/commands/neue-sprache.md` und `docs/produktion.md`.
 - Offen: ob die Sprachwahl künftig als Pfad (`/en/`) statt als Parameter adressierbar sein soll.

@@ -19,9 +19,8 @@ Die Zeitmarken werden aus der fertigen Aufnahme bestimmt und steuern das Bild:
    Ein Stichwort (`water`, `hab`, `pad` …) markiert die Stelle, an der etwas passiert.
 2. `tools/audio/align.py` findet die Zeitmarken: Sprachabschnitte per Silero-VAD, Text je Abschnitt per Whisper (small,
    über sherpa-onnx), dann zeichenweiser Abgleich mit dem Skript.
-3. `tools/audio/finalize.py` schreibt Dauer und Zeitmarken je Sprache in die Daten der Seite (`VOICE_*`, `GEO_T_*`;
-   Ziel: JSON je Sprache unter `src/data/`).
-4. Zur Laufzeit liefert `narT()` die Sprecherzeit des laufenden Clips und `cue(k)` die Zeitmarke eines Stichworts.
+3. `tools/audio/finalize.py` schreibt Dauer und Zeitmarken je Sprache nach `src/data/voice.<sprache>.json` (`clips`, `geo`).
+4. Zur Laufzeit (`src/app/tour.js`) liefert `narT()` die Sprecherzeit des laufenden Clips und `cue(k)` die Zeitmarke eines Stichworts.
    Die Kamerafahrt rechnet relativ zu den Stichworten und passt sich so an die Länge jeder Fassung an. Ohne Ton läuft
    ein Kapitel mit Marken trotzdem in voller Länge (die Verweildauer `dwell` richtet sich dann nach der Dauer des Clips).
 

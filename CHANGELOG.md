@@ -6,21 +6,45 @@ keine semantischen Versionen.
 
 ## [Unveröffentlicht]
 
-Laufende Arbeit an Version 9 und 10 (Stichpunkte, Einzelheiten stehen im Git-Verlauf):
+## [Version 10] – 2026-11-13
 
-### Hinzugefügt
-
-- Neue Nachbearbeitung, neue Shader und neue Texturen für die Darstellung.
-- Neue Marsbasis.
-- Neue Musik und neue Effekte.
-- E2E-Tests mit Playwright.
-- Entscheidungsprotokolle (`docs/adr/`), Beitragsregeln, Issue- und Pull-Request-Vorlagen, CI-Workflow, `AGENTS.md`,
-  Glossar und `llms.txt` für die Arbeit mit KI-Agenten.
+Umbau der Struktur; Verhalten und Aussehen sollen gleich bleiben.
 
 ### Geändert
 
-- Quelltext in ES-Module mit Vite aufgeteilt, three.js r128 aus npm statt als klassisches Skript (ADR 0002).
-  Verhalten und Aussehen sollen gleich bleiben.
+- Quelltext aus der einen Datei `src/sonnensystem.html` in ES-Module unter `src/` aufgeteilt, mit Vite als Entwicklungsserver und Bauwerkzeug;
+  three.js r128 kommt aus npm statt als klassisches Skript (ADR 0001, ADR 0002).
+- Übersetzungen und Sprecher-Zeitmarken liegen als JSON je Sprache vor (`src/i18n/`, `src/data/voice.<sprache>.json`).
+- Bau mit Node: `npm run build` (Website), `npm run build:artifact` (claude.ai-Artefakt), Pages-Workflow auf Node umgestellt. Python bleibt nur für
+  `tools/audio/`; `tools/build.py` und `tools/serve.py` entfallen.
+- Bildschirmfotos über `npm run shots` (`tools/shots/`) statt `tools/test/run.js`.
+
+### Hinzugefügt
+
+- Unit-Tests mit Vitest (Bahnmechanik, Übersetzungen, Zeitmarken, Prüfung auf fremde Adressen).
+- CI-Workflow (`.github/workflows/ci.yml`), Dependabot, Issue- und Pull-Request-Vorlagen, CODEOWNERS.
+- Dokumentation für Menschen und KI-Agenten: `AGENTS.md` (mit Anleitungen je Ordner), `docs/architecture.md`, erzeugte Modulkarte
+  (`docs/modulkarte.md`), Entscheidungsprotokolle (`docs/adr/`), Glossar, `CONTRIBUTING.md`, `SECURITY.md`, `llms.txt`, Befehle und Unteragenten für Claude Code.
+- ESLint (`no-undef` als harte Regel), Typprüfung über JSDoc (`tsc`), Prettier (Formatierung als eigener Commit, ADR 0007).
+
+## [Version 9] – 2026-11-13
+
+### Bild
+
+- Neue Nachbearbeitung (`POST`): HDR-Rendern mit MSAA, Bloom, filmisches Tonemapping, Vignette und Korn.
+- Neue Sonne mit Korona und Protuberanzen, Milchstraße als gebackener Himmel.
+- Erde mit Streulicht und Meeresglanz.
+- Neue NASA-Karten für Saturn, Neptun, Phobos und Deimos; Eisriesen und Venus neu gestaltet, Monde mit Relief, Turbulenz der Gasriesen.
+- Marsbasis mit neuem Licht (tiefe Sonne, HDR-Lichter), neuem Boden, Luftperspektive, Horizont aus Tafelbergen, mitlaufenden Schatten und Technikdetails an den Bauten.
+
+### Ton
+
+- Eigene Musik für Erde und Mars mit Überblendung auf dem Takt des Hauptstücks.
+- 13 Effekte als Samples (Flug, Ankunft, Landung, Atmosphären, Knopfklick und weitere).
+
+### Tests
+
+- E2E-Suite mit Playwright (Zustände, DOM, ARIA, Netz, Konsole).
 
 ## [Version 8] – 2026-11-13
 

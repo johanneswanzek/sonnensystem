@@ -1,13 +1,13 @@
 # ADR 0006: Teststrategie – E2E mit Playwright, Bildschirmfotos zur Sichtprüfung, Unit-Tests für reine Logik
 
-- Status: angenommen (Umsetzung in Arbeit; Stand heute: `tools/test/run.js`)
+- Status: angenommen und umgesetzt (Version 10)
 - Datum: 2026-11-13
 - Betrifft: `tests/e2e/`, `tests/unit/`, `playwright.config.js`, `tools/shots/`, `.github/workflows/ci.yml`
 
 ## Kontext
 
 Die Seite ist ein Bild- und Tonerlebnis; ob eine Szene schön aussieht, entscheidet ein Mensch. Automatisch prüfbar sind
-dagegen Zustände, Markup, Bedienbarkeit, Netzverkehr und Fehler. Bisher gab es ein Skript (`tools/test/run.js`), das die
+dagegen Zustände, Markup, Bedienbarkeit, Netzverkehr und Fehler. Bis Version 9 gab es ein Skript (`tools/test/run.js`, heute `tools/shots/run.js`), das die
 Seite in einem Chrome ohne Fenster steuert, Bildschirmfotos macht und Konsolenfehler, fremde Adressen und
 fehlgeschlagene Anfragen meldet. Auf Rechnern ohne Grafikkarte läuft es mit Software-Rendering (`SOFTWARE_GL=1`),
 das langsam und bei Wartezeiten unzuverlässig ist. Die Aufteilung in Module (ADR 0002) verlangt einen Nachweis,
@@ -22,7 +22,7 @@ Drei Ebenen:
    und Konsole (keine Fehler). **Keine Pixelvergleiche**: Software-Rendering und Treiber machen sie unzuverlässig.
 2. **Bildschirmfotos zur Sichtprüfung** (`npm run shots -- <Breite> <Höhe> <Schritte…>`): ein Mensch oder Agent schaut
    sich Hochformat (390×760) und Querformat (1920×1080) an. Die Schritte (`start`, `focus:N`, `stage:N`, `mbt:S`,
-   `shot:Name` …) und die Prüfhaken `window.__t`, `__mbt`, `__clk`, `__cam` bleiben so wie in `tools/test/run.js`.
+   `shot:Name` …) und die Prüfhaken `window.__t`, `__mbt`, `__clk`, `__cam` stammen aus `src/testing/hooks.js` und dem Code der Marsbasis und sind nur im Testmodus vorhanden.
 3. **Unit-Tests mit Vitest** (`npm run test:unit`, in `tests/unit/`) für reine Logik: Bahnmechanik, Vollständigkeit der
    Übersetzungen, Zeitmarken, Bauprüfungen.
 
@@ -42,4 +42,4 @@ hängen an Zuständen, nicht an Zeiten (Marsbasis: `mbt:S` statt `seek` und `wai
 - Positiv: Verhalten ist nachweisbar, Fehler und fremde Adressen fallen in der CI auf; die Sichtprüfung bleibt ausdrücklich Menschensache.
 - Negativ: E2E im Software-Rendering ist langsam (mehrere Minuten je Lauf) und braucht Geduld bei Zeitabhängigem.
 - „Fertig“ heißt auch: Bildschirmfotos in beiden Formaten angesehen (siehe `CONTRIBUTING.md`).
-- Offen: Umfang der ersten E2E-Tests und der Unit-Tests richtet sich nach der Umsetzung durch die Zweige `v9-arch` und `v9-e2e`.
+- Umfang heute: E2E-Dateien in `tests/e2e/` (Laden, Start, Tour, Navigation, Zeitraffer, Ton, Musik, Vollbild, Sprache, Quellen, Erde und Mars, Layout, Robustheit, Bau); Unit-Tests für Kepler, Übersetzungen, Zeitmarken und die Prüfung auf fremde Adressen.

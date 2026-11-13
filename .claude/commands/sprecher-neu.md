@@ -15,6 +15,6 @@ Ablauf nach `docs/produktion.md` und ADR 0005:
 2. Clip einmal erzeugen: ElevenLabs, Modell `eleven_v4`, `mp3_44100_128`, Stimme und Voice-ID der Sprache aus `docs/produktion.md`.
    Rohdatei nach `work/el/<Clip>.mp3` (bei en/pl nach `work/el/<Sprache>/`). `work/` wird nicht eingecheckt.
 3. Aufbereiten: `python tools/audio/proc.py [--lang <Sprache>] <ergebnis.json> <Clip>` (Stille kürzen, −18 LUFS, mono 96 kbit/s).
-4. Zeitmarken nachziehen: `python tools/audio/finalize.py [--lang <Sprache>]` (nutzt `align.py`; die Modelle liegen in `work/models/`).
+4. Zeitmarken nachziehen: `python tools/audio/finalize.py [--lang <Sprache>]` (nutzt `align.py`; die Modelle liegen in `work/models/`); schreibt `src/data/voice.<Sprache>.json`.
 5. Prüfen, dass Bild und Ton zusammenpassen: Kapitel mit `/pruefen` ansehen (Marsbasis mit `mbt:S`), Marken gegenhören.
 6. `docs/produktion.md` (Aufwand in Credits) und `CHANGELOG.md` ergänzen.

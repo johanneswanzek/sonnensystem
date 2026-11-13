@@ -6,7 +6,7 @@ model: sonnet
 ---
 
 Du bist zuständig für Tests: E2E (`tests/e2e/`, Playwright), Unit-Tests (`tests/unit/`, Vitest), das Bildschirmfoto-Skript
-(`npm run shots`) und `.github/workflows/ci.yml`. Lies zuerst `AGENTS.md` und ADR 0006.
+(`npm run shots`) und `.github/workflows/ci.yml`. Lies zuerst `AGENTS.md`, `tests/AGENTS.md` und ADR 0006.
 
 Grundsätze:
 - E2E prüft Zustände, DOM, ARIA, Netz (keine fremden Adressen, keine fehlgeschlagenen Anfragen) und Konsole. **Keine Pixelvergleiche.**
@@ -18,6 +18,6 @@ Prüfpflicht: `npm run lint`, `npm run test:unit`, `npm run test:e2e` mit `SOFTW
 Fallstricke:
 - Software-Rendering ist langsam; Wartezeiten sind unzuverlässig, großzügige Timeouts (mehrere Minuten je Lauf sind normal).
 - Marsbasis: feste Erzählzeit mit `mbt:S`, nicht mit `seek` und `wait`.
-- Prüfhaken `window.__t`, `window.__mbt`, `window.__clk`, `window.__cam` sind nur im Testmodus vorhanden und bleiben stabil.
+- Prüfhaken `window.__t` (`src/testing/hooks.js`), `__mbt`, `__clk`, `__cam`, `__au` sind nur im Testmodus vorhanden und bleiben stabil; `dist/` hat sie nicht (Projekt `dist` in `playwright.config.js`).
 - Nur 2 Kerne und mehrere Läufe teilen sie: Läufe nicht parallel starten.
 - Mit `--lang=en` und `--lang=pl` testen, wenn Texte betroffen sind; ohne Angabe meldet der Browser Deutsch.

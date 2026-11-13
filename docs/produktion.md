@@ -1,6 +1,6 @@
 # Produktion: Sprecher, Musik, Modelle, Karten
 
-Stand: Version 8 (November 2026, dreisprachig). Dieses Dokument hält fest, womit die Medien entstanden sind und wie man sie
+Stand: Version 10 (November 2026). Dieses Dokument hält fest, womit die Medien entstanden sind und wie man sie
 neu erzeugt.
 
 ## Sprecher
@@ -43,8 +43,8 @@ python tools/audio/finalize.py --lang en          # Polnisch entsprechend mit pl
   −18 LUFS, begrenzt Spitzen weich und schreibt `public/voice/<Clip>.mp3` (96 kbit/s, mono).
 - `align.py` findet die Zeitmarken: Sprachabschnitte per Silero-VAD, Text je Abschnitt per Whisper (small,
   über sherpa-onnx), dann zeichenweiser Abgleich mit dem Skript. Die Modelle gehören nach `work/models/`.
-- `finalize.py` trägt Dauer und Zeitmarken der Sprache in `src/sonnensystem.html` ein (`VOICE_DE`, `VOICE_EN`,
-  `VOICE_PL`), ebenso die Zeitpunkte, zu denen die Namen der Ozeane und Kontinente erscheinen (`GEO_T_*`).
+- `finalize.py` schreibt Dauer und Zeitmarken der Sprache nach `src/data/voice.<sprache>.json` (Schlüssel `clips`), ebenso die Zeitpunkte,
+  zu denen die Namen der Ozeane und Kontinente erscheinen (Schlüssel `geo`). `src/data/voice.js` lädt die Dateien, `app/tour.js` (`cue`) und `hud/` lesen sie.
 - Die Stichworte (`water`, `hab`, `pad` …) müssen in allen Sprachen an derselben inhaltlichen Stelle stehen; die
   Kamerafahrt rechnet relativ zu ihnen und passt sich so an die Länge jeder Fassung an.
 
@@ -68,7 +68,7 @@ eingecheckt.
 - **Schleife:** `python tools/audio/loop.py work/el/music_b.mp3 public/audio/music.mp3 8 24 31`
   bestimmt Tempo und Schlagraster, sucht zwei ähnlich klingende Stellen im Abstand ganzer Taktgruppen,
   blendet über, hebt den leisen Auftakt um 8 dB an (bis Sekunde 24, ausgelaufen bei Sekunde 31) und bringt
-  das Stück auf −16 LUFS. Die ausgegebenen Werte stehen in der Konstante `MUSIC` der Seite
+  das Stück auf −16 LUFS. Die ausgegebenen Werte stehen in der Konstante `MUSIC` in `src/audio/tracks.js`
   (`loop0`, `loop1`, `beat`, `grid0`).
 
 Der ElevenLabs-Flow mit allen Aufträgen heißt „Sonnensystem Kamerafahrt – Sprecher und Musik“
@@ -94,7 +94,7 @@ Der ElevenLabs-Flow mit allen Aufträgen heißt „Sonnensystem Kamerafahrt – 
 
   `loop.py` kennt dafür zusätzlich `--from` (frühester Schleifenanfang), `--end` (Quelle abschneiden) und `--bars`
   (erlaubte Schleifenlängen). Der leise Auftakt der Erde wird um bis zu 14 dB angehoben (bis Sekunde 12, ausgelaufen bei 15).
-  Werte in `AU`: Erde `loop0` 20,1252, `loop1` 67,3461, `grid0` 0,4499 (24 Takte); Mars `loop0` 83,0884, `loop1` 114,569,
+  Werte in `src/audio/tracks.js` (`TRACKS`): Erde `loop0` 20,1252, `loop1` 67,3461, `grid0` 0,4499 (24 Takte); Mars `loop0` 83,0884, `loop1` 114,569,
   `grid0` 0,4519 (16 Takte). Beide Stücke beginnen beim Anflug mit ihrem Auftakt (auf einem Schlag des Hauptstücks) und gehen
   danach in die Schleife; Lautheit −17,0 (Erde) und −16,4 LUFS (Mars) nach dem MP3-Kodieren, das Hauptstück misst −17,2.
   Der Mars-Pegel wird im Programm um 0,8 dB gesenkt (`TRACKS.mars.gain`).
@@ -168,6 +168,6 @@ im Shader (`detail`, `flow`), Venus und die Eisriesen einen Dunst zum Rand hin (
 
 ## Schriften und Bibliotheken
 
-- three.js r128 als klassisches Skript (`THREE` global) und der dazugehörige `GLTFLoader`.
+- three.js r128 (MIT) aus npm (`three@0.128.0`, `import * as THREE from 'three'`) samt `GLTFLoader` aus `three/examples/jsm/`; die Vite-Bündelung nimmt beides in die Seite auf (ADR 0001, ADR 0002).
 - Instrument Serif 400, IBM Plex Sans 400/500, IBM Plex Mono 400/500, jeweils der lateinische Zeichensatz und das
   erweiterte Latein (für Polnisch) als WOFF2 (aus den `@fontsource`-Paketen).
