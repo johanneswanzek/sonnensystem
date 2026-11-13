@@ -1,4 +1,4 @@
-// mars/layout – Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Dunst (HZ), Krater, Teilchenfarben.
+// mars/layout – Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Krater, Teilchenfarben.
 // Exporte: AST_YAW, CRATERS, DUST, FLAT, HAB, OBST, ROVER_YAW, STEAM
 
 const FLAT = [

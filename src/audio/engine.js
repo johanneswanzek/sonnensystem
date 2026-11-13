@@ -43,8 +43,7 @@ export function initEngine() {
       curBody = 0,
       sweepT = 0,
       tTick = 0,
-      tStart = 0,
-      sfxReady = null;
+      tStart = 0;
     const clips = {},
       smp = {},
       live = [],

@@ -4,7 +4,7 @@ Diese Datei wird von `tools/docs/modulkarte.mjs` aus dem Quelltext erzeugt (`npm
 Zweck = erste Kopfkommentarzeile jedes Moduls, Exporte und Abhängigkeiten stammen aus den `export`- und `import`-Zeilen.
 Die Erklärung der Schichten und des Datenflusses steht in `docs/architecture.md`, Begriffe in `docs/glossar.md`.
 
-Stand: 50 Module, 7711 Zeilen JavaScript.
+Stand: 50 Module, 7710 Zeilen JavaScript.
 
 ## Abhängigkeiten zwischen den Ordnern
 
@@ -106,7 +106,7 @@ flowchart LR
 
 | Modul | Zweck | Exporte | Zeilen |
 | --- | --- | --- | --- |
-| `audio/engine.js` | Ton (AU): Web Audio, Musikstück als Schleife, Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme | `initEngine`, `AU` | 689 |
+| `audio/engine.js` | Ton (AU): Web Audio, Musikstück als Schleife, Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme | `initEngine`, `AU` | 688 |
 | `audio/tracks.js` | Tondaten: Hauptstück (MUSIC, BEAT), Zusatzstücke je Halt (TRACKS), Effekt-Samples (SFX) | `BEAT`, `MUSIC`, `SFX`, `TRACKS` | 30 |
 
 ### src/core/
@@ -149,7 +149,7 @@ flowchart LR
 | Modul | Zweck | Exporte | Zeilen |
 | --- | --- | --- | --- |
 | `mars/base.js` | Marsbasis (MB): eigene Szene auf der Oberfläche in Metern – Gelände, Bauten, Fahrzeuge, Kamerafahrt, Teilchen | `initBase`, `MB` | 1840 |
-| `mars/layout.js` | Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Dunst (HZ), Krater, Teilchenfarben | `AST_YAW`, `CRATERS`, `DUST`, `FLAT`, `HAB`, `OBST`, `ROVER_YAW`, `STEAM` | 44 |
+| `mars/layout.js` | Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Krater, Teilchenfarben | `AST_YAW`, `CRATERS`, `DUST`, `FLAT`, `HAB`, `OBST`, `ROVER_YAW`, `STEAM` | 44 |
 | `mars/shaders.js` | GLSL der Marsszene: Luftperspektive und Bodendetail (MB_GLSL), Himmel (SKY_FS) | `MB_GLSL`, `SKY_FS` | 40 |
 
 ### src/orbit/

@@ -3,9 +3,8 @@ const { test, expect } = require('playwright/test');
 const L = require('./lib');
 
 test.describe.serial('Laden', () => {
-  let s, info;
+  let s;
   test.beforeAll(async ({ browser }, testInfo) => {
-    info = testInfo;
     s = await L.open(browser, testInfo);
   });
   test.afterAll(async () => {

@@ -1,7 +1,5 @@
 // Gemeinsame Hilfen der E2E-Tests.
-const fs = require('fs'),
-  path = require('path');
-const { ROOT, delivered } = require('./server');
+const { delivered } = require('./server');
 
 const SOFT = !!process.env.SOFTWARE_GL;
 const LOAD_TIMEOUT = SOFT ? 300000 : 90000;
