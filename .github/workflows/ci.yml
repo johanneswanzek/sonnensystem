@@ -1,12 +1,14 @@
-# Prüft jeden Push und jeden Pull Request: Lint, Typen, Unit-Tests, Bau (Website und Artefakt), E2E mit Playwright.
-# Die E2E-Tests bauen die Testseite selbst (playwright.config.js: webServer -> npm run build:test, tools/shots/serve.mjs).
+# Prüft jeden Push auf main und jeden Pull Request (Zweige mit Pull Request laufen so nur einmal je Commit): Lint, Typen, Unit-Tests, Bau (Website und Artefakt), E2E mit Playwright.
+# Die E2E-Tests bauen die Testseite selbst (playwright.config.js: globalSetup tests/e2e/global-setup.js baut .test/ und dist/ und startet die Server).
 # Veröffentlicht wird nicht hier, sondern in pages.yml.
 # Voraussetzung: package-lock.json ist eingecheckt (für npm ci) und .nvmrc nennt die Node-Version.
 name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,7 +20,7 @@ concurrency:
 jobs:
   pruefen:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       SOFTWARE_GL: "1"   # keine Grafikkarte auf dem Runner
     steps:

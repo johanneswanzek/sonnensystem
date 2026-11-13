@@ -19,19 +19,18 @@ auf der Oberfläche, Einheit **Meter**, gezeichnet über `POST.render` mit `lin:
 ## Bild der Marsszene
 
 - `haze(m,dust)` hängt an jedes Material (nach `build` per `traverse`, in `addModel` für die Modelle) die Luftperspektive `mbAir` aus
-  `MB_GLSL` (`shaders.js`): Dunst mit Höhenabfall, zur Sonne heller, Werte in `HZ` (`layout.js`); vor dem Tonemapping, ersetzt den
+  `MB_GLSL` (`shaders.js`): Dunst mit Höhenabfall, zur Sonne heller, Werte in `HZ` (in `base.js`); vor dem Tonemapping, ersetzt den
   `Fog` der Szene. Optional heller Staub auf nach oben weisenden Flächen. Der Himmel geht am Horizont in dieselbe Dunstfarbe über.
 - Der Boden (`soilDetail`) legt Muster in Weltkoordinaten über die Textur (dunkle Sandfelder mit Rippeln, Kies, großflächige Helligkeit)
   und leitet daraus das Relief ab.
 - Der Schattenbereich folgt der Kamera (`fitShadow`, texelgerastert, PCF mit Radius); weiche Flecken (`blob`) verdunkeln den Boden unter
   Bauten und Fahrzeugen.
 - Lichter, Triebwerksstrahl und Sonnenscheibe sind HDR-Werte über 1 (der Bloom macht daraus Glanz).
-- **Bildstimmung (Art-Direction v9):** Sonne tief (≈14°, `sunDir`), starkes warmes Streiflicht, schwaches kühles Fülllicht; `haze()`
-  halbiert dabei `envMapIntensity` (außer `userData.keepEnv`: Glas, Solarzellen). Dunst erst ab einigen hundert Metern (`HZ.mbHzP`),
-  Staubschleier am Boden nur als Akzent. Bauten tragen Canvas-Texturen aus `tech(0|1)` (Paneelfugen, Nieten, Orange/Anthrazit-Streifen,
+- **Bildstimmung (Art-Direction v9):** Sonne tief (≈15°, `sunDir`), starkes warmes Streiflicht, schwaches kühles Fülllicht; `haze()`
+  halbiert dabei `envMapIntensity` (außer `userData.keepEnv`: Glas, Solarzellen). Dunstdichte und -abnahme in `HZ.mbHzP`. Bauten tragen Canvas-Texturen aus `tech(0|1)` (Paneelfugen, Nieten, Orange/Anthrazit-Streifen,
   Kennungen, Schmutz am Fuß; Leinwand unten = Fuß). Drei Ringe aus Tafelbergen (3,3/4,6/6,2 km) bilden den Horizont, `mbAir` stuft sie ab.
-- Die POST-Parameter der Marsszene setzt `MB.render`. **Tonemapping** (ACES, sRGB) gilt nur hier; `MB.render` setzt es und stellt es
-  zurück. Die Weltraumszene rechnet ohne.
+- Die POST-Parameter der Marsszene setzt `MB.render` (`lin:1, exposure:.95, bloom:.26, thr:2, knee:.8, vig:.24`). Tonemapping (ACES, sRGB) macht `POST`
+  (`src/render/post.js`) für beide Szenen; die Weltraumszene ruft `POST.render` ohne `lin` auf (`app/loop.js`).
 
 ## Regeln und Fallstricke
 

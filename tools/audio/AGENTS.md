@@ -15,5 +15,5 @@ Aufwand: [`docs/produktion.md`](../../docs/produktion.md). Hintergrund: ADR 0005
 
 ## Voraussetzungen
 
-`ffmpeg` im Pfad; Python-Pakete je nach Skript (`numpy`, `soundfile`, `pyloudnorm`; Zeitmarken: Silero-VAD und Whisper über sherpa-onnx, Modelle
+`ffmpeg` im Pfad; Python-Pakete je nach Skript (`numpy`, `scipy`, `soundfile`, `pyloudnorm`; Zeitmarken: Silero-VAD und Whisper über sherpa-onnx, Modelle
 nach `work/models/`). Genaue Aufrufe in den Kopfkommentaren der Skripte und in `docs/produktion.md`.

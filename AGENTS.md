@@ -25,7 +25,7 @@ npm run dev                                  # http://localhost:8080
 | `npm run dev` / `build` / `preview` | Entwicklungsserver / Website nach `dist/` / gebaute Website ansehen |
 | `npm run build:artifact` | claude.ai-Artefakt nach `dist-artifact/` (`sonnensystem.html`, `begleitdateien.txt`) |
 | `npm run build:test` | Testseite mit Prüfhaken nach `.test/` |
-| `npm run lint` / `typecheck` | ESLint (flat config, `no-undef` hart) / `tsc` über JSDoc-Typen |
+| `npm run lint` / `typecheck` | ESLint (flat config, `no-undef` hart) / `tsc` (`checkJs` aus, geprüft werden nur Dateien mit `// @ts-check`) |
 | `npm run format` / `format:check` | Prettier für `src` und `tests` |
 | `npm run test:unit` (`test`) | Vitest, `tests/unit/` |
 | `npm run test:e2e` | Playwright, `tests/e2e/`; `test:e2e:file <name>` eine Datei, `-- --project=dist` nur `dist/` |
@@ -113,7 +113,7 @@ Ausführlich: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 - `loadModels` (`src/app/boot.js`) blendet `createImageBitmap` während des Parsens aus, damit der `GLTFLoader` r128 Texturen über gewöhnliche Bildelemente lädt; das verhält sich in allen
   Browsern gleich.
 - Beschriftungen der Stationen der Marsbasis erscheinen erst, wenn die Station im Bild ist (`baseHUD`).
-- Tonemapping (ACES, sRGB) gilt nur für die Marsszene; `MB.render` setzt es und stellt es zurück. `drawHUD` stellt `W`, `H`, `topH`, `botH` nach dem Zeichnen zurück.
+- Tonemapping macht die Nachbearbeitung `POST` (`src/render/post.js`) für beide Szenen: `MB.render` ruft `POST.render(sc, cam, {lin:1, …})` (ACES, sRGB, Belichtung), die Weltraumszene `POST.render(scene, camera, {…})` ohne `lin` (Werte fürs Display, nur Lichter über 1 laufen weich aus). Ohne HalfFloat-Ziele zeichnet `POST` direkt. `drawHUD` stellt `W`, `H`, `topH`, `botH` nach dem Zeichnen zurück.
 - Zeitmarken schreibt `tools/audio/finalize.py`; von Hand nur ändern, wenn auch der Clip dazu passt.
 - Artefakt: kein `.glb`; Modelle heißen dort `models/<name>.json` (`tools/models/embed.mjs`, siehe `CLAUDE.md`).
 - Git für Windows: `.gitattributes` hält Textdateien auf LF, sonst ändern sich Prüfsummen und Diffs.

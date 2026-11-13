@@ -6,7 +6,7 @@ Maßstab: realistisch, filmisch, ruhig wie eine hochwertige Weltraum-Doku; nicht
 
 ## Nachbearbeitung (`POST`, `post.js`)
 
-- `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})` ersetzt `renderer.render` für beide Szenen.
+- `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})` (außerdem `scatter`, `pre`; Weltraum: `exposure:1, bloom:.9, thr:1.05, knee:.45, vig:.24`) ersetzt `renderer.render` für beide Szenen.
 - Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit MSAA, Desktop 4×, Handy 2×; so groß wie der Bildspeicher, folgt also `PR`/`setPR`
   und `measure`), dann Bloom über 4 Stufen (Desktop 6) ab halber Auflösung (Hell-Pass mit weichem Knie, Dual-Filter abwärts und aufwärts),
   zuletzt in einem Schritt Belichtung, Tonemapping, Vignette und Korn.
@@ -14,7 +14,7 @@ Maßstab: realistisch, filmisch, ruhig wie eine hochwertige Weltraum-Doku; nicht
   und der Erdkern liefern bewusst Werte über 1 und leuchten dadurch.
 - Marsoberfläche (`lin:1`): linear, ACES (wie `THREE.ACESFilmicToneMapping`) und sRGB, Belichtung .95.
 - Ohne HalfFloat-Ziele (Probe beim Start) oder unter 0,45 Bildpunkten je CSS-Pixel zeichnet `POST` direkt wie früher. `POST.ok` sagt, ob der
-  volle Weg läuft (Glanzsprites der Sonne werden dann schwächer gesetzt). Kein Feature darf die Seite brechen, wenn eine Erweiterung fehlt.
+  volle Weg läuft (Sonne, Korona und die hellsten Sterne werden dann anders gesetzt). Kein Feature darf die Seite brechen, wenn eine Erweiterung fehlt.
 
 ## Oberflächen und Karten
 
