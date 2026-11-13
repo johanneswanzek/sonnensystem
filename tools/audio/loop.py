@@ -1,7 +1,10 @@
 # Aus einem Musikstück eine nahtlose Schleife bauen: Tempo und Schlagraster bestimmen, zwei ähnlich klingende Stellen im Abstand ganzer
 # Taktgruppen suchen, davor überblenden. Ausgabe: MP3 und die Schleifenpunkte als JSON.
 #
-#   python tools/audio/loop.py <Quelle.mp3> <Ziel.mp3> [<dB> <bis Sekunde a> <ausgelaufen bei Sekunde b>]
+#   python tools/audio/loop.py [--from=S] [--end=S] [--bars=32,24,16] <Quelle.mp3> <Ziel.mp3> [<dB> <bis Sekunde a> <ausgelaufen bei Sekunde b>]
+#
+# Wahlfrei: --from=S frühester Schleifenanfang, --end=S Quelle dort abschneiden (wenn das Stück vorher ausläuft),
+# --bars=… erlaubte Schleifenlängen in Takten (Vorgabe 64,56,48,40,32,24,16).
 #
 # Die ausgegebenen Werte (loop0, loop1, beat, grid0) gehören in die Konstante MUSIC in src/sonnensystem.html.
 # Die aktuelle Musik entstand mit: loop.py work/el/music_b.mp3 public/audio/music.mp3 8 24 31
@@ -9,10 +12,13 @@
 import os, sys, json, subprocess, tempfile, numpy as np, soundfile as sf
 from scipy.signal import stft, resample_poly
 import pyloudnorm as pyln
+OPT = dict(a[2:].split('=', 1) for a in sys.argv[1:] if a.startswith('--') and '=' in a)
+sys.argv = [a for a in sys.argv if not a.startswith('--')]
 src, dst = sys.argv[1], sys.argv[2]
 TM, TO = (os.path.join(tempfile.gettempdir(), n) for n in ('_sonnensystem_m.wav', '_sonnensystem_o.wav'))
 subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', src, '-ar', '44100', '-ac', '2', TM], check=True)
 x, sr = sf.read(TM, dtype='float32')
+if 'end' in OPT: x = x[:int(float(OPT['end']) * sr)]
 if len(sys.argv) > 5:      # leisen Auftakt anheben: Pegel in dB bis Sekunde a, bis Sekunde b läuft die Anhebung aus
     db, ta, tb = float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]); tt = np.arange(len(x)) / sr
     x = (x * (10 ** (db * np.clip((tb - tt) / (tb - ta), 0, 1) / 20))[:, None]).astype(np.float32)
@@ -45,10 +51,10 @@ def sim(a, b, n=8):      # Ähnlichkeit der n Schläge vor und nach zwei Stellen
     ks = [k for k in range(-n, n) if 0 <= a + k < nb and 0 <= b + k < nb]
     return float(np.mean([F[a + k] @ F[b + k] for k in ks]))
 opts = []
-for bars in (64, 56, 48, 40, 32, 24, 16):
+for bars in [int(b) for b in OPT.get('bars', '64,56,48,40,32,24,16').split(',')]:
     L = bars * 4
     for a in range(16, nb - L - 12, 4):
-        if phase + a * beat < 6 or phase + (a + L) * beat > dur - 5: continue
+        if phase + a * beat < max(6, float(OPT.get('from', 0))) or phase + (a + L) * beat > dur - 5: continue
         opts.append((sim(a, a + L) + .0015 * bars, bars, a))
 opts.sort(reverse=True); score, bars, a = opts[0]
 t0 = phase + a * beat; t1 = t0 + bars * 4 * beat

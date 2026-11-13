@@ -26,7 +26,7 @@ Karten und Modelle nicht von der Festplatte laden.
 src/sonnensystem.html    die ganze Seite in einer Datei: Stil, Markup, Programm (three.js r128, kein Framework)
 site.json                Adresse, Titel, Beschreibung, Verweise auf Impressum und Datenschutz
 public/                  wird unverändert veröffentlicht
-  voice/, audio/           Sprecher (15 Clips je Sprache; voice/en/, voice/pl/) und Musik als MP3
+  voice/, audio/           Sprecher (15 Clips je Sprache; voice/en/, voice/pl/), Musik (drei Stücke) und audio/sfx/ (13 Effekte) als MP3
   img/                     Karten von Erde, Mars und Jupiter
   models/                  3D-Modelle (GLB)
   vendor/                  three.js, GLTFLoader, Schriften – alles lokal, nichts kommt von fremden Servern
@@ -122,8 +122,8 @@ Alle Schritte stehen im Kopf von `tools/test/run.js`.
 
 - **Karten und 3D-Modelle:** NASA (Blue Marble, Nachtlichter, Mars, Jupiter; Modelle aus „NASA 3D Resources“).
   Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.
-- **Sprecher und Musik:** mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit
-  Eleven Music.
+- **Sprecher, Musik und Effekte:** mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit
+  Eleven Music, die Effekte mit Sound Effects.
 - **Technik:** three.js r128 (MIT). Schriften: Instrument Serif, IBM Plex (SIL Open Font License).
 
 Die vollständigen Angaben und Lizenztexte stehen in [`public/LIZENZEN.txt`](public/LIZENZEN.txt), Einzelheiten

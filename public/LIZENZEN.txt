@@ -13,7 +13,9 @@ NASA (Karten und 3D-Modelle)
   Richtlinien: https://www.nasa.gov/nasa-brand-center/images-and-media/
 
 Sprecher und Musik
-  voice/*.mp3, audio/music.mp3    mit ElevenLabs erzeugt (Stimme "Helmut", Musik mit Eleven Music).
+  voice/*.mp3, audio/music*.mp3   mit ElevenLabs erzeugt (Stimme "Helmut", Musik mit Eleven Music:
+                                  music.mp3, music-earth.mp3, music-mars.mp3).
+  audio/sfx/*.mp3                 Effekte mit ElevenLabs erzeugt (Sound Effects, Modell eleven_text_to_sound_v2).
   Die Nutzungsrechte richten sich nach dem ElevenLabs-Tarif, in dem die Dateien erzeugt wurden.
   https://elevenlabs.io/docs/help-center/legal/can-i-publish-the-content-i-generate-on-the-platform
 
