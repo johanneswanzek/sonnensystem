@@ -246,7 +246,7 @@ button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
   <dialog id="credits" aria-labelledby="creditsT">
     <h2 id="creditsT" data-t>Quellen und Lizenzen</h2>
     <p data-t>Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.</p>
-    <p data-t><b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.</p>
+    <p data-t><b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars, Jupiter, Saturn, Neptun sowie die Marsmonde Phobos und Deimos stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.</p>
     <p data-t><b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.</p>
     <p data-t><b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.</p>
     <p data-t><b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).</p>
@@ -287,8 +287,8 @@ const LANG = (function(){
 })();
 const LOC = {de:'de-DE', en:'en-GB', pl:'pl-PL'}[LANG];          // Zahlen und Datum
 const TR = {
-en:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"3D view of the solar system with orbits","Karten werden geladen …":"Loading maps …","Oberflächen werden berechnet …":"Computing surfaces …","Marsbasis wird aufgebaut …":"Building the Mars base …","Simuliertes Datum":"Simulated date","Zeitraffer":"Time lapse","Langsamer":"Slower","Schneller":"Faster","Pause":"Paused","1 Tag/s":"1 day/s"," Tage/s":" days/s","Nahansicht: ":"Close-up: ","Tour pausieren":"Pause the tour","Tour starten":"Start the tour","Ton einschalten":"Turn sound on","Vollbild":"Full screen","Vollbild verlassen":"Exit full screen","Sprache":"Language","Reise starten":"Start the journey","Ohne Ton starten":"Start without sound","Vorheriger Halt":"Previous stop","Nächster Halt":"Next stop","Himmelskörper":"Celestial bodies","Musik und Sprecher":"Music and narrator","Nur Sprecher, ohne Musik":"Narrator only, no music","Ton aus":"Sound off",". Antippen für: ":". Tap for: ","Tour starten oder anhalten · Leertaste":"Start or pause the tour · Space","Ton · Taste M":"Sound · M key","Vollbild · Taste F":"Full screen · F key","Vorheriger Halt · Pfeil links":"Previous stop · Left arrow","Nächster Halt · Pfeil rechts":"Next stop · Right arrow","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"The 3D view could not be started. It requires WebGL, which is not available in this environment.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Diameter {0} km. Mean distance from the Sun {1} AU. Orbital period {2}. Axial tilt {3} degrees. Rotation {4}. Known moons: {5}.","Quellen":"Sources","Impressum":"Legal notice","Datenschutz":"Privacy","Schließen":"Close","Quellen und Lizenzen":"Sources and licences","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"The positions of the planets are calculated from orbital elements for the date shown. Distances and sizes are compressed, otherwise nothing would be visible.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Maps:</b> Earth (Blue Marble, night lights, elevation, clouds), Mars and Jupiter come from NASA. The other surfaces are computed in the browser.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>3D models:</b> habitat module, pressurised rover, rover, helicopter, antenna, spacesuit and the asteroid Vesta come from the “NASA 3D Resources” archive. The other structures of the Mars base are an original design based on studies by the space agencies.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Narrator and music:</b> generated with artificial intelligence at ElevenLabs (elevenlabs.io), the music with Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technology:</b> three.js (MIT licence). Fonts: Instrument Serif and IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA has neither reviewed nor endorsed this project.","Übersicht":"Overview","Sonnensystem":"Solar System","Sonne":"Sun","Merkur":"Mercury","Erde":"Earth","Asteroidengürtel":"Asteroid belt","Asteroiden":"Asteroids","Neptun":"Neptune","Mond":"Moon","Ganymed":"Ganymede","Kallisto":"Callisto","Stern · Zentrum des Systems":"Star · Centre of the system","Gesteinsplanet · 1. Planet":"Rocky planet · 1st planet","Gesteinsplanet · 2. Planet":"Rocky planet · 2nd planet","Gesteinsplanet · 3. Planet":"Rocky planet · 3rd planet","Gesteinsplanet · 4. Planet":"Rocky planet · 4th planet","Kleinkörper · zwischen Mars und Jupiter":"Small bodies · between Mars and Jupiter","Gasriese · 5. Planet":"Gas giant · 5th planet","Gasriese · 6. Planet":"Gas giant · 6th planet","Eisriese · 7. Planet":"Ice giant · 7th planet","Eisriese · 8. Planet":"Ice giant · 8th planet","Erde · Kontinente und Ozeane":"Earth · Continents and oceans","Erde · Aufbau":"Earth · Structure","Mars · Eine mögliche Kolonie":"Mars · A possible colony","58,6 TAGE":"58.6 DAYS","243 TAGE":"243 DAYS","88 Tage":"88 days","224,7 Tage":"224.7 days","365,25 Tage":"365.25 days","687 Tage":"687 days","3,63 Jahre":"3.63 years","11,86 Jahre":"11.86 years","29,45 Jahre":"29.45 years","84,0 Jahre":"84.0 years","164,8 Jahre":"164.8 years","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Eight planets, their positions calculated for the date shown. The ring of light shows how long sunlight takes to reach each orbit. Distances and sizes are compressed. Maps and 3D models: NASA. Narrator voice and music are AI-generated (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planets. Age 4.57 billion years. Orbit of Neptune 30.07 AU. Light to Neptune 4.2 hours.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"It holds 99.86 % of the mass of the solar system. Its light takes a good eight minutes to reach the Earth.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Diameter 1,392,700 km. Surface about 5,500 °C. Spectral class G2V. Rotation at the equator 25 days.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"The smallest and fastest planet. On its strongly elliptical orbit its speed varies between 39 and 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Almost as large as the Earth, but around 465 °C hot beneath dense clouds. It spins backwards, and a day on Venus lasts longer than its year.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"The only known planet with liquid water on its surface. On the night side the cities glow.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Around 71 % of the surface is water, spread across five oceans. The remaining 29 % form seven continents.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Section from the centre to the surface: 6,371 km. The crust is drawn exaggerated; to scale it would be thinner than a line.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rust-red from iron oxide in the dust. Phobos circles it faster than Mars rotates.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"A design based on studies by the space agencies. Habitat, rovers, antenna and spacesuits are NASA models; the other structures are reconstructions.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"At 525 km, Vesta is one of the largest asteroids. In the picture the chunks are far closer together than in reality: on average about a million kilometres separate them.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Vesta: diameter 525 km, orbital period 3.63 years. More than 1.4 million asteroids are known; together they have about 3 percent of the mass of the Moon.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"More than twice as massive as all the other planets combined. The Great Red Spot is a storm larger than the Earth.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Its rings of water ice are around 280,000 km across, yet in the main rings mostly only about ten metres thick. The planet casts its shadow on them.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Its axis is tilted by 98°. It rolls around the Sun on its side, rings and moons included.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"The planet farthest from the Sun. Since its discovery in 1846 it has completed just a single orbit. Triton circles it against the direction of rotation.","BEKANNTE ASTEROIDEN":"KNOWN ASTEROIDS","ÜBER 1,4 MIO.":"OVER 1.4 MILLION","GESAMTMASSE":"TOTAL MASS","3 % DES MONDES":"3 % OF THE MOON","WOHNMODULE":"HABITAT MODULES","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"PRESSURE CABINS · TUNNELS · AIRLOCKS","STRAHLENSCHUTZ":"RADIATION SHIELD","2 BIS 3 M MARSBODEN ALS SCHILD":"2 TO 3 M OF MARTIAN SOIL AS A SHIELD","GEWÄCHSHÄUSER":"GREENHOUSES","NAHRUNG UND SAUERSTOFF":"FOOD AND OXYGEN","SOLARFELD":"SOLAR FIELD","SONNE 43 % SO STARK WIE AUF DER ERDE":"SUNLIGHT 43 % AS STRONG AS ON EARTH","KERNREAKTOREN":"NUCLEAR REACTORS","JE 10 KW · AUCH IM STAUBSTURM":"10 KW EACH · EVEN IN A DUST STORM","TREIBSTOFFANLAGE":"FUEL PLANT","WASSER · SAUERSTOFF · METHAN":"WATER · OXYGEN · METHANE","LANDEPLATZ":"LANDING PAD","430 M ABSTAND · SCHUTZWÄLLE":"430 M AWAY · PROTECTIVE BERMS","DRUCKROVER":"PRESSURISED ROVER","MEHRTÄGIGE FAHRTEN":"MULTI-DAY TRIPS","FUNKANLAGE":"RADIO STATION","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SIGNAL TO EARTH: 3 TO 22 MIN","DURCHMESSER":"DIAMETER","ACHSNEIGUNG":"AXIAL TILT","RÜCKLÄUFIG":"RETROGRADE","MONDE":"MOONS","KEINE":"NONE","UMLAUF SEIT PERIHEL":"ORBIT SINCE PERIHELION","JAHR ":"YEAR ","TAG ":"DAY ","SONNE":"SUN"," AE":" AU","LICHT ":"LIGHT ","BAHNTEMPO":"ORBITAL SPEED","BEKANNTE MONDE":"KNOWN MOONS","ERDE IM MASSSTAB":"EARTH TO SCALE","OBERFLÄCHE":"SURFACE","KERN 15 MIO. °C":"CORE 15 MILLION °C","ANTEIL AN DER MASSE":"SHARE OF THE MASS","DES SONNENSYSTEMS":"OF THE SOLAR SYSTEM","ROTATION AM ÄQUATOR":"ROTATION AT THE EQUATOR","25 TAGE":"25 DAYS","SPEKTRALKLASSE G2V":"SPECTRAL CLASS G2V","LICHT ZUR ERDE":"LIGHT TO EARTH","LICHT AB SONNE":"LIGHT FROM THE SUN","{0} ERREICHT":"{0} REACHED","PERIHEL 2061":"PERIHELION 2061","VON WASSER BEDECKT":"COVERED BY WATER","LANDFLÄCHE":"LAND AREA","PAZIFIK":"PACIFIC","ATLANTIK":"ATLANTIC","INDISCHER OZEAN":"INDIAN OCEAN","NORDPOLARMEER":"ARCTIC OCEAN","SÜDPOLARMEER":"SOUTHERN OCEAN","ASIEN":"ASIA","AFRIKA":"AFRICA","NORDAMERIKA":"NORTH AMERICA","SÜDAMERIKA":"SOUTH AMERICA","ANTARKTIS":"ANTARCTICA","EUROPA":"EUROPE","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"INNER CORE","RADIUS 1.220 KM":"RADIUS 1,220 KM","FEST · 5.400 °C":"SOLID · 5,400 °C","ÄUSSERER KERN":"OUTER CORE","2.260 KM DICK":"2,260 KM THICK","FLÜSSIGES EISEN":"LIQUID IRON","UNTERER MANTEL":"LOWER MANTLE","2.230 KM DICK":"2,230 KM THICK","BIS 3.700 °C":"UP TO 3,700 °C","OBERER MANTEL":"UPPER MANTLE","BIS 660 KM TIEFE":"DOWN TO 660 KM","ZÄHES GESTEIN":"VISCOUS ROCK","KRUSTE":"CRUST","5 BIS 70 KM DICK":"5 TO 70 KM THICK","FESTES GESTEIN":"SOLID ROCK"},
-pl:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"Widok 3D Układu Słonecznego z orbitami","Karten werden geladen …":"Wczytywanie map …","Oberflächen werden berechnet …":"Obliczanie powierzchni …","Marsbasis wird aufgebaut …":"Budowanie bazy na Marsie …","Simuliertes Datum":"Symulowana data","Zeitraffer":"Przyspieszenie czasu","Langsamer":"Wolniej","Schneller":"Szybciej","Pause":"Pauza","1 Tag/s":"1 dzień/s"," Tage/s":" dni/s","Nahansicht: ":"Zbliżenie: ","Tour":"Podróż","Tour pausieren":"Wstrzymaj podróż","Tour starten":"Wznów podróż","Ton einschalten":"Włącz dźwięk","Vollbild":"Pełny ekran","Vollbild verlassen":"Zamknij pełny ekran","Sprache":"Język","Reise starten":"Rozpocznij podróż","Ohne Ton starten":"Rozpocznij bez dźwięku","Vorheriger Halt":"Poprzedni przystanek","Nächster Halt":"Następny przystanek","Himmelskörper":"Ciała niebieskie","Musik und Sprecher":"Muzyka i lektor","Nur Sprecher, ohne Musik":"Tylko lektor, bez muzyki","Ton aus":"Dźwięk wyłączony",". Antippen für: ":". Dotknij, aby wybrać: ","Tour starten oder anhalten · Leertaste":"Rozpocznij lub wstrzymaj podróż · Spacja","Ton · Taste M":"Dźwięk · klawisz M","Vollbild · Taste F":"Pełny ekran · klawisz F","Vorheriger Halt · Pfeil links":"Poprzedni przystanek · strzałka w lewo","Nächster Halt · Pfeil rechts":"Następny przystanek · strzałka w prawo","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"Nie udało się uruchomić widoku 3D. Wymaga on WebGL, które nie jest dostępne w tym środowisku.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Średnica {0} km. Średnia odległość od Słońca {1} au. Okres obiegu {2}. Nachylenie osi {3} stopnia. Obrót {4}. Znane księżyce: {5}.","Quellen":"Źródła","Impressum":"Nota prawna","Datenschutz":"Prywatność","Schließen":"Zamknij","Quellen und Lizenzen":"Źródła i licencje","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"Położenia planet obliczono z elementów orbit dla wyświetlanej daty. Odległości i rozmiary są ściśnięte, inaczej nic nie byłoby widać.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars und Jupiter stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Mapy:</b> Ziemia (Blue Marble, nocne światła, wysokości, chmury), Mars i Jowisz pochodzą z NASA. Pozostałe powierzchnie są obliczane w przeglądarce.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>Modele 3D:</b> moduł mieszkalny, łazik ciśnieniowy, łazik, śmigłowiec, antena, skafander i planetoida Westa pochodzą z archiwum „NASA 3D Resources”. Pozostałe budowle bazy marsjańskiej to własny projekt oparty na studiach agencji kosmicznych.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Lektor i muzyka:</b> wygenerowane przez sztuczną inteligencję w ElevenLabs (elevenlabs.io), muzyka w Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technika:</b> three.js (licencja MIT). Kroje pisma: Instrument Serif i IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA nie weryfikowała tego projektu ani go nie wspiera.","Übersicht":"Przegląd","Sonnensystem":"Układ Słoneczny","Sonne":"Słońce","Merkur":"Merkury","Venus":"Wenus","Erde":"Ziemia","Asteroidengürtel":"Pas planetoid","Asteroiden":"Planetoidy","Vesta":"Westa","Jupiter":"Jowisz","Uranus":"Uran","Mond":"Księżyc","Phobos":"Fobos","Ganymed":"Ganimedes","Rhea":"Rea","Titan":"Tytan","Titania":"Tytania","Triton":"Tryton","Stern · Zentrum des Systems":"Gwiazda · Centrum układu","Gesteinsplanet · 1. Planet":"Planeta skalista · 1. planeta","Gesteinsplanet · 2. Planet":"Planeta skalista · 2. planeta","Gesteinsplanet · 3. Planet":"Planeta skalista · 3. planeta","Gesteinsplanet · 4. Planet":"Planeta skalista · 4. planeta","Kleinkörper · zwischen Mars und Jupiter":"Małe ciała · między Marsem a Jowiszem","Gasriese · 5. Planet":"Gazowy olbrzym · 5. planeta","Gasriese · 6. Planet":"Gazowy olbrzym · 6. planeta","Eisriese · 7. Planet":"Lodowy olbrzym · 7. planeta","Eisriese · 8. Planet":"Lodowy olbrzym · 8. planeta","Erde · Kontinente und Ozeane":"Ziemia · Kontynenty i oceany","Erde · Aufbau":"Ziemia · Budowa","Mars · Eine mögliche Kolonie":"Mars · Możliwa kolonia","58,6 TAGE":"58,6 DNIA","243 TAGE":"243 DNI","88 Tage":"88 dni","224,7 Tage":"224,7 dnia","365,25 Tage":"365,25 dnia","687 Tage":"687 dni","3,63 Jahre":"3,63 roku","11,86 Jahre":"11,86 roku","29,45 Jahre":"29,45 roku","84,0 Jahre":"84 lata","164,8 Jahre":"164,8 roku","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Osiem planet, ich położenia obliczono dla wyświetlanej daty. Pierścień światła pokazuje, jak długo światło słoneczne biegnie do każdej orbity. Odległości i rozmiary są ściśnięte. Mapy i modele 3D: NASA. Głos lektora i muzykę wygenerowała sztuczna inteligencja (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planet. Wiek 4,57 miliarda lat. Orbita Neptuna 30,07 au. Światło do Neptuna 4,2 godziny.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"Zawiera 99,86 % masy Układu Słonecznego. Jego światło potrzebuje ponad ośmiu minut, by dotrzeć do Ziemi.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Średnica 1 392 700 km. Powierzchnia ok. 5500 °C. Typ widmowy G2V. Obrót na równiku 25 dni.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"Najmniejsza i najszybsza planeta. Na silnie eliptycznej orbicie jej prędkość waha się od 39 do 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Prawie tak duża jak Ziemia, ale pod gęstymi chmurami panuje około 465 °C. Obraca się wstecz, a doba na Wenus trwa dłużej niż jej rok.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"Jedyna znana planeta z ciekłą wodą na powierzchni. Po nocnej stronie świecą miasta.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Około 71 % powierzchni to woda, podzielona na pięć oceanów. Pozostałe 29 % tworzy siedem kontynentów.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Przekrój od środka do powierzchni: 6371 km. Skorupę narysowano z przesadą, w skali byłaby cieńsza niż kreska.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rdzawoczerwony od tlenku żelaza w pyle. Fobos okrąża go szybciej, niż Mars się obraca.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"Projekt oparty na studiach agencji kosmicznych. Habitat, łaziki, antena i skafandry to modele NASA, pozostałe budowle odtworzono.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"Westa, o średnicy 525 km, należy do największych planetoid. Na obrazie bryły są dużo gęściej niż w rzeczywistości: średnio dzieli je około miliona kilometrów.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Westa: średnica 525 km, okres obiegu 3,63 roku. Znanych jest ponad 1,4 miliona planetoid, razem mają około 3 procent masy Księżyca.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"Ponad dwa razy masywniejszy niż wszystkie pozostałe planety razem. Wielka Czerwona Plama to burza większa od Ziemi.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Jego pierścienie z lodu wodnego mają około 280 000 km szerokości, ale w głównych pierścieniach zwykle tylko około dziesięciu metrów grubości. Planeta rzuca na nie cień.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Jego oś jest nachylona o 98°. Toczy się wokół Słońca na boku, razem z pierścieniami i księżycami.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"Planeta najdalsza od Słońca. Od odkrycia w 1846 roku ukończył zaledwie jedno okrążenie. Tryton okrąża go przeciwnie do kierunku obrotu.","BEKANNTE ASTEROIDEN":"ZNANE PLANETOIDY","ÜBER 1,4 MIO.":"PONAD 1,4 MLN","GESAMTMASSE":"ŁĄCZNA MASA","3 % DES MONDES":"3 % MASY KSIĘŻYCA","WOHNMODULE":"MODUŁY MIESZKALNE","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"KABINY CIŚNIENIOWE · TUNELE · ŚLUZY","STRAHLENSCHUTZ":"OSŁONA PRZED PROMIENIOWANIEM","2 BIS 3 M MARSBODEN ALS SCHILD":"2 DO 3 M GRUNTU MARSJAŃSKIEGO JAKO TARCZA","GEWÄCHSHÄUSER":"SZKLARNIE","NAHRUNG UND SAUERSTOFF":"ŻYWNOŚĆ I TLEN","SOLARFELD":"POLE OGNIW SŁONECZNYCH","SONNE 43 % SO STARK WIE AUF DER ERDE":"SŁOŃCE ŚWIECI Z 43 % MOCY ZIEMSKIEJ","KERNREAKTOREN":"REAKTORY JĄDROWE","JE 10 KW · AUCH IM STAUBSTURM":"PO 10 KW · TAKŻE W BURZY PYŁOWEJ","TREIBSTOFFANLAGE":"WYTWÓRNIA PALIWA","WASSER · SAUERSTOFF · METHAN":"WODA · TLEN · METAN","LANDEPLATZ":"LĄDOWISKO","430 M ABSTAND · SCHUTZWÄLLE":"430 M OD BAZY · WAŁY OCHRONNE","DRUCKROVER":"ŁAZIK CIŚNIENIOWY","MEHRTÄGIGE FAHRTEN":"WIELODNIOWE WYPRAWY","FUNKANLAGE":"STACJA RADIOWA","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SYGNAŁ DO ZIEMI: 3 DO 22 MIN","DURCHMESSER":"ŚREDNICA","ACHSNEIGUNG":"NACHYLENIE OSI","ROTATION":"OBRÓT","RÜCKLÄUFIG":"WSTECZNY","MONDE":"KSIĘŻYCE","KEINE":"BRAK","UMLAUF SEIT PERIHEL":"OBIEG OD PERYHELIUM","JAHR ":"ROK ","TAG ":"DZIEŃ ","SONNE":"SŁOŃCE"," AE":" AU","LICHT ":"ŚWIATŁO ","BAHNTEMPO":"PRĘDKOŚĆ ORBITALNA","BEKANNTE MONDE":"ZNANE KSIĘŻYCE","ERDE IM MASSSTAB":"ZIEMIA W SKALI","OBERFLÄCHE":"POWIERZCHNIA","KERN 15 MIO. °C":"JĄDRO 15 MLN °C","ANTEIL AN DER MASSE":"UDZIAŁ W MASIE","DES SONNENSYSTEMS":"UKŁADU SŁONECZNEGO","ROTATION AM ÄQUATOR":"OBRÓT NA RÓWNIKU","25 TAGE":"25 DNI","SPEKTRALKLASSE G2V":"TYP WIDMOWY G2V","LICHT ZUR ERDE":"ŚWIATŁO DO ZIEMI","LICHT AB SONNE":"ŚWIATŁO OD SŁOŃCA","{0} ERREICHT":"ŚWIATŁO DOTARŁO: {0}","PERIHEL 2061":"PERYHELIUM 2061","VON WASSER BEDECKT":"POKRYTE WODĄ","LANDFLÄCHE":"LĄDY","PAZIFIK":"PACYFIK","ATLANTIK":"ATLANTYK","INDISCHER OZEAN":"OCEAN INDYJSKI","NORDPOLARMEER":"OCEAN ARKTYCZNY","SÜDPOLARMEER":"OCEAN POŁUDNIOWY","ASIEN":"AZJA","AFRIKA":"AFRYKA","NORDAMERIKA":"AMERYKA PÓŁNOCNA","SÜDAMERIKA":"AMERYKA POŁUDNIOWA","ANTARKTIS":"ANTARKTYDA","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"JĄDRO WEWNĘTRZNE","RADIUS 1.220 KM":"PROMIEŃ 1220 KM","FEST · 5.400 °C":"STAŁE · 5400 °C","ÄUSSERER KERN":"JĄDRO ZEWNĘTRZNE","2.260 KM DICK":"GRUBOŚĆ 2260 KM","FLÜSSIGES EISEN":"CIEKŁE ŻELAZO","UNTERER MANTEL":"PŁASZCZ DOLNY","2.230 KM DICK":"GRUBOŚĆ 2230 KM","BIS 3.700 °C":"DO 3700 °C","OBERER MANTEL":"PŁASZCZ GÓRNY","BIS 660 KM TIEFE":"DO GŁĘBOKOŚCI 660 KM","ZÄHES GESTEIN":"PLASTYCZNA SKAŁA","KRUSTE":"SKORUPA","5 BIS 70 KM DICK":"GRUBOŚĆ 5 DO 70 KM","FESTES GESTEIN":"LITA SKAŁA"}
+en:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"3D view of the solar system with orbits","Karten werden geladen …":"Loading maps …","Oberflächen werden berechnet …":"Computing surfaces …","Marsbasis wird aufgebaut …":"Building the Mars base …","Simuliertes Datum":"Simulated date","Zeitraffer":"Time lapse","Langsamer":"Slower","Schneller":"Faster","Pause":"Paused","1 Tag/s":"1 day/s"," Tage/s":" days/s","Nahansicht: ":"Close-up: ","Tour pausieren":"Pause the tour","Tour starten":"Start the tour","Ton einschalten":"Turn sound on","Vollbild":"Full screen","Vollbild verlassen":"Exit full screen","Sprache":"Language","Reise starten":"Start the journey","Ohne Ton starten":"Start without sound","Vorheriger Halt":"Previous stop","Nächster Halt":"Next stop","Himmelskörper":"Celestial bodies","Musik und Sprecher":"Music and narrator","Nur Sprecher, ohne Musik":"Narrator only, no music","Ton aus":"Sound off",". Antippen für: ":". Tap for: ","Tour starten oder anhalten · Leertaste":"Start or pause the tour · Space","Ton · Taste M":"Sound · M key","Vollbild · Taste F":"Full screen · F key","Vorheriger Halt · Pfeil links":"Previous stop · Left arrow","Nächster Halt · Pfeil rechts":"Next stop · Right arrow","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"The 3D view could not be started. It requires WebGL, which is not available in this environment.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Diameter {0} km. Mean distance from the Sun {1} AU. Orbital period {2}. Axial tilt {3} degrees. Rotation {4}. Known moons: {5}.","Quellen":"Sources","Impressum":"Legal notice","Datenschutz":"Privacy","Schließen":"Close","Quellen und Lizenzen":"Sources and licences","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"The positions of the planets are calculated from orbital elements for the date shown. Distances and sizes are compressed, otherwise nothing would be visible.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars, Jupiter, Saturn, Neptun sowie die Marsmonde Phobos und Deimos stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Maps:</b> Earth (Blue Marble, night lights, elevation, clouds), Mars, Jupiter, Saturn, Neptune and the Martian moons Phobos and Deimos come from NASA. The other surfaces are computed in the browser.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>3D models:</b> habitat module, pressurised rover, rover, helicopter, antenna, spacesuit and the asteroid Vesta come from the “NASA 3D Resources” archive. The other structures of the Mars base are an original design based on studies by the space agencies.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Narrator and music:</b> generated with artificial intelligence at ElevenLabs (elevenlabs.io), the music with Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technology:</b> three.js (MIT licence). Fonts: Instrument Serif and IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA has neither reviewed nor endorsed this project.","Übersicht":"Overview","Sonnensystem":"Solar System","Sonne":"Sun","Merkur":"Mercury","Erde":"Earth","Asteroidengürtel":"Asteroid belt","Asteroiden":"Asteroids","Neptun":"Neptune","Mond":"Moon","Ganymed":"Ganymede","Kallisto":"Callisto","Stern · Zentrum des Systems":"Star · Centre of the system","Gesteinsplanet · 1. Planet":"Rocky planet · 1st planet","Gesteinsplanet · 2. Planet":"Rocky planet · 2nd planet","Gesteinsplanet · 3. Planet":"Rocky planet · 3rd planet","Gesteinsplanet · 4. Planet":"Rocky planet · 4th planet","Kleinkörper · zwischen Mars und Jupiter":"Small bodies · between Mars and Jupiter","Gasriese · 5. Planet":"Gas giant · 5th planet","Gasriese · 6. Planet":"Gas giant · 6th planet","Eisriese · 7. Planet":"Ice giant · 7th planet","Eisriese · 8. Planet":"Ice giant · 8th planet","Erde · Kontinente und Ozeane":"Earth · Continents and oceans","Erde · Aufbau":"Earth · Structure","Mars · Eine mögliche Kolonie":"Mars · A possible colony","58,6 TAGE":"58.6 DAYS","243 TAGE":"243 DAYS","88 Tage":"88 days","224,7 Tage":"224.7 days","365,25 Tage":"365.25 days","687 Tage":"687 days","3,63 Jahre":"3.63 years","11,86 Jahre":"11.86 years","29,45 Jahre":"29.45 years","84,0 Jahre":"84.0 years","164,8 Jahre":"164.8 years","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Eight planets, their positions calculated for the date shown. The ring of light shows how long sunlight takes to reach each orbit. Distances and sizes are compressed. Maps and 3D models: NASA. Narrator voice and music are AI-generated (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planets. Age 4.57 billion years. Orbit of Neptune 30.07 AU. Light to Neptune 4.2 hours.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"It holds 99.86 % of the mass of the solar system. Its light takes a good eight minutes to reach the Earth.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Diameter 1,392,700 km. Surface about 5,500 °C. Spectral class G2V. Rotation at the equator 25 days.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"The smallest and fastest planet. On its strongly elliptical orbit its speed varies between 39 and 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Almost as large as the Earth, but around 465 °C hot beneath dense clouds. It spins backwards, and a day on Venus lasts longer than its year.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"The only known planet with liquid water on its surface. On the night side the cities glow.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Around 71 % of the surface is water, spread across five oceans. The remaining 29 % form seven continents.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Section from the centre to the surface: 6,371 km. The crust is drawn exaggerated; to scale it would be thinner than a line.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rust-red from iron oxide in the dust. Phobos circles it faster than Mars rotates.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"A design based on studies by the space agencies. Habitat, rovers, antenna and spacesuits are NASA models; the other structures are reconstructions.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"At 525 km, Vesta is one of the largest asteroids. In the picture the chunks are far closer together than in reality: on average about a million kilometres separate them.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Vesta: diameter 525 km, orbital period 3.63 years. More than 1.4 million asteroids are known; together they have about 3 percent of the mass of the Moon.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"More than twice as massive as all the other planets combined. The Great Red Spot is a storm larger than the Earth.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Its rings of water ice are around 280,000 km across, yet in the main rings mostly only about ten metres thick. The planet casts its shadow on them.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Its axis is tilted by 98°. It rolls around the Sun on its side, rings and moons included.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"The planet farthest from the Sun. Since its discovery in 1846 it has completed just a single orbit. Triton circles it against the direction of rotation.","BEKANNTE ASTEROIDEN":"KNOWN ASTEROIDS","ÜBER 1,4 MIO.":"OVER 1.4 MILLION","GESAMTMASSE":"TOTAL MASS","3 % DES MONDES":"3 % OF THE MOON","WOHNMODULE":"HABITAT MODULES","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"PRESSURE CABINS · TUNNELS · AIRLOCKS","STRAHLENSCHUTZ":"RADIATION SHIELD","2 BIS 3 M MARSBODEN ALS SCHILD":"2 TO 3 M OF MARTIAN SOIL AS A SHIELD","GEWÄCHSHÄUSER":"GREENHOUSES","NAHRUNG UND SAUERSTOFF":"FOOD AND OXYGEN","SOLARFELD":"SOLAR FIELD","SONNE 43 % SO STARK WIE AUF DER ERDE":"SUNLIGHT 43 % AS STRONG AS ON EARTH","KERNREAKTOREN":"NUCLEAR REACTORS","JE 10 KW · AUCH IM STAUBSTURM":"10 KW EACH · EVEN IN A DUST STORM","TREIBSTOFFANLAGE":"FUEL PLANT","WASSER · SAUERSTOFF · METHAN":"WATER · OXYGEN · METHANE","LANDEPLATZ":"LANDING PAD","430 M ABSTAND · SCHUTZWÄLLE":"430 M AWAY · PROTECTIVE BERMS","DRUCKROVER":"PRESSURISED ROVER","MEHRTÄGIGE FAHRTEN":"MULTI-DAY TRIPS","FUNKANLAGE":"RADIO STATION","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SIGNAL TO EARTH: 3 TO 22 MIN","DURCHMESSER":"DIAMETER","ACHSNEIGUNG":"AXIAL TILT","RÜCKLÄUFIG":"RETROGRADE","MONDE":"MOONS","KEINE":"NONE","UMLAUF SEIT PERIHEL":"ORBIT SINCE PERIHELION","JAHR ":"YEAR ","TAG ":"DAY ","SONNE":"SUN"," AE":" AU","LICHT ":"LIGHT ","BAHNTEMPO":"ORBITAL SPEED","BEKANNTE MONDE":"KNOWN MOONS","ERDE IM MASSSTAB":"EARTH TO SCALE","OBERFLÄCHE":"SURFACE","KERN 15 MIO. °C":"CORE 15 MILLION °C","ANTEIL AN DER MASSE":"SHARE OF THE MASS","DES SONNENSYSTEMS":"OF THE SOLAR SYSTEM","ROTATION AM ÄQUATOR":"ROTATION AT THE EQUATOR","25 TAGE":"25 DAYS","SPEKTRALKLASSE G2V":"SPECTRAL CLASS G2V","LICHT ZUR ERDE":"LIGHT TO EARTH","LICHT AB SONNE":"LIGHT FROM THE SUN","{0} ERREICHT":"{0} REACHED","PERIHEL 2061":"PERIHELION 2061","VON WASSER BEDECKT":"COVERED BY WATER","LANDFLÄCHE":"LAND AREA","PAZIFIK":"PACIFIC","ATLANTIK":"ATLANTIC","INDISCHER OZEAN":"INDIAN OCEAN","NORDPOLARMEER":"ARCTIC OCEAN","SÜDPOLARMEER":"SOUTHERN OCEAN","ASIEN":"ASIA","AFRIKA":"AFRICA","NORDAMERIKA":"NORTH AMERICA","SÜDAMERIKA":"SOUTH AMERICA","ANTARKTIS":"ANTARCTICA","EUROPA":"EUROPE","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"INNER CORE","RADIUS 1.220 KM":"RADIUS 1,220 KM","FEST · 5.400 °C":"SOLID · 5,400 °C","ÄUSSERER KERN":"OUTER CORE","2.260 KM DICK":"2,260 KM THICK","FLÜSSIGES EISEN":"LIQUID IRON","UNTERER MANTEL":"LOWER MANTLE","2.230 KM DICK":"2,230 KM THICK","BIS 3.700 °C":"UP TO 3,700 °C","OBERER MANTEL":"UPPER MANTLE","BIS 660 KM TIEFE":"DOWN TO 660 KM","ZÄHES GESTEIN":"VISCOUS ROCK","KRUSTE":"CRUST","5 BIS 70 KM DICK":"5 TO 70 KM THICK","FESTES GESTEIN":"SOLID ROCK"},
+pl:{"3D-Ansicht des Sonnensystems mit Umlaufbahnen":"Widok 3D Układu Słonecznego z orbitami","Karten werden geladen …":"Wczytywanie map …","Oberflächen werden berechnet …":"Obliczanie powierzchni …","Marsbasis wird aufgebaut …":"Budowanie bazy na Marsie …","Simuliertes Datum":"Symulowana data","Zeitraffer":"Przyspieszenie czasu","Langsamer":"Wolniej","Schneller":"Szybciej","Pause":"Pauza","1 Tag/s":"1 dzień/s"," Tage/s":" dni/s","Nahansicht: ":"Zbliżenie: ","Tour":"Podróż","Tour pausieren":"Wstrzymaj podróż","Tour starten":"Wznów podróż","Ton einschalten":"Włącz dźwięk","Vollbild":"Pełny ekran","Vollbild verlassen":"Zamknij pełny ekran","Sprache":"Język","Reise starten":"Rozpocznij podróż","Ohne Ton starten":"Rozpocznij bez dźwięku","Vorheriger Halt":"Poprzedni przystanek","Nächster Halt":"Następny przystanek","Himmelskörper":"Ciała niebieskie","Musik und Sprecher":"Muzyka i lektor","Nur Sprecher, ohne Musik":"Tylko lektor, bez muzyki","Ton aus":"Dźwięk wyłączony",". Antippen für: ":". Dotknij, aby wybrać: ","Tour starten oder anhalten · Leertaste":"Rozpocznij lub wstrzymaj podróż · Spacja","Ton · Taste M":"Dźwięk · klawisz M","Vollbild · Taste F":"Pełny ekran · klawisz F","Vorheriger Halt · Pfeil links":"Poprzedni przystanek · strzałka w lewo","Nächster Halt · Pfeil rechts":"Następny przystanek · strzałka w prawo","Die 3D-Ansicht konnte nicht gestartet werden. Dafür wird WebGL benötigt, das in dieser Umgebung nicht verfügbar ist.":"Nie udało się uruchomić widoku 3D. Wymaga on WebGL, które nie jest dostępne w tym środowisku.","Durchmesser {0} km. Mittlerer Sonnenabstand {1} AE. Umlaufzeit {2}. Achsneigung {3} Grad. Rotation {4}. Bekannte Monde: {5}.":"Średnica {0} km. Średnia odległość od Słońca {1} au. Okres obiegu {2}. Nachylenie osi {3} stopnia. Obrót {4}. Znane księżyce: {5}.","Quellen":"Źródła","Impressum":"Nota prawna","Datenschutz":"Prywatność","Schließen":"Zamknij","Quellen und Lizenzen":"Źródła i licencje","Die Positionen der Planeten sind für das angezeigte Datum aus Bahnelementen berechnet. Abstände und Größen sind gestaucht dargestellt, sonst wäre nichts zu erkennen.":"Położenia planet obliczono z elementów orbit dla wyświetlanej daty. Odległości i rozmiary są ściśnięte, inaczej nic nie byłoby widać.","<b>Karten:</b> Erde (Blue Marble, Nachtlichter, Höhen, Wolken), Mars, Jupiter, Saturn, Neptun sowie die Marsmonde Phobos und Deimos stammen von der NASA. Die übrigen Oberflächen werden im Browser berechnet.":"<b>Mapy:</b> Ziemia (Blue Marble, nocne światła, wysokości, chmury), Mars, Jowisz, Saturn, Neptun oraz księżyce Marsa Fobos i Deimos pochodzą z NASA. Pozostałe powierzchnie są obliczane w przeglądarce.","<b>3D-Modelle:</b> Wohnmodul, Druckrover, Rover, Hubschrauber, Antenne, Raumanzug und der Asteroid Vesta stammen aus dem Archiv »NASA 3D Resources«. Die übrigen Bauten der Marsbasis sind ein eigener Entwurf nach Studien der Raumfahrtagenturen.":"<b>Modele 3D:</b> moduł mieszkalny, łazik ciśnieniowy, łazik, śmigłowiec, antena, skafander i planetoida Westa pochodzą z archiwum „NASA 3D Resources”. Pozostałe budowle bazy marsjańskiej to własny projekt oparty na studiach agencji kosmicznych.","<b>Sprecher und Musik:</b> mit künstlicher Intelligenz erzeugt bei ElevenLabs (elevenlabs.io), die Musik mit Eleven Music.":"<b>Lektor i muzyka:</b> wygenerowane przez sztuczną inteligencję w ElevenLabs (elevenlabs.io), muzyka w Eleven Music.","<b>Technik:</b> three.js (MIT-Lizenz). Schriften: Instrument Serif und IBM Plex (SIL Open Font License).":"<b>Technika:</b> three.js (licencja MIT). Kroje pisma: Instrument Serif i IBM Plex (SIL Open Font License).","Die NASA hat dieses Projekt weder geprüft noch unterstützt sie es.":"NASA nie weryfikowała tego projektu ani go nie wspiera.","Übersicht":"Przegląd","Sonnensystem":"Układ Słoneczny","Sonne":"Słońce","Merkur":"Merkury","Venus":"Wenus","Erde":"Ziemia","Asteroidengürtel":"Pas planetoid","Asteroiden":"Planetoidy","Vesta":"Westa","Jupiter":"Jowisz","Uranus":"Uran","Mond":"Księżyc","Phobos":"Fobos","Ganymed":"Ganimedes","Rhea":"Rea","Titan":"Tytan","Titania":"Tytania","Triton":"Tryton","Stern · Zentrum des Systems":"Gwiazda · Centrum układu","Gesteinsplanet · 1. Planet":"Planeta skalista · 1. planeta","Gesteinsplanet · 2. Planet":"Planeta skalista · 2. planeta","Gesteinsplanet · 3. Planet":"Planeta skalista · 3. planeta","Gesteinsplanet · 4. Planet":"Planeta skalista · 4. planeta","Kleinkörper · zwischen Mars und Jupiter":"Małe ciała · między Marsem a Jowiszem","Gasriese · 5. Planet":"Gazowy olbrzym · 5. planeta","Gasriese · 6. Planet":"Gazowy olbrzym · 6. planeta","Eisriese · 7. Planet":"Lodowy olbrzym · 7. planeta","Eisriese · 8. Planet":"Lodowy olbrzym · 8. planeta","Erde · Kontinente und Ozeane":"Ziemia · Kontynenty i oceany","Erde · Aufbau":"Ziemia · Budowa","Mars · Eine mögliche Kolonie":"Mars · Możliwa kolonia","58,6 TAGE":"58,6 DNIA","243 TAGE":"243 DNI","88 Tage":"88 dni","224,7 Tage":"224,7 dnia","365,25 Tage":"365,25 dnia","687 Tage":"687 dni","3,63 Jahre":"3,63 roku","11,86 Jahre":"11,86 roku","29,45 Jahre":"29,45 roku","84,0 Jahre":"84 lata","164,8 Jahre":"164,8 roku","Acht Planeten, ihre Positionen sind für das angezeigte Datum berechnet. Der Lichtring zeigt, wie lange Sonnenlicht bis zu jeder Bahn braucht. Abstände und Größen sind gestaucht. Karten und 3D-Modelle: NASA. Sprecherstimme und Musik sind KI-erzeugt (ElevenLabs).":"Osiem planet, ich położenia obliczono dla wyświetlanej daty. Pierścień światła pokazuje, jak długo światło słoneczne biegnie do każdej orbity. Odległości i rozmiary są ściśnięte. Mapy i modele 3D: NASA. Głos lektora i muzykę wygenerowała sztuczna inteligencja (ElevenLabs).","8 Planeten. Alter 4,57 Milliarden Jahre. Neptunbahn 30,07 AE. Licht bis Neptun 4,2 Stunden.":"8 planet. Wiek 4,57 miliarda lat. Orbita Neptuna 30,07 au. Światło do Neptuna 4,2 godziny.","Sie enthält 99,86 % der Masse des Sonnensystems. Ihr Licht braucht gut acht Minuten bis zur Erde.":"Zawiera 99,86 % masy Układu Słonecznego. Jego światło potrzebuje ponad ośmiu minut, by dotrzeć do Ziemi.","Durchmesser 1.392.700 km. Oberfläche ca. 5.500 °C. Spektralklasse G2V. Rotation am Äquator 25 Tage.":"Średnica 1 392 700 km. Powierzchnia ok. 5500 °C. Typ widmowy G2V. Obrót na równiku 25 dni.","Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.":"Najmniejsza i najszybsza planeta. Na silnie eliptycznej orbicie jej prędkość waha się od 39 do 59 km/s.","Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.":"Prawie tak duża jak Ziemia, ale pod gęstymi chmurami panuje około 465 °C. Obraca się wstecz, a doba na Wenus trwa dłużej niż jej rok.","Der einzige bekannte Planet mit flüssigem Wasser an der Oberfläche. Auf der Nachtseite leuchten die Städte.":"Jedyna znana planeta z ciekłą wodą na powierzchni. Po nocnej stronie świecą miasta.","Rund 71 % der Oberfläche sind Wasser, verteilt auf fünf Ozeane. Die übrigen 29 % bilden sieben Kontinente.":"Około 71 % powierzchni to woda, podzielona na pięć oceanów. Pozostałe 29 % tworzy siedem kontynentów.","Schnitt vom Mittelpunkt bis zur Oberfläche: 6.371 km. Die Kruste ist überhöht gezeichnet, maßstäblich wäre sie dünner als ein Strich.":"Przekrój od środka do powierzchni: 6371 km. Skorupę narysowano z przesadą, w skali byłaby cieńsza niż kreska.","Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.":"Rdzawoczerwony od tlenku żelaza w pyle. Fobos okrąża go szybciej, niż Mars się obraca.","Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.":"Projekt oparty na studiach agencji kosmicznych. Habitat, łaziki, antena i skafandry to modele NASA, pozostałe budowle odtworzono.","Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.":"Westa, o średnicy 525 km, należy do największych planetoid. Na obrazie bryły są dużo gęściej niż w rzeczywistości: średnio dzieli je około miliona kilometrów.","Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.":"Westa: średnica 525 km, okres obiegu 3,63 roku. Znanych jest ponad 1,4 miliona planetoid, razem mają około 3 procent masy Księżyca.","Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.":"Ponad dwa razy masywniejszy niż wszystkie pozostałe planety razem. Wielka Czerwona Plama to burza większa od Ziemi.","Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.":"Jego pierścienie z lodu wodnego mają około 280 000 km szerokości, ale w głównych pierścieniach zwykle tylko około dziesięciu metrów grubości. Planeta rzuca na nie cień.","Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.":"Jego oś jest nachylona o 98°. Toczy się wokół Słońca na boku, razem z pierścieniami i księżycami.","Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.":"Planeta najdalsza od Słońca. Od odkrycia w 1846 roku ukończył zaledwie jedno okrążenie. Tryton okrąża go przeciwnie do kierunku obrotu.","BEKANNTE ASTEROIDEN":"ZNANE PLANETOIDY","ÜBER 1,4 MIO.":"PONAD 1,4 MLN","GESAMTMASSE":"ŁĄCZNA MASA","3 % DES MONDES":"3 % MASY KSIĘŻYCA","WOHNMODULE":"MODUŁY MIESZKALNE","DRUCKKABINEN · TUNNEL · SCHLEUSEN":"KABINY CIŚNIENIOWE · TUNELE · ŚLUZY","STRAHLENSCHUTZ":"OSŁONA PRZED PROMIENIOWANIEM","2 BIS 3 M MARSBODEN ALS SCHILD":"2 DO 3 M GRUNTU MARSJAŃSKIEGO JAKO TARCZA","GEWÄCHSHÄUSER":"SZKLARNIE","NAHRUNG UND SAUERSTOFF":"ŻYWNOŚĆ I TLEN","SOLARFELD":"POLE OGNIW SŁONECZNYCH","SONNE 43 % SO STARK WIE AUF DER ERDE":"SŁOŃCE ŚWIECI Z 43 % MOCY ZIEMSKIEJ","KERNREAKTOREN":"REAKTORY JĄDROWE","JE 10 KW · AUCH IM STAUBSTURM":"PO 10 KW · TAKŻE W BURZY PYŁOWEJ","TREIBSTOFFANLAGE":"WYTWÓRNIA PALIWA","WASSER · SAUERSTOFF · METHAN":"WODA · TLEN · METAN","LANDEPLATZ":"LĄDOWISKO","430 M ABSTAND · SCHUTZWÄLLE":"430 M OD BAZY · WAŁY OCHRONNE","DRUCKROVER":"ŁAZIK CIŚNIENIOWY","MEHRTÄGIGE FAHRTEN":"WIELODNIOWE WYPRAWY","FUNKANLAGE":"STACJA RADIOWA","SIGNAL ZUR ERDE: 3 BIS 22 MIN":"SYGNAŁ DO ZIEMI: 3 DO 22 MIN","DURCHMESSER":"ŚREDNICA","ACHSNEIGUNG":"NACHYLENIE OSI","ROTATION":"OBRÓT","RÜCKLÄUFIG":"WSTECZNY","MONDE":"KSIĘŻYCE","KEINE":"BRAK","UMLAUF SEIT PERIHEL":"OBIEG OD PERYHELIUM","JAHR ":"ROK ","TAG ":"DZIEŃ ","SONNE":"SŁOŃCE"," AE":" AU","LICHT ":"ŚWIATŁO ","BAHNTEMPO":"PRĘDKOŚĆ ORBITALNA","BEKANNTE MONDE":"ZNANE KSIĘŻYCE","ERDE IM MASSSTAB":"ZIEMIA W SKALI","OBERFLÄCHE":"POWIERZCHNIA","KERN 15 MIO. °C":"JĄDRO 15 MLN °C","ANTEIL AN DER MASSE":"UDZIAŁ W MASIE","DES SONNENSYSTEMS":"UKŁADU SŁONECZNEGO","ROTATION AM ÄQUATOR":"OBRÓT NA RÓWNIKU","25 TAGE":"25 DNI","SPEKTRALKLASSE G2V":"TYP WIDMOWY G2V","LICHT ZUR ERDE":"ŚWIATŁO DO ZIEMI","LICHT AB SONNE":"ŚWIATŁO OD SŁOŃCA","{0} ERREICHT":"ŚWIATŁO DOTARŁO: {0}","PERIHEL 2061":"PERYHELIUM 2061","VON WASSER BEDECKT":"POKRYTE WODĄ","LANDFLÄCHE":"LĄDY","PAZIFIK":"PACYFIK","ATLANTIK":"ATLANTYK","INDISCHER OZEAN":"OCEAN INDYJSKI","NORDPOLARMEER":"OCEAN ARKTYCZNY","SÜDPOLARMEER":"OCEAN POŁUDNIOWY","ASIEN":"AZJA","AFRIKA":"AFRYKA","NORDAMERIKA":"AMERYKA PÓŁNOCNA","SÜDAMERIKA":"AMERYKA POŁUDNIOWA","ANTARKTIS":"ANTARKTYDA","AUSTRALIEN":"AUSTRALIA","INNERER KERN":"JĄDRO WEWNĘTRZNE","RADIUS 1.220 KM":"PROMIEŃ 1220 KM","FEST · 5.400 °C":"STAŁE · 5400 °C","ÄUSSERER KERN":"JĄDRO ZEWNĘTRZNE","2.260 KM DICK":"GRUBOŚĆ 2260 KM","FLÜSSIGES EISEN":"CIEKŁE ŻELAZO","UNTERER MANTEL":"PŁASZCZ DOLNY","2.230 KM DICK":"GRUBOŚĆ 2230 KM","BIS 3.700 °C":"DO 3700 °C","OBERER MANTEL":"PŁASZCZ GÓRNY","BIS 660 KM TIEFE":"DO GŁĘBOKOŚCI 660 KM","ZÄHES GESTEIN":"PLASTYCZNA SKAŁA","KRUSTE":"SKORUPA","5 BIS 70 KM DICK":"GRUBOŚĆ 5 DO 70 KM","FESTES GESTEIN":"LITA SKAŁA"}
 }[LANG] || {};
 const tr = s => TR[s] || s;
 const fill = (s,...a) => tr(s).replace(/\{(\d)\}/g,(m,k) => a[k]);
@@ -318,7 +318,7 @@ const BODIES = [
    el:{a:.38709927,e:.20563593,I:7.00497902,L:252.2503235,w:77.45779628,O:48.33076593,dL:149472.67411175},
    blurb:'Der kleinste und schnellste Planet. Auf seiner stark elliptischen Bahn schwankt das Tempo zwischen 39 und 59 km/s.'},
   {id:'venus', name:'Venus', kind:'Gesteinsplanet · 2. Planet', color:'#e3c58a', R:.6, tilt:177.36, spin:.015, diam:12104, moons:0, day:'243 TAGE', retro:true, per:'224,7 Tage', camEl:8,
-   tex:1024, atmo:[1,.84,.5,.8],
+   tex:2048, atmo:[1,.84,.5,.8], gas:.45, haze:[1,.94,.80,.6],
    el:{a:.72333566,e:.00677672,I:3.39467605,L:181.9790995,w:131.60246718,O:76.67984255,dL:58517.81538729},
    blurb:'Fast so groß wie die Erde, aber unter dichten Wolken rund 465 °C heiß. Sie dreht sich rückwärts, ein Venustag dauert länger als ein Venusjahr.'},
   {id:'earth', name:'Erde', kind:'Gesteinsplanet · 3. Planet', color:'#4f8fd6', R:.64, tilt:23.44, spin:.2, diam:12742, moons:1, day:'23 H 56 MIN', per:'365,25 Tage', camEl:10, cap:2.5,
@@ -335,7 +335,7 @@ const BODIES = [
    // Zwei Kapitel: Ankunft im Orbit, dann Flug zu einer möglichen Basis auf der Oberfläche
    stages:[{id:'mars'},
      {id:'mars_base', kind:'Mars · Eine mögliche Kolonie', blurb:'Ein Entwurf nach Studien der Raumfahrtagenturen. Habitat, Rover, Antenne und Raumanzüge sind NASA-Modelle, die übrigen Bauten sind nachgebaut.'}],
-   sats:[{n:'Phobos',a:1.5,p:.319,r:.035,c:0xa39686},{n:'Deimos',a:2.1,p:1.263,r:.028,c:0xb5a999}],
+   sats:[{n:'Phobos',a:1.5,p:.319,r:.035,c:0xa39686,img:'phobos'},{n:'Deimos',a:2.1,p:1.263,r:.028,c:0xb5a999,img:'deimos'}],
    el:{a:1.52371034,e:.0933941,I:1.84969142,L:-4.55343205,w:-23.94362959,O:49.55953891,dL:19140.30268499},
    blurb:'Rostrot durch Eisenoxid im Staub. Phobos umrundet ihn schneller, als der Mars sich dreht.'},
   // Halt im Asteroidengürtel bei Vesta (Formmodell der NASA-Sonde Dawn). Bahnelemente genähert, Perihel Ende 2021.
@@ -345,22 +345,22 @@ const BODIES = [
    blurb:'Vesta ist mit 525 km einer der größten Asteroiden. Im Bild stehen die Brocken viel dichter als in Wirklichkeit: Im Schnitt trennen sie rund eine Million Kilometer.',
    sr:'Vesta: Durchmesser 525 km, Umlaufzeit 3,63 Jahre. Über 1,4 Millionen Asteroiden sind bekannt, zusammen haben sie etwa 3 Prozent der Mondmasse.'},
   {id:'jupiter', name:'Jupiter', kind:'Gasriese · 5. Planet', color:'#d2a878', R:1.9, tilt:3.13, spin:.5, diam:139820, moons:101, day:'9 H 56 MIN', per:'11,86 Jahre', camEl:7, cap:.2,
-   tex:2048, gas:1, atmo:[.95,.8,.6,.3],
+   tex:2048, gas:1, atmo:[.95,.8,.6,.3], bump:1.6, flow:.004, detail:.16,
    sats:[{n:'Io',a:1.35,p:1.769,r:.1,c:0xe6cf6e},{n:'Europa',a:1.65,p:3.551,r:.09,c:0xd9d2c2},{n:'Ganymed',a:2,p:7.155,r:.14,c:0xa89c8c},{n:'Kallisto',a:2.35,p:16.689,r:.13,c:0x7d7368}],
    el:{a:5.202887,e:.04838624,I:1.30439695,L:34.39644051,w:14.72847983,O:100.47390909,dL:3034.74612775},
    blurb:'Mehr als doppelt so massereich wie alle anderen Planeten zusammen. Der Große Rote Fleck ist ein Sturm, größer als die Erde.'},
   {id:'saturn', name:'Saturn', kind:'Gasriese · 6. Planet', color:'#e3cf9d', R:1.6, tilt:26.73, spin:.45, diam:116460, moons:285, day:'10 H 33 MIN', per:'29,45 Jahre', camEl:17, cap:.5, fitR:3.68, fill:.62,
-   tex:2048, gas:1, atmo:[.95,.85,.6,.25],
+   tex:2048, gas:1, atmo:[.95,.85,.6,.25], bump:1.2, flow:.003, detail:.10,
    sats:[{n:'Rhea',a:2.65,p:4.518,r:.07,c:0xcbc5b8},{n:'Titan',a:3,p:15.945,r:.13,c:0xe0aa5c}],
    el:{a:9.53667594,e:.05386179,I:2.48599187,L:49.95424423,w:92.59887831,O:113.66242448,dL:1222.49362201},
    blurb:'Seine Ringe aus Wassereis sind rund 280.000 km breit, in den Hauptringen aber meist nur etwa zehn Meter dick. Der Planet wirft seinen Schatten darauf.'},
   {id:'uranus', name:'Uranus', kind:'Eisriese · 7. Planet', color:'#a6dde0', R:1.1, tilt:97.77, spin:.3, diam:50724, moons:29, day:'17 H 14 MIN', retro:true, per:'84,0 Jahre', camEl:9, cap:1,
-   tex:1024, gas:1, atmo:[.6,.95,1,.55],
+   tex:1024, gas:1, atmo:[.6,.95,1,.55], haze:[.72,.90,.92,.55],
    sats:[{n:'Titania',a:2.15,p:8.706,r:.08,c:0xb9b3ab},{n:'Oberon',a:2.4,p:13.463,r:.075,c:0x9f9a94}],
    el:{a:19.18916464,e:.04725744,I:.77263783,L:313.23810451,w:170.9542763,O:74.01692503,dL:428.48202785},
    blurb:'Seine Achse ist um 98° gekippt. Er rollt samt Ringen und Monden auf der Seite um die Sonne.'},
   {id:'neptune', name:'Neptun', kind:'Eisriese · 8. Planet', color:'#4a74e0', R:1.05, tilt:28.32, spin:.3, diam:49244, moons:16, day:'16 H 6 MIN', per:'164,8 Jahre', camEl:12, cap:.7,
-   tex:1024, gas:1, atmo:[.35,.55,1,.8],
+   tex:2048, gas:1, atmo:[.35,.55,1,.8], haze:[.42,.62,1,.45], bump:.8,
    sats:[{n:'Triton',a:2.2,p:-5.877,r:.09,c:0xd6ccc5}],
    el:{a:30.06992276,e:.00859048,I:1.77004347,L:-55.12002969,w:44.96476227,O:131.78422574,dL:218.45945325},
    blurb:'Der sonnenfernste Planet. Seit seiner Entdeckung 1846 hat er erst einen einzigen Umlauf vollendet. Triton umkreist ihn gegen die Drehrichtung.'}
@@ -794,28 +794,53 @@ void geo(vec3 p,float lat,out float n,out float e,out float land,out float m,out
 }`;
 const SURF = {
   mercury: `vec4 surf(vec3 p,float lat,float lon){
-    float n=fbm(p*2.5+3.0,7);
-    float cr=craters(p,4.0,0.55)*0.5+craters(p,9.0,0.65)*0.3+craters(p,19.0,0.7)*0.16+craters(p,41.0,0.7)*0.08;
-    float m=fbm(p*1.3+9.0,4);
-    vec3 col=mix(vec3(0.34,0.32,0.31),vec3(0.66,0.63,0.60),smoothstep(0.3,0.7,n));
-    col=mix(col,vec3(0.27,0.26,0.26),smoothstep(0.52,0.66,m)*0.6);
-    col*=0.9+0.5*cr;
-    col+=0.10*smoothstep(0.62,0.78,fbm(p*14.0,4));
-    return vec4(clamp(col,0.0,1.0),clamp(0.55+0.3*(n-0.5)+0.5*cr+grain(p),0.0,1.0)); }`,
+    float n=fbm(p*2.5+3.0,7); float m=fbm(p*1.3+9.0,4);
+    float cr=craters(p,3.0,0.5)*0.45+craters(p,7.0,0.62)*0.32+craters(p,16.0,0.68)*0.18+craters(p,37.0,0.7)*0.1+craters(p,85.0,0.72)*0.05;
+    // glatte Ebenen (dunkler, weniger Krater) und helle Strahlen junger Krater
+    float pl=smoothstep(0.55,0.68,m);
+    vec3 col=mix(vec3(0.36,0.34,0.32),vec3(0.62,0.59,0.55),smoothstep(0.3,0.7,n));
+    col=mix(col,vec3(0.30,0.29,0.28),pl*0.55);
+    col*=0.88+0.45*cr*(1.0-pl*0.5);
+    for(int k=0;k<3;k++){ vec3 rc=normalize(h33(vec3(float(k)*7.1,3.0,1.0))*2.0-1.0); float rd=acos(clamp(dot(p,rc),-1.0,1.0));
+      float ry=fbm(normalize(p-rc*dot(p,rc)+vec3(1e-4))*16.0+float(k),4); col+=0.16*exp(-rd*4.0)*smoothstep(0.56,0.76,ry)+0.18*(1.0-smoothstep(0.015,0.04,rd)); }
+    return vec4(clamp(col,0.0,1.0),clamp(0.55+0.25*(n-0.5)+0.5*cr*(1.0-pl*0.4)-0.05*pl+grain(p),0.0,1.0)); }`,
   moon: `vec4 surf(vec3 p,float lat,float lon){
-    float n=fbm(p*2.0+5.0,6);
-    float cr=craters(p,3.5,0.6)*0.5+craters(p,8.0,0.7)*0.3+craters(p,18.0,0.7)*0.15;
-    float mare=smoothstep(0.52,0.62,fbm(p*1.2+2.0,4));
-    vec3 col=mix(vec3(0.62,0.61,0.58),vec3(0.84,0.83,0.80),n);
-    col=mix(col,vec3(0.36,0.36,0.38),mare*0.8); col*=0.85+0.6*cr*(1.0-mare*0.5);
-    return vec4(clamp(col,0.0,1.0),1.0); }`,
+    float n=fbm(p*2.0+5.0,7); float w=fbm(p*0.9+1.0,4);
+    float cr=craters(p,3.0,0.55)*0.5+craters(p,7.0,0.65)*0.32+craters(p,16.0,0.7)*0.18+craters(p,37.0,0.72)*0.1+craters(p,80.0,0.75)*0.05;
+    float mare=smoothstep(0.50,0.60,fbm(p*1.1+vec3(2.0,w,1.0),5))*smoothstep(-0.2,0.6,p.z+0.3);
+    vec3 col=mix(vec3(0.56,0.55,0.53),vec3(0.80,0.79,0.76),n);
+    col=mix(col,vec3(0.30,0.30,0.32)+0.06*(fbm(p*9.0,4)-0.5),mare*0.85);
+    col*=0.86+0.42*cr*(1.0-mare*0.6);
+    // helle Strahlen junger Krater
+    vec3 rc=normalize(vec3(0.35,-0.75,0.55)); float rd=acos(clamp(dot(p,rc),-1.0,1.0));
+    float ry=fbm(normalize(p-rc*dot(p,rc)+vec3(1e-4))*18.0,4); col+=0.22*exp(-rd*3.0)*smoothstep(0.55,0.75,ry)+0.25*(1.0-smoothstep(0.02,0.05,rd));
+    float h=0.5+0.18*(n-0.5)+0.45*cr-0.06*mare;
+    return vec4(clamp(col,0.0,1.0),clamp(h+grain(p),0.0,1.0)); }`,
+  // Kleine Monde und Mars-Monde nach NASA-Karte (Graustufen): Farbe aus der Karte, Höhe aus Helligkeit und zusätzlichen Kratern
+  rockReal: `vec4 surf(vec3 p,float lat,float lon){
+    vec3 real=texture2D(src,vUv).rgb; float lum=dot(real,vec3(0.333));
+    float cr=craters(p,22.0,0.55)*0.3+craters(p,50.0,0.6)*0.15;
+    float n=fbm(p*14.0,5);
+    vec3 col=real*(0.92+0.2*cr)*(0.94+0.12*(n-0.5)*2.0);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.6*(lum-0.5)+0.35*cr+0.08*(n-0.5)+grain(p),0.0,1.0)); }`,
+  // Venus im sichtbaren Licht fast strukturlos; die großen Y-Muster der Wolkenoberseite (aus UV-Aufnahmen) zart angedeutet:
+  // am Äquator eilen die Wolken voraus, zu den Polen hin bleiben sie zurück, dadurch liegen die dunklen Bänder als Winkel
   venus: `vec4 surf(vec3 p,float lat,float lon){
-    float w=fbm(p*1.6,5); float sh=lon+lat*lat*1.8; float cl=cos(lat);
-    vec3 q=vec3(cos(sh)*cl,sin(lat)*4.5,sin(sh)*cl)*1.6;
-    float n=fbm(q+w*1.6,8); float f=fbm(p*vec3(6.0,22.0,6.0)+w*2.0,5);
-    vec3 col=mix(vec3(0.64,0.47,0.25),vec3(0.96,0.88,0.68),smoothstep(0.28,0.72,n*0.75+f*0.25));
-    col=mix(col,vec3(0.98,0.93,0.80),smoothstep(0.9,1.4,abs(lat))*0.5);
-    return vec4(col,0.5); }`,
+    float cl=cos(lat); float sl=sin(lat);
+    float w=fbm(p*1.4+3.0,5);
+    float sh=lon+1.25*abs(sl)+0.35*sl*sl+(w-0.5)*0.6;
+    vec3 q=vec3(cos(sh)*cl,sl*2.2,sin(sh)*cl);
+    float big=fbm(q*0.85+vec3(4.0,0.0,1.0),5);
+    float str=fbm(vec3(q.x*2.0,q.y*9.0,q.z*2.0)+w*1.5,7);
+    float fine=fbm(p*vec3(9.0,20.0,9.0)+w*2.0,5);
+    float y=smoothstep(0.34,0.70,big*0.88+str*0.12);
+    vec3 col=mix(vec3(0.80,0.67,0.44),vec3(0.98,0.93,0.80),y);
+    col*=0.975+0.05*(fine-0.5)*2.0;
+    // helle Polarkragen, dunkler Saum davor
+    float al=abs(lat);
+    col=mix(col,col*vec3(0.88,0.84,0.78),smoothstep(0.95,1.1,al)*(1.0-smoothstep(1.15,1.3,al))*0.6);
+    col=mix(col,vec3(1.0,0.97,0.88),smoothstep(1.2,1.45,al)*0.6);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.25*(y-0.5)+0.1*(fine-0.5),0.0,1.0)); }`,
   earth: EARTH_GEO + `vec4 surf(vec3 p,float lat,float lon){
     float n,e,land,m,ice,dry; geo(p,lat,n,e,land,m,ice,dry); float al=abs(lat);
     vec3 sea=mix(vec3(0.012,0.06,0.20),vec3(0.05,0.27,0.50),smoothstep(0.40,0.515,n));
@@ -870,13 +895,28 @@ const SURF = {
   jupiterReal: `vec4 surf(vec3 p,float lat,float lon){
     float t=fbm(p*2.0,5);
     float wv=fbm(vec3(p.x*3.0,p.y*11.0,p.z*3.0)+t*1.5,6)-0.5;
+    // Großer Roter Fleck (in der Karte bei u 0,20, v 0,33): Abtastung im Wirbel gedreht, innen stärker
+    vec2 gc=vec2(0.200,0.330); vec2 gd=(vUv-gc)*vec2(2.0,1.0); float gr=length(gd/vec2(0.07,0.042));
+    float ga=2.2*exp(-gr*gr*0.9)*(1.0-smoothstep(1.4,2.2,gr)); float ca=cos(ga); float sa=sin(ga);
+    vec2 uv=gc+vec2(ca*gd.x-sa*gd.y,sa*gd.x+ca*gd.y)/vec2(2.0,1.0);
     float st=fbm(vec3(p.x*5.0,p.y*52.0,p.z*5.0)+wv*3.0,6);
     float ed=fbm(vec3(p.x*14.0,p.y*30.0,p.z*14.0)+t*4.0,6);
-    vec3 real=texture2D(src,vUv+vec2(wv*0.006,wv*0.003)).rgb;
-    vec3 col=real*1.12*(0.82+0.36*st)*(0.93+0.14*ed);
-    col=mix(col,vec3(dot(col,vec3(0.33))),0.18);
+    vec3 real=texture2D(src,uv+vec2(wv*0.006,wv*0.003)*(1.0-smoothstep(0.8,1.6,gr))).rgb;
+    vec3 col=real*1.12*(0.84+0.32*st)*(0.93+0.14*ed);
+    col=mix(col,vec3(dot(col,vec3(0.33))),0.15);
     col=mix(col,vec3(0.46,0.40,0.36),smoothstep(1.05,1.45,abs(lat))*0.8);
-    return vec4(clamp(col,0.0,1.0),0.5); }`,
+    float lum=dot(col,vec3(0.3,0.5,0.2));
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.5*(lum-0.5)+0.1*(st-0.5)+0.12*exp(-gr*gr),0.0,1.0)); }`,
+  // Saturn: NASA-Karte (720×360) als Grundlage, feine Bänder und Turbulenz dazu, Hexagon am Nordpol nur angedeutet
+  saturnReal: `vec4 surf(vec3 p,float lat,float lon){
+    float t=fbm(p*2.0,4); float wv=fbm(vec3(p.x*2.5,p.y*9.0,p.z*2.5)+t,5)-0.5;
+    vec3 real=texture2D(src,vec2(vUv.x,vUv.y+wv*0.004)).rgb;
+    float st=fbm(vec3(p.x*4.0,p.y*70.0,p.z*4.0)+wv*2.0,6); float ed=fbm(vec3(p.x*10.0,p.y*30.0,p.z*10.0)+t*3.0,5);
+    vec3 col=real*(0.88+0.24*st)*(0.96+0.08*ed);
+    float lu=dot(col,vec3(0.3,0.55,0.15)); col=mix(col,lu*vec3(1.08,0.98,0.78),0.6)*0.95;
+    float hb=1.40+0.012*cos(lon*6.0); col=mix(col,col*vec3(0.80,0.84,0.86),smoothstep(hb-0.012,hb+0.012,lat)*0.45);
+    col=mix(col,vec3(0.66,0.64,0.57)*(0.9+0.2*st),smoothstep(1.25,1.5,abs(lat))*0.75);
+    return vec4(clamp(col,0.0,1.0),clamp(0.5+0.4*(dot(col,vec3(0.33))-0.6)+0.08*(st-0.5),0.0,1.0)); }`,
   // Milchstraße als Himmelshintergrund (Breite 0 = galaktische Ebene): diffuses Band, helleres Zentrum, dunkle Staubbahnen
   milky: `vec4 surf(vec3 p,float lat,float lon){
     float w=fbm(p*3.0+1.0,5);
@@ -924,30 +964,43 @@ const SURF = {
     col=mix(col,vec3(0.60,0.56,0.44),smoothstep(1.0,1.4,abs(lat))*0.6);
     float hb=1.43+0.014*cos(lon*6.0); col=mix(col,vec3(0.50,0.50,0.42),smoothstep(hb-0.01,hb+0.01,lat)*0.4);
     return vec4(col,0.5); }`,
+  // Uranus: fast strukturlose Dunstkugel, zarte Bänder, hellere Polkappe (Südpol zeigt zur Sonne), wenige helle Flecken
   uranus: `vec4 surf(vec3 p,float lat,float lon){
-    float t=fbm(p*2.0,4); float b=sin((lat+(t-0.5)*0.1)*9.0)*0.5+0.5;
-    vec3 col=mix(vec3(0.52,0.80,0.84),vec3(0.72,0.92,0.93),clamp(b*0.45+(t-0.5)*0.3+0.3,0.0,1.0));
-    col=mix(col,vec3(0.86,0.97,0.97),smoothstep(0.7,1.3,lat)*0.6);
-    col*=0.96+0.08*fbm(vec3(p.x*4.0,p.y*40.0,p.z*4.0),4);
+    float t=fbm(p*1.6,4); float y=lat+(t-0.5)*0.06;
+    float b=sin(y*7.0)*0.5+0.5; float b2=sin(y*19.0+0.8)*0.5+0.5;
+    vec3 col=mix(vec3(0.55,0.78,0.80),vec3(0.66,0.86,0.87),b*0.6+b2*0.15+(t-0.5)*0.25);
+    col=mix(col,vec3(0.80,0.92,0.92),smoothstep(-0.6,-1.25,lat)*0.7);
+    col*=0.985+0.03*fbm(vec3(p.x*4.0,p.y*36.0,p.z*4.0),4);
+    float sp=smoothstep(0.80,0.88,fbm(vec3(p.x*6.0,p.y*22.0,p.z*6.0)+5.0,5))*(1.0-smoothstep(0.2,0.7,abs(lat-0.55)));
+    col=mix(col,vec3(0.93,0.98,0.98),sp*0.5);
     return vec4(col,0.5); }`,
-  neptune: `vec4 surf(vec3 p,float lat,float lon){
-    float t=fbm(p*2.0,5); float wv=fbm(vec3(p.x*3.0,p.y*9.0,p.z*3.0)+t,5)-0.5; float y=lat+wv*0.08;
-    float b=sin(y*9.0)*0.5+0.5;
-    vec3 col=mix(vec3(0.10,0.22,0.66),vec3(0.28,0.47,0.90),b);
-    col=mix(col,vec3(0.16,0.32,0.78),fbm(vec3(p.x*5.0,p.y*40.0,p.z*5.0),5)*0.5);
-    vec2 q=vec2((lon-2.0)*cos(lat),lat+0.36)/vec2(0.22,0.10); float r=length(q);
-    col=mix(col,vec3(0.05,0.11,0.40),1.0-smoothstep(0.7,1.05,r));
-    float ci=fbm(vec3(p.x*5.0,p.y*30.0,p.z*5.0)+wv*4.0,6);
-    col=mix(col,vec3(0.92,0.95,1.0),smoothstep(0.70,0.84,ci)*0.65*max(1.0-smoothstep(0.9,2.6,r),0.25*smoothstep(0.75,0.95,sin(lat*7.0+1.0))));
-    col=mix(col,vec3(0.07,0.14,0.45),smoothstep(1.0,1.45,abs(lat))*0.5);
-    return vec4(col,0.5); }`
+  // Neptun: NASA-Karte (stark geglättet) nur als Farbschwankung, darüber Bänder, Großer Dunkler Fleck mit hellem Begleiter, Zirren
+  neptuneReal: `vec4 surf(vec3 p,float lat,float lon){
+    float t=fbm(p*2.0,5); float wv=fbm(vec3(p.x*3.0,p.y*9.0,p.z*3.0)+t,5)-0.5; float y=lat+wv*0.06;
+    vec3 real=(texture2D(src,vUv).rgb+texture2D(src,vUv+vec2(0.01,0.006)).rgb+texture2D(src,vUv-vec2(0.01,0.006)).rgb)/3.0;
+    float rl=dot(real,vec3(0.2,0.4,0.4));
+    float b=sin(y*8.0)*0.5+0.5;
+    vec3 col=mix(vec3(0.13,0.27,0.70),vec3(0.27,0.47,0.88),b*0.55+(rl-0.4)*0.9);
+    col=mix(col,vec3(0.20,0.36,0.82),fbm(vec3(p.x*4.0,p.y*34.0,p.z*4.0),5)*0.35);
+    col=mix(col,vec3(0.10,0.19,0.55),smoothstep(-0.95,-1.35,lat)*0.5);
+    col=mix(col,vec3(0.17,0.33,0.80),smoothstep(-1.35,-1.5,lat)*0.6);
+    vec2 q=vec2((lon-2.0)*cos(lat),lat+0.38)/vec2(0.20,0.085); float r=length(q);
+    col=mix(col,vec3(0.05,0.11,0.38),(1.0-smoothstep(0.55,1.0,r+(t-0.5)*0.4))*0.9);
+    vec2 q2=vec2((lon-2.06)*cos(lat),lat+0.47)/vec2(0.10,0.025);
+    float ci=fbm(vec3(p.x*5.0,p.y*34.0,p.z*5.0)+wv*4.0,6);
+    float zone=max(1.0-smoothstep(0.6,1.4,length(q2)),0.55*smoothstep(0.7,0.95,sin(lat*6.0+1.2)));
+    col=mix(col,vec3(0.94,0.97,1.0),smoothstep(0.66,0.82,ci)*0.8*zone);
+    col=mix(col,vec3(0.94,0.97,1.0),(1.0-smoothstep(0.5,1.0,length(q2)))*0.7);
+    return vec4(col,0.5); }`,
 };
+// ohne Karte: dieselbe Oberfläche mit gleichmäßiger Grundfarbe
+SURF.neptune = SURF.neptuneReal.replace('float rl=dot(real,vec3(0.2,0.4,0.4));','float rl=0.4;');
 const nextFrame = () => new Promise(r => requestAnimationFrame(r));
 const bakeScene = new THREE.Scene(), bakeCam = new THREE.Camera();
 const bakeQuad = new THREE.Mesh(new THREE.PlaneGeometry(2,2)); bakeQuad.frustumCulled = false; bakeScene.add(bakeQuad);
 // Rendert eine Oberfläche in eine Textur (Farbe in RGB, Höhe oder Maske in A), in Streifen, damit die Seite bedienbar bleibt
 async function bake(w,body,src){
-  const h = w/2;
+  w = Math.min(w,renderer.capabilities.maxTextureSize,DESKTOP ? 4096 : 2048); const h = w/2;
   const rt = new THREE.WebGLRenderTarget(w,h,{minFilter:THREE.LinearMipmapLinearFilter, magFilter:THREE.LinearFilter, format:THREE.RGBAFormat,
     depthBuffer:false, stencilBuffer:false, generateMipmaps:true, wrapS:THREE.RepeatWrapping});
   rt.texture.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy());
@@ -966,6 +1019,7 @@ async function bake(w,body,src){
 }
 // Kachelbare Bodentextur (gespiegelt wiederholt, damit keine Naht entsteht)
 async function bakeFlat(size,body){
+  size = Math.min(size,renderer.capabilities.maxTextureSize);
   const rt = new THREE.WebGLRenderTarget(size,size,{minFilter:THREE.LinearMipmapLinearFilter, magFilter:THREE.LinearFilter, format:THREE.RGBAFormat,
     depthBuffer:false, stencilBuffer:false, generateMipmaps:true, wrapS:THREE.MirroredRepeatWrapping, wrapT:THREE.MirroredRepeatWrapping});
   rt.texture.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy()); rt.texture.encoding = THREE.sRGBEncoding;
@@ -1064,7 +1118,12 @@ const CUT_GLSL = `if(cut.y>0.001){ float ca=atan(vP.z,vP.x); if(abs(mod(ca-cut.x
 const PLANET_FS = `
 uniform sampler2D map; uniform sampler2D nmap; uniform sampler2D aux; uniform float nightK; uniform float specK; uniform float bumpK; uniform float gas; uniform vec2 texel;
 uniform vec4 atmo; uniform vec3 center; uniform vec3 ringN; uniform vec3 ringR; uniform vec2 cut; uniform vec2 cloud;
+uniform vec3 tint; uniform vec4 haze; uniform float time; uniform float flow; uniform float detail;
 varying vec2 vUv; varying vec3 vN; varying vec3 vW; varying vec3 vP;
+float ph(vec3 p){ p=fract(p*0.1031); p+=dot(p,p.zyx+31.32); return fract((p.x+p.y)*p.z); }
+float pn(vec3 p){ vec3 i=floor(p); vec3 f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(mix(ph(i),ph(i+vec3(1.0,0.0,0.0)),f.x),mix(ph(i+vec3(0.0,1.0,0.0)),ph(i+vec3(1.0,1.0,0.0)),f.x),f.y),
+             mix(mix(ph(i+vec3(0.0,0.0,1.0)),ph(i+vec3(1.0,0.0,1.0)),f.x),mix(ph(i+vec3(0.0,1.0,1.0)),ph(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z); }
 #ifdef EARTH
 #define HGT(c) texture2D(aux,c).r
 #else
@@ -1098,10 +1157,24 @@ void main(){
   sh*=1.0-0.5*texture2D(aux,cuv).b*cloud.y;
   base=mix(base,base*vec3(0.92,1.0,1.08),ocean*0.5);
 #else
-  vec4 nt=texture2D(nmap,vUv); float ocean=nt.a; vec3 night=nt.rgb; vec3 base=tx.rgb;
+  vec4 nt=texture2D(nmap,vUv); float ocean=nt.a; vec3 night=nt.rgb; vec3 base=tx.rgb*tint;
+  // Gasriesen aus der Nähe: feine Turbulenz entlang der Bänder; jede Breite dreht starr mit ihrem eigenen Tempo (Scherung, kein Schwimmen)
+  if(detail>0.0){
+    float fade=1.0-smoothstep(3.5,9.0,length(cameraPosition-center)/length(vP));
+    if(fade>0.0){
+      vec3 q=normalize(vP); float la=asin(clamp(q.y,-1.0,1.0)); float a=time*flow*(sin(la*11.0)+0.6*sin(la*23.0+1.0));
+      float ca=cos(a); float sa=sin(a); q.xz=vec2(ca*q.x-sa*q.z,sa*q.x+ca*q.z);
+      float w=pn(q*vec3(9.0,30.0,9.0));
+      float dd=pn(q*vec3(18.0,90.0,18.0)+w*1.6)*0.55+pn(q*vec3(41.0,190.0,41.0)+w*2.5)*0.3+pn(q*vec3(90.0,330.0,90.0))*0.15;
+      base*=1.0+detail*fade*(dd-0.5)*1.4;
+    }
+  }
 #endif
   vec3 col=base*(0.02+1.08*day*relief*sh);
-  col*=mix(1.0,0.55+0.45*pow(max(dot(N,V),0.0),0.45),gas);
+  float mu0=max(dot(N,V),0.0);
+  col*=mix(1.0,0.50+0.50*pow(mu0,0.5),gas);
+  // Dunst über der Wolkendecke: zum Rand hin trüber und heller (Eisriesen, Venus)
+  col=mix(col,haze.rgb*(0.02+1.05*smoothstep(-0.15,0.5,d0)),haze.a*pow(1.0-mu0,2.2));
   // Sonnenglanz auf dem Wasser: scharfer heller Kern und breiter Schimmer, zum Rand hin stärker (Fresnel); hell genug für den Bloom
   float nh=max(dot(N,normalize(L+V)),0.0); float mu=max(dot(N,V),0.0); float fr=0.25+0.75*pow(1.0-mu,4.0);
   col+=vec3(1.0,0.90,0.74)*(pow(nh,160.0)*1.1+pow(nh,22.0)*0.10)*fr*ocean*specK*day;
@@ -1209,9 +1282,9 @@ void main(){
   gl_FragColor=vec4(col*1.55,1.0);
 }`;
 // Korona, Chromosphäre und Protuberanzen: eine Fläche um die Sonne, die stets zur Kamera zeigt (additiv, HDR)
-const CORONA_VS = `varying vec2 vQ; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
+const CORONA_VS = `varying vec2 vQ; varying float vD; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); vD=length(c.xyz); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
 const CORONA_FS = `
-uniform float time; uniform float R; uniform float k; varying vec2 vQ;
+uniform float time; uniform float R; uniform float k; varying vec2 vQ; varying float vD;
 ` + SUN_NOISE + `
 void main(){
   float r=length(vQ)/R; if(r<0.985 || r>6.0) discard;
@@ -1232,7 +1305,9 @@ void main(){
       col+=vec3(1.0,0.34,0.14)*pm*2.4;
     }
   }
-  gl_FragColor=vec4(col*k,1.0);
+  // Nah an der Sonne (Merkur, Venus) bliebe sonst das ganze Bild ein Schleier: Korona nur bis rund 35–55° um die Sonnenmitte
+  float ang=r*R/vD;
+  gl_FragColor=vec4(col*k*(1.0-smoothstep(0.6,1.0,ang)),1.0);
 }`;
 // Saturnringe mit Schatten des Planeten
 const RING_FS = `
@@ -1319,10 +1394,10 @@ const POST = (() => {
     w = nw; h = nh;
     if (main) main.dispose(); bd.forEach(t => t.dispose()); bu.forEach(t => t.dispose()); bd = []; bu = [];
     const o = Object.assign({}, opt, {depthBuffer:true});
-    if (wgl2 && THREE.WebGLMultisampleRenderTarget) { main = new THREE.WebGLMultisampleRenderTarget(w,h,o); main.samples = 4; }
+    if (wgl2 && THREE.WebGLMultisampleRenderTarget) { main = new THREE.WebGLMultisampleRenderTarget(w,h,o); main.samples = DESKTOP ? 4 : 2; }
     else main = new THREE.WebGLRenderTarget(w,h,o);
     // Bloom ab halber Auflösung, Stufen bis etwa 16 Bildpunkte
-    const n = DESKTOP ? 6 : 5;
+    const n = DESKTOP ? 6 : 4;                                 // Handy: eine Stufe weniger
     let lw = w, lh = h;
     for (let i = 0; i < n; i++) { lw = Math.max(1,lw >> 1); lh = Math.max(1,lh >> 1); if (i > 2 && Math.min(lw,lh) < 12) break; bd.push(new THREE.WebGLRenderTarget(lw,lh,opt)); bu.push(new THREE.WebGLRenderTarget(lw,lh,opt)); }
   }
@@ -1375,6 +1450,17 @@ function points(n,fn,size,color,opacity){
   const m = new THREE.Points(g, new THREE.PointsMaterial({size, sizeAttenuation:false, vertexColors:true, color:color || 0xffffff, transparent:true, opacity:opacity == null ? 1 : opacity, depthWrite:false}));
   m.frustumCulled = false;
   return m;
+}
+// Gemeinsame Uhr der Planetenshader (Turbulenz der Gasriesen)
+const planetTime = {value:0};
+// Monde und kleine Körper: derselbe Shader wie die Planeten (Relief aus der Höhe in A, weicher Terminator), getönt, ohne Atmosphäre
+function rockMat(map,color,bump){
+  const z = new THREE.Vector4(0,0,0,0);
+  return new THREE.ShaderMaterial({uniforms:{map:{value:map}, nmap:{value:blackTex}, aux:{value:blackTex}, nightK:{value:0}, specK:{value:0}, bumpK:{value:bump}, gas:{value:0},
+    texel:{value:map.texelStep || new THREE.Vector2(1/512,1/256)}, atmo:{value:z}, cut:{value:new THREE.Vector2(0,0)}, cloud:{value:new THREE.Vector2(0,0)},
+    center:{value:new THREE.Vector3()}, ringN:{value:new THREE.Vector3(0,1,0)}, ringR:{value:new THREE.Vector3(0,0,0)},
+    tint:{value:new THREE.Color(color).multiplyScalar(1.15)}, haze:{value:z}, time:planetTime, flow:{value:0}, detail:{value:0}},
+    vertexShader:VS, fragmentShader:PLANET_FS});
 }
 function halo(radius,inner,color,k,self){
   const s = radius/inner;
@@ -1440,7 +1526,9 @@ function buildSun(b){
   b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,64,48), sunMat);
   b.fitR = b.R;
   scene.add(b.mesh);
-  scene.add(halo(b.R*1.55,b.R,[1,.5,.14],.5,1));
+  // Saum der Sonne; steht die Kamera in dieser Kugel (Merkur bei Sonnennähe), färbte ihre Rückseite das ganze Bild: dann ausblenden
+  const sh = halo(b.R*1.55,b.R,[1,.5,.14],.5,1); scene.add(sh);
+  sh.onBeforeRender = (r,sc,cam) => { sh.material.uniforms.k.value = .5*ss(b.R*1.65,b.R*2.3,cam.position.distanceTo(sh.position)); };
   // Korona mit Protuberanzen; sie leuchtet über den Bloom, deshalb sind Schein und Strahlen nur noch ein Hauch
   b.corona = new THREE.Mesh(new THREE.PlaneGeometry(b.R*12,b.R*12), new THREE.ShaderMaterial({uniforms:{time:{value:0}, R:{value:b.R}, k:{value:POST.ok ? 1 : .6}},
     vertexShader:CORONA_VS, fragmentShader:CORONA_FS, blending:add, transparent:true, depthWrite:false}));
@@ -1448,11 +1536,18 @@ function buildSun(b){
   scene.add(b.corona);
   const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex([[0,'rgba(255,214,130,.9)'],[.28,'rgba(255,170,60,.42)'],[.55,'rgba(255,130,30,.12)'],[1,'rgba(255,110,20,0)']]), blending:add, depthWrite:false, transparent:true, opacity:POST.ok ? .35 : 1}));
   glow.scale.set(13,13,1); scene.add(glow);
-  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = POST.ok ? .4 : 1; scene.add(wide); rays.push(wide);
+  // Nah an der Sonne (Merkur, Venus, Flug zur Erde) würden die großen Scheine das ganze Bild füllen: Unter dem Abstand der
+  // Sonnen-Nahansicht (GLARE_D) schrumpfen sie mit dem Abstand, ihr scheinbarer Radius bleibt also begrenzt; der Rand gehört der Korona
+  const GLARE_D = 20, cap = sp => { const s0 = sp.scale.x;
+    sp.onBeforeRender = (r,sc,cam) => { sp.scale.setScalar(s0*Math.min(1,cam.position.distanceTo(sp.position)/GLARE_D)); sp.updateMatrixWorld(); }; };
+  const glowOp = glow.material.opacity;
+  cap(glow); const glowCap = glow.onBeforeRender;
+  glow.onBeforeRender = (r,sc,cam) => { glowCap(r,sc,cam); glow.material.opacity = glowOp*(.5+.5*ss(8,30,cam.position.length())); };
+  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = POST.ok ? .4 : 1; scene.add(wide); rays.push(wide); cap(wide);
   [1,2].forEach(k => {
     const op = (k === 1 ? .5 : .35)*(POST.ok ? .45 : 1);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({map:raysTex(k), blending:add, depthWrite:false, transparent:true, opacity:op}));
-    s.scale.set(30+k*5,30+k*5,1); s.userData.op = op; scene.add(s); rays.push(s);
+    s.scale.set(30+k*5,30+k*5,1); s.userData.op = op; scene.add(s); rays.push(s); cap(s);
   });
 }
 
@@ -1470,8 +1565,10 @@ function buildPlanet(b){
   b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,128,80), new THREE.ShaderMaterial({defines:defs,
     uniforms:{map:{value:b.map}, nmap:{value:b.ntex || blackTex}, aux:{value:b.aux || blackTex}, nightK:{value:b.ntex ? 1 : 0}, specK:{value:b.spec || 0}, bumpK:{value:b.bump || 0}, gas:{value:b.gas || 0},
       texel:{value:b.map.texelStep}, atmo:{value:new THREE.Vector4(at[0],at[1],at[2],at[3])}, cut:{value:b.cut}, cloud:{value:new THREE.Vector2(0,0)},
-      center:{value:b.pos}, ringN:{value:b.axis}, ringR:{value:new THREE.Vector3(b.R*1.22,b.R*2.3,b.id === 'saturn' ? 1 : 0)}},
+      center:{value:b.pos}, ringN:{value:b.axis}, ringR:{value:new THREE.Vector3(b.R*1.22,b.R*2.3,b.id === 'saturn' ? 1 : 0)},
+      tint:{value:new THREE.Color(1,1,1)}, haze:{value:new THREE.Vector4(...(b.haze || [0,0,0,0]))}, time:planetTime, flow:{value:b.flow || 0}, detail:{value:b.detail || 0}},
     vertexShader:VS, fragmentShader:PLANET_FS}));
+  if (b.flow) b.mesh.onBeforeRender = () => { planetTime.value = sunMat.uniforms.time.value; };
   b.tiltG.add(b.mesh);
   if (b.ctex) {
     b.clouds = new THREE.Mesh(new THREE.SphereGeometry(b.R*1.015,96,64), new THREE.ShaderMaterial({defines:defs,
@@ -1497,12 +1594,15 @@ function buildPlanet(b){
     ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
   }
   if (b.id === 'uranus') {
-    const ring = new THREE.Mesh(new THREE.RingGeometry(b.R*1.94,b.R*1.965,160,1), new THREE.MeshBasicMaterial({color:0x9fb7bd, transparent:true, opacity:.32, side:THREE.DoubleSide, depthWrite:false}));
-    ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
+    // dünne, dunkle Ringe; der äußere (Epsilon) ist der breiteste
+    [[1.64,1.648,.22],[1.71,1.716,.2],[1.80,1.808,.24],[1.94,1.968,.42]].forEach(([r0_,r1_,op]) => {
+      const ring = new THREE.Mesh(new THREE.RingGeometry(b.R*r0_,b.R*r1_,192,1), new THREE.MeshBasicMaterial({color:0x7d8a8e, transparent:true, opacity:op, side:THREE.DoubleSide, depthWrite:false}));
+      ring.rotation.x = -Math.PI/2; b.tiltG.add(ring);
+    });
   }
   (b.sats || []).forEach((s,k) => {
     const parent = s.ecl ? b.pivot : b.tiltG;
-    s.mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r,32,20), new THREE.MeshLambertMaterial({color:s.c, map:moonTex}));
+    s.mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r,48,32), rockMat(s.map || moonTex,s.map ? 0xffffff : s.c,s.map ? 6 : 5));
     s.world = new THREE.Vector3(); s.ph = hash(k,3,b.diam)*TAU; s.vis = 0;
     s.rgb = (s.c >> 16 & 255) + ',' + (s.c >> 8 & 255) + ',' + (s.c & 255);
     parent.add(s.mesh);
@@ -1544,7 +1644,7 @@ function buildMinor(b){
   b.m = basis(b.el); b.period = 36525*360/b.el.dL; b.fitR = b.R; b.fill = .42; b.rMean = 10*Math.pow(b.el.a,.45);
   b.axis = new THREE.Vector3(-Math.sin(b.tilt*DEG),Math.cos(b.tilt*DEG),0);
   b.pivot = new THREE.Group(); b.tiltG = new THREE.Group(); b.tiltG.rotation.z = b.tilt*DEG; b.pivot.add(b.tiltG); scene.add(b.pivot);
-  b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,48,32), new THREE.MeshLambertMaterial({color:0xb5aea4, map:moonTex})); b.tiltG.add(b.mesh);
+  b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,48,32), rockMat(moonTex,0xb5aea4,6)); b.tiltG.add(b.mesh);
   const n = 44, rm = new THREE.InstancedMesh(rockGeo(3,1), new THREE.MeshLambertMaterial({color:0x9a9288}), n);
   for (let i = 0; i < n; i++) {
     const a = hash(i,1,61)*TAU, r = b.R*(2.6+9*hash(i,2,61)), sz = b.R*(.03+.1*Math.pow(hash(i,3,61),2));
@@ -1613,17 +1713,17 @@ const SKY_FS = MB_GLSL + `
 uniform vec3 sun; uniform vec3 hor; uniform vec3 zen; uniform float time; varying vec3 vD;
 void main(){
   vec3 d=normalize(vD); float h=max(d.y,0.0);
-  vec3 col=mix(hor,zen,pow(h,0.5));
+  vec3 col=mix(hor,zen,pow(h,0.42));
   // hohe, dünne Eiswolken: gestreckte Schlieren, die mit dem Wind wandern
   vec2 cp=d.xz/(d.y+0.22)*vec2(1.1,3.2)+vec2(time*0.012,time*0.004);
   float cl=mbN(cp)*0.55+mbN(cp*2.3+7.0)*0.3+mbN(cp*5.1+3.0)*0.15;
   col=mix(col,hor*1.16+vec3(0.03),smoothstep(0.50,0.84,cl)*smoothstep(0.04,0.32,d.y)*0.2);
   float s=max(dot(d,sun),0.0);
   col+=hor*pow(s,4.0)*0.3;                                                    // Staub streut das Licht nach vorn: zur Sonne hin wird der Himmel heller
-  col+=vec3(0.26,0.40,0.74)*(pow(s,20.0)*0.45+pow(s,160.0)*0.9);             // bläulicher Hof um die Sonne, wie auf dem Mars
+  col+=vec3(0.26,0.40,0.74)*(pow(s,12.0)*0.55+pow(s,90.0)*1.4+pow(s,600.0)*3.0);             // bläulicher Hof um die Sonne, wie auf dem Mars
   col=mix(col,mbHaze(d),exp(-h*9.0)*0.9);                                     // am Horizont geht der Himmel in den Dunst über
   col=mix(col,mbHaze(d),smoothstep(0.02,-0.06,d.y));
-  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*28.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
+  col+=vec3(1.0,0.96,0.9)*smoothstep(0.99976,0.99989,s)*60.0;                // Sonnenscheibe, sehr hell (überstrahlt in der Nachbearbeitung)
   gl_FragColor=vec4(col,1.0);
   #include <tonemapping_fragment>
   #include <encodings_fragment>
@@ -1633,7 +1733,7 @@ const DESKTOP = !!(window.matchMedia && window.matchMedia('(hover:hover) and (po
 const MB = (function(){
   const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(46,1,.5,14000);
   const lin = h => new THREE.Color(h).convertSRGBToLinear();
-  const sunDir = new THREE.Vector3(.73,.41,.55).normalize(), up = new THREE.Vector3(0,1,0);      // tief stehende Sonne von der Seite: lange Schatten
+  const sunDir = new THREE.Vector3(.73,.25,.55).normalize(), up = new THREE.Vector3(0,1,0);      // tief stehende Sonne von der Seite: lange Schatten
   const FLAT = [[120,-40,420],[430,-40,115]];                                // eingeebnete Flächen: x, z, Radius
   // Bauten, über die die Kamera steigt, statt hindurchzufahren: x, z, Radius, Höhe
   const OBST = [[12,-30,6,5],[0,0,9.5,10.5],[-18,-4,7.5,8.5],[15,-11,7.5,8.5],[3,18,7.5,8.5],[42,17,16,5.5],[-46,38,9,7.5],[-30,-25,11,6.5],[-9,-36,11,6.5],[430,-40,10,15],[275,-85,16,14],[62,-72,9,12],[90,-94,2,15.5],[30,-58,9,8]];
@@ -1647,11 +1747,12 @@ const MB = (function(){
   let puffs = null, skyU = null, lander = null, shadowEvery = 4;
   const DUST = [.64,.44,.29], STEAM = [.8,.8,.84];
   // Luftperspektive: Dunstfarbe, Aufhellung zur Sonne, Dichte am Boden (1/m), Abnahme mit der Höhe (1/m), Grunddichte (1/m)
-  const HZ = {mbSun:{value:sunDir}, mbHz:{value:lin(0xae8160)}, mbHzS:{value:lin(0xc89a70)}, mbHzP:{value:new THREE.Vector4(1/2600,1/170,1/16000,0)}, mbCam:{value:cam.position}};
+  const HZ = {mbSun:{value:sunDir}, mbHz:{value:lin(0xb07e58)}, mbHzS:{value:lin(0xd6a274)}, mbHzP:{value:new THREE.Vector4(1/5600,1/170,1/34000,0)}, mbCam:{value:cam.position}};
   // Hängt Luftperspektive (vor dem Tonemapping, damit sie auch mit HDR-Nachbearbeitung stimmt) und Staub auf nach oben weisenden Flächen an ein Material
   function haze(m,dust){
     if (!m || m.userData.mbHaze || !(m.isMeshStandardMaterial || m.isMeshBasicMaterial || m.isMeshLambertMaterial || m.isMeshPhongMaterial)) return m;
     m.userData.mbHaze = true;
+    if (m.isMeshStandardMaterial && !m.userData.keepEnv) m.envMapIntensity *= .5;
     const prev = m.onBeforeCompile, key = String(prev);
     m.onBeforeCompile = (sh,r) => {
       prev.call(m,sh,r);
@@ -1759,17 +1860,17 @@ const MB = (function(){
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;      // PCF mit Radius: weiche Kanten ohne Treppen
     // Himmel, Dunst, Licht
     const hor = lin(0xd0a680), sky = new THREE.Mesh(new THREE.SphereGeometry(9000,32,16), new THREE.ShaderMaterial({
-      uniforms:(skyU = Object.assign({sun:{value:sunDir}, hor:{value:lin(0xd2a47c)}, zen:{value:lin(0x6e5040)}, time:{value:0}},HZ)),
+      uniforms:(skyU = Object.assign({sun:{value:sunDir}, hor:{value:lin(0xc99468)}, zen:{value:lin(0x3a2a26)}, time:{value:0}},HZ)),
       vertexShader:`varying vec3 vD; void main(){ vD=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`, fragmentShader:SKY_FS, side:THREE.BackSide, depthWrite:false}));
     sc.add(sky);
     try { const es = new THREE.Scene(); es.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); sc.environment = pm.fromScene(es,0,1,12000).texture; pm.dispose(); } catch (e) {}
     sc.fog = new THREE.Fog(hor,280,5600);
     puffs = Puffs(320,hor);
     // Umgebungslicht: Himmel von oben, vom rötlichen Boden zurückgeworfenes Licht von unten; weniger als bisher, damit Schatten Tiefe haben
-    sc.add(new THREE.HemisphereLight(lin(0xd8b896),lin(0x5a3a28),.36));
-    sunL = new THREE.DirectionalLight(lin(0xfff0de),3.4); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
+    sc.add(new THREE.HemisphereLight(lin(0x9ea4b4),lin(0x4a2a1a),.2));
+    sunL = new THREE.DirectionalLight(lin(0xffe4c4),4.6); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
     shadowEvery = DESKTOP ? 2 : 4;
-    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0004; sunL.shadow.normalBias = .12; sunL.shadow.autoUpdate = false; sunL.shadow.radius = 2;
+    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0005; sunL.shadow.normalBias = .16; sunL.shadow.autoUpdate = false; sunL.shadow.radius = 2;
     const sca = sunL.shadow.camera; sca.left = -310; sca.right = 310; sca.top = 310; sca.bottom = -310; sca.near = 10; sca.far = 1600;
     sc.add(sunL,sunL.target);
 
@@ -1781,39 +1882,57 @@ const MB = (function(){
           'float dv=length(vViewPosition); vec2 wq=vUv*36.0; float nf=1.0-smoothstep(8.0,90.0,dv);' +
           'vec4 texelColor=mapTexelToLinear(texture2D(map,vUv)); vec4 wide=mapTexelToLinear(texture2D(map,vUv*0.131+0.37,2.5)); vec4 fine=mapTexelToLinear(texture2D(map,vUv*5.7+0.11));' +
           'texelColor=mix(texelColor,wide*1.06,0.38+0.5*smoothstep(50.0,520.0,dv)); texelColor.rgb*=mix(1.0,clamp(dot(fine.rgb,vec3(0.3,0.5,0.2))/0.13,0.55,1.6),0.5*nf);' +
-          // Farbe beruhigen: weniger Orange, mehr Butterscotch und Braun
-          'float lu=dot(texelColor.rgb,vec3(0.3,0.55,0.15)); texelColor.rgb=mix(texelColor.rgb,lu*vec3(1.32,0.86,0.6),0.22)*0.8;' +
+          // Farbe: Rostrot satter, dazu großflächig Umbra und helle Staubzungen
+          'float lu=dot(texelColor.rgb,vec3(0.3,0.55,0.15)); texelColor.rgb=max(mix(vec3(lu),texelColor.rgb,1.35),0.0)*vec3(1.04,0.86,0.72)*0.68;' +
           'float mA=mbN(wq*0.0085)*0.6+mbN(wq*0.031+7.0)*0.4, mS=smoothstep(0.5,0.7,mbN(wq*0.017+3.0)*0.72+mbN(wq*0.08+1.0)*0.28);' +
-          'texelColor.rgb*=mix(0.62,1.15,smoothstep(0.25,0.78,mA))*(0.93+0.14*mbN(wq*0.25));' +
+          'texelColor.rgb*=mix(0.5,1.12,smoothstep(0.25,0.78,mA))*(0.9+0.2*mbN(wq*0.25));' +
+          'float mU=smoothstep(0.55,0.3,mA); texelColor.rgb=mix(texelColor.rgb,vec3(0.11,0.062,0.04)*(0.8+0.4*mbN(wq*0.4)),mU*0.55);' +
+          'float mZ=smoothstep(0.62,0.78,mbN(vec2(wq.x*0.006+wq.y*0.012,wq.y*0.03-wq.x*0.01)+4.0))*(1.0-mS); texelColor.rgb=mix(texelColor.rgb,vec3(0.5,0.31,0.19),mZ*0.45);' +
           'texelColor.rgb=mix(texelColor.rgb,vec3(0.15,0.095,0.07)*(0.9+0.25*mbN(wq*0.6)),mS*0.7);' +
           // Rippel quer zum Wind, ihre Richtung schwankt langsam
           'float ra=0.55+0.6*(mbN(wq*0.01+5.0)-0.5); vec2 rd=vec2(cos(ra),sin(ra)); float rp=dot(wq,rd)*6.6+mbN(wq*0.35)*5.0; float rip=pow(0.5+0.5*sin(rp),1.6);' +
           'float gv=mbN(wq*2.7+3.1), gc=mbN(wq*0.85+9.0); float peb=smoothstep(0.66,0.82,gv)*(1.0-mS), cob=smoothstep(0.72,0.86,gc)*(1.0-mS);' +
-          'texelColor.rgb*=1.0-0.28*peb*nf-0.22*cob*smoothstep(160.0,20.0,dv); texelColor.rgb*=1.0+0.08*(rip-0.5)*mS*nf;' +
-          'float mbHt=(rip*0.035*mS+peb*0.014+cob*0.03)*nf;' +
-          'texelColor.rgb=mix(texelColor.rgb,vec3(0.2,0.105,0.06),0.45*smoothstep(500.0,2200.0,dv)); diffuseColor*=texelColor;')
+          'texelColor.rgb*=1.0-0.4*peb*nf-0.35*cob*smoothstep(160.0,20.0,dv); texelColor.rgb*=1.0+0.14*(rip-0.5)*mS*nf;' +
+          'float mbHt=(rip*0.055*mS+peb*0.03+cob*0.06)*nf;' +
+          'texelColor.rgb=mix(texelColor.rgb,vec3(0.17,0.085,0.05),0.4*smoothstep(500.0,2200.0,dv)); diffuseColor*=texelColor;')
           .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n{ float hF=dot(texture2D(map,vUv*5.7+0.11).rgb,vec3(0.333))*0.05*(1.0-smoothstep(4.0,40.0,dv))+mbHt; vec3 gsx=dFdx(-vViewPosition), gsy=dFdy(-vViewPosition); vec3 gra=cross(gsy,normal), grb=cross(normal,gsx); float gdet=dot(gsx,gra);' +
           ' normal=normalize(abs(gdet)*normal-sign(gdet)*(dFdx(hF)*gra+dFdy(hF)*grb)); }');
       };
       return m;
     };
+    // Technik-Oberflächen als kleine Canvas-Texturen: Paneelfugen, Nieten, Markierungsstreifen, Schmutz am Sockel (Leinwand unten = Fuß)
+    const tech = kind => {
+      const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+      x.fillStyle = kind ? '#d9dde0' : '#dedad2'; x.fillRect(0,0,256,256);
+      for (let i = 0; i < 16; i++) { const v = Math.round(hash(i,1,kind+7)*22-11); x.fillStyle = v > 0 ? 'rgba(255,255,255,' + v/60 + ')' : 'rgba(60,50,40,' + (-v/70) + ')'; x.fillRect((i%4)*64,Math.floor(i/4)*64,64,64); }
+      x.fillStyle = 'rgba(70,64,58,.75)';
+      if (kind) { for (let y = 0; y < 256; y += 32) x.fillRect(0,y,256,3); x.fillRect(127,0,2,256); x.fillStyle = 'rgba(255,255,255,.55)'; for (let y = 3; y < 256; y += 32) x.fillRect(0,y,256,1); }
+      else { for (let i = 0; i < 256; i += 64) { x.fillRect(i,0,2,256); x.fillRect(0,i,256,2); } x.fillStyle = 'rgba(90,84,76,.8)'; for (let i = 0; i < 256; i += 64) for (let j = 6; j < 64; j += 12) { x.fillRect(i+5,j+i%128,2,2); x.fillRect(i+57,j,2,2); } }
+      x.fillStyle = '#c8581c'; x.fillRect(0,kind ? 150 : 176,256,kind ? 10 : 12); x.fillStyle = '#2b2d31'; x.fillRect(0,kind ? 162 : 190,256,4);
+      x.fillStyle = '#26282c'; x.font = 'bold 22px monospace'; x.fillText(kind ? 'LOX-2' : 'M-04',kind ? 140 : 12,kind ? 120 : 160); x.fillText(kind ? 'CH4' : 'A7',kind ? 12 : 140,kind ? 210 : 40);
+      if (kind) { x.fillStyle = '#c8581c'; x.fillRect(40,60,38,20); }
+      const gr = x.createLinearGradient(0,256,0,180); gr.addColorStop(0,'rgba(92,52,30,.85)'); gr.addColorStop(.4,'rgba(110,64,38,.35)'); gr.addColorStop(1,'rgba(110,64,38,0)'); x.fillStyle = gr; x.fillRect(0,180,256,76);
+      for (let i = 0; i < 90; i++) { x.fillStyle = 'rgba(100,60,36,' + (.08+.15*hash(i,3,kind)) + ')'; x.fillRect(hash(i,4,kind)*256,150+hash(i,5,kind)*106,1+hash(i,6,kind)*5,8+hash(i,7,kind)*30); }
+      const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 4; t.repeat.set(kind ? 3 : 2,1); return t;
+    };
+    const hullT = tech(0), tankT = tech(1);
     M = {
-      white:new THREE.MeshStandardMaterial({color:lin(0xe8e4dc), roughness:.55, metalness:.05}),
-      worn:new THREE.MeshStandardMaterial({color:lin(0xc9bfb0), roughness:.85, side:THREE.DoubleSide}),
-      metal:new THREE.MeshStandardMaterial({color:lin(0x9aa0a6), roughness:.32, metalness:.9}),
-      dark:new THREE.MeshStandardMaterial({color:lin(0x2a2c30), roughness:.6, metalness:.4}),
+      white:new THREE.MeshStandardMaterial({map:hullT, bumpMap:hullT, bumpScale:.025, color:lin(0xf0eee8), roughness:.5, metalness:.12}),
+      worn:new THREE.MeshStandardMaterial({map:hullT, color:lin(0xb0a696), roughness:.8, side:THREE.DoubleSide}),
+      metal:new THREE.MeshStandardMaterial({color:lin(0xa8adb3), roughness:.26, metalness:.95}),
+      dark:new THREE.MeshStandardMaterial({color:lin(0x1e2024), roughness:.5, metalness:.5}),
       gold:new THREE.MeshStandardMaterial({color:lin(0xc09a45), roughness:.38, metalness:.85}),
       soil:soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, color:lin(0xf4f0ec), roughness:1, metalness:0, envMapIntensity:.6})),
       bed:new THREE.MeshStandardMaterial({color:lin(0x3a271c), roughness:1}),
-      frost:new THREE.MeshStandardMaterial({color:lin(0xdfeaf2), roughness:.35, metalness:.1}),
+      frost:new THREE.MeshStandardMaterial({map:tankT, bumpMap:tankT, bumpScale:.03, color:lin(0xf4f8fb), roughness:.3, metalness:.35}),
       orange:new THREE.MeshStandardMaterial({color:lin(0xd2702c), roughness:.6}),
-      glass:new THREE.MeshStandardMaterial({color:lin(0xc6e8f0), roughness:.06, metalness:0, transparent:true, opacity:.24, side:THREE.DoubleSide, depthWrite:false, envMapIntensity:1.8}),
+      glass:new THREE.MeshStandardMaterial({color:lin(0xb8dcea), roughness:.04, metalness:0, transparent:true, opacity:.08, side:THREE.DoubleSide, depthWrite:false, envMapIntensity:.8}),
       pad:new THREE.MeshStandardMaterial({color:lin(0x3d312b), roughness:.92}),
       paint:new THREE.MeshStandardMaterial({color:lin(0xe6dcc6), roughness:.8}),
-      road:new THREE.MeshStandardMaterial({color:lin(0x5a3828), roughness:1, transparent:true, opacity:.6, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
-      leaf:new THREE.MeshStandardMaterial({color:lin(0x4a7a36), roughness:.7, emissive:lin(0x3a1030), emissiveIntensity:.35}),
+      road:new THREE.MeshStandardMaterial({color:lin(0x3a2216), roughness:1, transparent:true, opacity:.72, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
+      leaf:new THREE.MeshStandardMaterial({color:lin(0x24781a), roughness:.6, emissive:lin(0x2a7014), emissiveIntensity:.3}),
       // Lichter deutlich über 1 (HDR): sie sollen in der Nachbearbeitung überstrahlen
-      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(5,3.7,2.3)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(3.2,.75,2.6)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(7,.7,.35)})
+      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(9,6.6,4)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(5.5,1.1,4.4)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(14,1.2,.5)})
     };
 
     // Gelände: Gitter zur Mitte hin verdichtet, Höhen aus Rauschen, an den Bauplätzen eingeebnet
@@ -1829,6 +1948,19 @@ const MB = (function(){
     const ground = new THREE.Mesh(geo,gm);
     ground.receiveShadow = true; sc.add(ground);
 
+    // Horizont: drei Ketten aus Tafelbergen und Kraterrand jenseits des Geländes (Ring aus Streifen, oben flach abgeschnitten); mbAir stuft sie nach Entfernung ab
+    const ridgeMat = new THREE.MeshLambertMaterial({color:lin(0x6a3a22)});
+    [[3300,170,1.3,3],[4600,300,2.1,11],[6200,480,3.0,23]].forEach(r => {
+      const n = 360, gp = new Float32Array((n+1)*2*3), ix = [];
+      for (let i = 0; i <= n; i++) {
+        const a = i/n*TAU, cx = Math.cos(a), cz = Math.sin(a), q = vnoise(cx*r[2]+r[3],1.7,cz*r[2]);
+        const mesa = ss(.46,.52,q), h = r[1]*(.18+.82*mesa)*(.8+.4*vnoise(cx*7+r[3],1,cz*7))+r[1]*.08*vnoise(cx*23,r[3],cz*23), rr = r[0]*(1+.08*(vnoise(cx*3,r[3]+2,cz*3)-.5));
+        gp.set([cx*rr,-60,cz*rr, cx*rr,h,cz*rr],i*6);
+        if (i < n) ix.push(i*2,i*2+1,i*2+2, i*2+1,i*2+3,i*2+2);
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(gp,3)); g.setIndex(ix); g.computeVertexNormals();
+      const m = new THREE.Mesh(g,ridgeMat); m.material.side = THREE.DoubleSide; m.frustumCulled = false; sc.add(m);
+    });
     // Steine, verstreut außerhalb der Bauplätze; jeder mit eigener Tönung. Dazu Kiesel rund um die Basis.
     const free = (x,z) => !(Math.hypot(x,z-10) < 75 || Math.hypot(x-430,z+40) < 60 || seg(x,z,-45,38,255,38) < 8 || seg(x,z,255,38,392,-30) < 8 || Math.hypot(x-275,z+85) < 36 ||
       (Math.abs(x+10) < 40 && Math.abs(z-95) < 26) || seg(x,z,270,-280,330,-220) < 22 || seg(x,z,178,-284,334,-128) < 22 || Math.hypot(x-62,z+72) < 14 || Math.hypot(x-30,z+58) < 12);
@@ -1855,7 +1987,7 @@ const MB = (function(){
     // Zentrale Kuppel aus gedrucktem Marsboden, mit sichtbaren Druckschichten
     const stripe = (() => { const c = document.createElement('canvas'); c.width = 8; c.height = 64; const x = c.getContext('2d'); for (let i = 0; i < 64; i++) { const v = Math.round(150+80*Math.sin(i/64*TAU*8)); x.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')'; x.fillRect(0,i,8,1); } const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1,3); return t; })();
     const hub = grp(0,0,0);
-    M.print = new THREE.MeshStandardMaterial({color:lin(0xa9704a), roughness:.95, bumpMap:stripe, bumpScale:.1, side:THREE.DoubleSide});
+    M.print = new THREE.MeshStandardMaterial({color:lin(0x8e5434), roughness:.95, bumpMap:stripe, bumpScale:.1, side:THREE.DoubleSide});
     add(new THREE.SphereGeometry(7.5,48,20,0,TAU,0,Math.PI/2),M.print,0,0,0,hub);
     add(new THREE.CylinderGeometry(7.7,7.9,.7,48),M.white,0,.35,0,hub);
     add(new THREE.SphereGeometry(1.4,20,10,0,TAU,0,Math.PI/2),M.glass,0,7.3,0,hub).castShadow = false;
@@ -1896,15 +2028,16 @@ const MB = (function(){
     };
     greenhouse(42,12); greenhouse(42,22);
     // Solarfeld: zur Sonne geneigte Module auf Pfosten
-    const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#14275c'; x.fillRect(0,0,128,64); x.strokeStyle = '#3d5aa3'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
+    const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#0a1638'; x.fillRect(0,0,128,64); x.fillStyle = '#12224e'; for (let i = 0; i < 128; i += 8) for (let j = 0; j < 64; j += 8) if ((i+j)%16) x.fillRect(i+1,j+1,6,6); x.strokeStyle = '#8a96b0'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
     const pq = new THREE.Quaternion().setFromUnitVectors(up,v2.set(sunDir.x*.55,1,sunDir.z*.55).normalize());
-    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0x9aa0b0), roughness:.16, metalness:.05, envMapIntensity:1.6}),48);
+    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0xb4bccc), roughness:.1, metalness:.4, envMapIntensity:1.5}),48);
     const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(.09,.09,2.2,6),M.metal,48);
     for (let r = 0, n = 0; r < 6; r++) for (let c = 0; c < 8; c++, n++) {
       const x = -10+(c-3.5)*7.6, z = 95+(r-2.5)*6.2, y = hgt(x,z);
       panels.setMatrixAt(n,m4.compose(v1.set(x,y+2.3,z),pq,s4.set(1,1,1))); posts.setMatrixAt(n,m4.compose(v1.set(x,y+1.1,z),q4.identity(),s4.set(1,1,1)));
     }
     panels.castShadow = panels.receiveShadow = true; posts.castShadow = true; sc.add(panels,posts);
+    panels.material.userData.keepEnv = M.glass.userData.keepEnv = true;
     // Kernreaktoren weit draußen hinter einem Wall: Kern im Boden, darüber der Schirm, der die Abwärme abstrahlt
     mound(256,-206,110,8,18,-Math.PI/4,.2);
     const rad = new THREE.MeshStandardMaterial({color:lin(0xd9d6cf), roughness:.5, metalness:.3, side:THREE.DoubleSide});
@@ -1998,9 +2131,9 @@ const MB = (function(){
     // Staubschleier, die mit dem Wind dicht über den Boden ziehen; sie bleiben um die Kamera herum
     anim.push((t,dt,clk) => {
       const S = 360, cx = cam.position.x, cz = cam.position.z;
-      for (let i = 0; i < (DESKTOP ? 42 : 26); i++) {
+      for (let i = 0; i < (DESKTOP ? 30 : 18); i++) {
         const x = cx+((hash(i,1,93)*S-clk*7-cx)%S+S)%S-S/2, z = cz+((hash(i,2,93)*S+clk*4.5-cz)%S+S)%S-S/2, d = Math.hypot(x-cx,z-cz);
-        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.025+.035*hash(i,5,93))*ss(18,70,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
+        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.01+.016*hash(i,5,93))*ss(30,90,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
       }
     });
     // Staubteufel in der Ferne: schlanker, sich wiegender Schlauch aus wirbelndem Staub
@@ -2029,8 +2162,9 @@ const MB = (function(){
     // Landefähre: sie sinkt zum Stichwort des Sprechers auf den Platz, das Triebwerk wirbelt Staub auf
     { const cv = document.createElement('canvas'); cv.width = 8; cv.height = 64; const cx = cv.getContext('2d'), gr = cx.createLinearGradient(0,0,0,64);
       gr.addColorStop(0,'rgba(255,246,228,.95)'); gr.addColorStop(.16,'rgba(255,214,150,.6)'); gr.addColorStop(.5,'rgba(255,150,80,.22)'); gr.addColorStop(1,'rgba(255,110,40,0)'); cx.fillStyle = gr; cx.fillRect(0,0,8,64);
-      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false})); fl.material.color.setRGB(3.2,2.7,2.2);
+      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false})); fl.material.color.setRGB(7,5.6,4.2);
       fl.position.y = 1.4-5.5; ln.add(fl);
+      const core = new THREE.Mesh(new THREE.ConeGeometry(.75,5,14,1,true),fl.material.clone()); core.material.color.setRGB(22,20,17); core.position.y = 2.5; fl.add(core);
       const light = new THREE.PointLight(0xffb070,0,170,1.5); light.position.y = -2; ln.add(light);
       const pc = VOICE.mars_base.cues.pad, ta = pc-1.6, tb = pc+5.6, px = 430, pz = -40, py = hgt(px,pz);
       lander = t => {
@@ -2240,7 +2374,7 @@ const MB = (function(){
     },
     render(shiftY){
       cam.aspect = W/H; cam.fov = 46-11*ss(1,1.7,W/H); cam.setViewOffset(W,H,0,shiftY,W,H);
-      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.35, thr:1.6, knee:.8, vig:.18});
+      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.26, thr:2, knee:.8, vig:.24});
     },
     project(v,out){ v2.copy(v).project(cam); out.x = (v2.x*.5+.5)*W; out.y = (-v2.y*.5+.5)*H; out.z = v2.z; return out; }
   };
@@ -3128,12 +3262,13 @@ async function boot(){
   elSr.textContent = BODIES[0].sr;
   measure();
   await nextFrame();
-  // Karten der NASA: Erde (Blue Marble, Nachtlichter; Höhe, Wasser und Wolken in einer Hilfstextur), Mars und Jupiter. Fehlt eine, wird der Planet wie die übrigen berechnet.
+  // Karten der NASA: Erde (Blue Marble, Nachtlichter; Höhe, Wasser und Wolken in einer Hilfstextur), Mars, Jupiter, Saturn, Neptun,
+  // Phobos und Deimos. Fehlt eine, wird der Körper wie die übrigen berechnet.
   const loadTex = url => new Promise((res,rej) => new THREE.TextureLoader().load(url, t => { t.anisotropy = Math.min(8,renderer.capabilities.getMaxAnisotropy()); t.wrapS = THREE.RepeatWrapping; res(t); }, undefined, rej));
-  const maps = await Promise.all(['img/earth-day.jpg','img/earth-night.jpg','img/earth-aux.jpg','img/mars.jpg','img/jupiter.jpg'].map(u => loadTex(u).catch(() => null)));
+  const maps = await Promise.all(['img/earth-day.jpg','img/earth-night.jpg','img/earth-aux.jpg','img/mars.jpg','img/jupiter.jpg','img/saturn.jpg','img/neptune.jpg','img/phobos.jpg','img/deimos.jpg'].map(u => loadTex(u).catch(() => null)));
   const real = maps[0] && maps[1] && maps[2] ? maps : null;
   loader.textContent = tr('Oberflächen werden berechnet …');
-  moonTex = await bake(512,SURF.moon);
+  moonTex = await bake(1024,SURF.moon);
   try { milkyTex = await bake(DESKTOP ? 2048 : 1024,SURF.milky); } catch (e) { milkyTex = null; }
   for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
@@ -3141,7 +3276,10 @@ async function boot(){
     if (b.id === 'earth' && real) { b.map = real[0]; b.map.texelStep = new THREE.Vector2(1.5/2048,1.5/1024); b.ntex = real[1]; b.aux = real[2]; b.ctex = real[2]; b.bump = 10; continue; }
     if (b.id === 'mars' && maps[3]) b.map = await bake(2048,SURF.marsReal,maps[3]);
     else if (b.id === 'jupiter' && maps[4]) b.map = await bake(2048,SURF.jupiterReal,maps[4]);
+    else if (b.id === 'saturn' && maps[5]) b.map = await bake(2048,SURF.saturnReal,maps[5]);
+    else if (b.id === 'neptune' && maps[6]) b.map = await bake(b.tex,SURF.neptuneReal,maps[6]);
     else b.map = await bake(b.tex,SURF[b.id]);
+    for (const s of b.sats || []) { const m = s.img === 'phobos' ? maps[7] : s.img === 'deimos' ? maps[8] : null; if (m) s.map = await bake(1024,SURF.rockReal,m); }
     if (b.id === 'earth') { b.ntex = await bake(1024,SURF.earthNight); b.ctex = await bake(2048,SURF.earthClouds); }
   }
   buildBackdrop(); buildSun(BODIES[1]);

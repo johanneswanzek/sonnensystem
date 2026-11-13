@@ -151,12 +151,20 @@ weil dort `.glb` nicht ausgeliefert wird.
 
 - `earth-day.jpg`, `earth-night.jpg`: Blue Marble und Nachtlichter der NASA.
 - `earth-aux.jpg`: Höhen, Wasserflächen und Wolken in den drei Farbkanälen einer Hilfstextur (NASA-Daten).
-- `mars.jpg`, `jupiter.jpg`: aus „NASA 3D Resources“, Ordner „Images and Textures“.
+- `mars.jpg`, `jupiter.jpg`, `saturn.jpg` (720×360), `neptune.jpg` (720×360), `phobos.jpg`, `deimos.jpg` (1024×512, Graustufen):
+  aus „NASA 3D Resources“ (https://github.com/nasa/NASA-3D-Resources, Ordner „Images and Textures“, gemeinfrei als
+  NASA-Material). Geholt mit `git clone --filter=blob:none --sparse --depth 1` und `git sparse-checkout set "Images and Textures"`,
+  mit Pillow als JPEG (Qualität 85–88) gespeichert. Jupiter, Saturn, Neptun und die Marsmonde werden mit diesen Karten
+  im Browser zu 2048er-Texturen gebacken (`SURF.jupiterReal`, `saturnReal`, `neptuneReal`, `rockReal`): feine Bänder,
+  Turbulenz, Wirbel um den Großen Roten Fleck, Höhe für das Relief. Die Neptun-Karte dient stark geglättet nur als Farbschwankung.
+- Nicht verwendet: Venus (Radarkarte der Oberfläche, die Wolkendecke verdeckt sie), Mond (nur Fotos, keine Zylinderkarte),
+  Pluto und die übrigen Monde (nicht in der Szene). Für Merkur und Uranus gibt es dort keine Karte.
 
-Sonne, Merkur, Venus, Saturn, Uranus, Neptun, die Monde und der Marsboden werden im Browser berechnet.
-Ebenso das Band der Milchstraße (`SURF.milky`, einmal gebacken). Die Sonne, ihre Korona mit Protuberanzen und der
-Schnitt durch die Erde sind Shader, die in jedem Bild neu rechnen. Für Version 9 kamen keine neuen Bilddateien hinzu;
-NASA 3D Resources bietet keine Karten, die die berechneten Oberflächen sichtbar übertreffen würden, ohne viele MB zu kosten.
+Sonne, Merkur, Venus (Wolkendecke mit Y-Muster), Uranus, der Erdmond, die übrigen Monde und der Marsboden werden im Browser
+berechnet, ebenso das Band der Milchstraße (`SURF.milky`, einmal gebacken). Die Sonne, ihre Korona mit Protuberanzen und der
+Schnitt durch die Erde sind Shader, die in jedem Bild neu rechnen. Monde und Vesta-Platzhalter nutzen den Planetenshader
+(`rockMat`) mit Relief aus der Höhe; Jupiter und Saturn bekommen aus der Nähe eine feine, mit der Breite gescherte Turbulenz
+im Shader (`detail`, `flow`), Venus und die Eisriesen einen Dunst zum Rand hin (`haze`).
 
 ## Schriften und Bibliotheken
 
