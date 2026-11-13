@@ -45,7 +45,7 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
 | Sprache | `LANG` (aus `?lang=`, sonst letzte Wahl, sonst Browsersprache; unbekannt → Englisch), `TR` (Übersetzungen, Schlüssel ist der deutsche Text), `tr`, `fill`, `setLang` |
 | Daten | `BODIES` (Index 0 Übersicht, 1 Sonne, 2 Merkur, 3 Venus, 4 Erde, 5 Mars, 6 Asteroidengürtel/Vesta, 7 Jupiter, 8 Saturn, 9 Uranus, 10 Neptun), `VOICE_DE`/`VOICE_EN`/`VOICE_PL` (Dauer und Zeitmarken je Clip), `VOICE` (die der gewählten Sprache) |
 | DOM | Elemente, Übersetzen der festen Texte (`data-t`), Sprachwahl oben rechts, Leiste, Dialog „Quellen“ (`window.SITE` liefert Impressum und Datenschutz) |
-| Ton | `AU`: Web Audio, ein Musikstück als Schleife (`MUSIC`), Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme |
+| Ton | `AU`: Web Audio, drei Musikstücke als Schleife (`MUSIC`, `TRACKS`), Sprecher-Clips, Effekte als Samples (`SFX`), Absenken von Musik und Effekten unter der Stimme |
 | Oberflächen | `SURF`: prozedurale Texturen, auf der Grafikkarte gebacken |
 | Bahnmechanik | Kepler-Bahnen aus Bahnelementen für das angezeigte Datum |
 | Shader, Szene | Planeten, Ringe, Sterne, Bahnen, Erde mit Wolken und Schnitt |
@@ -85,6 +85,16 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   als Funktionen `(t, dt, clk)` in `anim[]`: Landefähre (zum Stichwort `pad`), Tankwagen, zwei Rover,
   Hubschrauber, laufende Astronauten, Bagger, Staubteufel. Staub und Dampf sind zustandslose Teilchen
   (`Puffs`, `puffs.put(...)`), ihre Zahl ist begrenzt.
+- **Ton (`AU`):** Hauptstück `audio/music.mp3` für alle Halte, `music-earth.mp3` für die Erde, `music-mars.mp3` für den
+  Mars (beide Abschnitte). `AU.place(i)` (aus `focus`) blendet auf der nächsten Zählzeit des Hauptstücks mit gleicher
+  Leistung über (8 Schläge); das Hauptstück läuft stumm weiter und gibt das Raster, die Zusatzstücke starten auf einem
+  Schlag und werden nach der Überblendung gestoppt. Zusatzstücke und Effekte laden erst im Hintergrund nach dem Hauptstück;
+  fehlt etwas, läuft das Hauptstück weiter bzw. der alte synthetische Effekt. Effekte (`audio/sfx/*.mp3`, `tools/audio/sfx.py`):
+  `playS(name,{group,delay,...})` blendet laufende Effekte derselben Gruppe aus. Flug: whoosh (Höhepunkt in der Flugmitte),
+  `AU.flight(dur,'stage'|'dive')` für Kapitelwechsel und Sturzflug, Ankunft: arrive (dazu belt, rings), `AU.boom` = Erdschnitt,
+  Landung: in `say` zum Stichwort `pad` geplant (Motor-Ende der Aufnahme bei 8,0 s = Aufsetzen bei pad + 5,6 s), Schleifen
+  (sun, mars_wind, base_hum) über `rumble`/`wind`. Knopfklicks: ein Hörer in `AU` (capture). Die Schleifen tragen 0,15 s
+  zyklischen Vorlauf (`SFX.loop` = [Anfang, Ende]). `blip` und `ping` bleiben synthetisch. Prüfhaken: `window.__au.st`.
 - **Tonemapping:** ACES und sRGB-Ausgabe gelten nur für die Marsszene; `MB.render` setzt sie und stellt sie
   zurück. Die Weltraumszene rechnet ohne.
 

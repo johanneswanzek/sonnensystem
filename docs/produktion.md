@@ -74,6 +74,58 @@ eingecheckt.
 Der ElevenLabs-Flow mit allen Aufträgen heißt „Sonnensystem Kamerafahrt – Sprecher und Musik“
 (Flow-ID `xg8wz5tgqyq6Xg6rX8Lw`).
 
+### Musik für Erde und Mars (Version 9)
+
+- **Dienst:** ElevenLabs, Modell `eleven_music_v2_5`, je 130 Sekunden, instrumental (je 1.950 Credits).
+- **Erde, Auftrag:**
+
+  > Oceanic deep house instrumental at 122 BPM in A minor. Warm rounded sub bass and a soft four-on-the-floor kick, shuffled closed hi-hats, lush Rhodes electric piano chords with slow chorus, glassy marimba and bell plucks that sparkle like sunlight on water, wide airy pads that swell and recede like tides, gentle filtered ocean-wave noise sweeps and distant whale-song-like synth calls. Deep, immersive, serene and quietly uplifting, like gliding over a blue ocean seen from orbit. Polished modern production, long reverb tails, wide stereo. Energy: opens with pads, waves and Rhodes alone for eight bars, the kick and bass enter, then a steady hypnotic groove that holds until the end. No vocals, no drops, no noisy risers, no sudden breaks.
+
+- **Mars, Auftrag:**
+
+  > Cinematic frontier electronica instrumental at 122 BPM in A minor: the sound of the first human outpost on Mars. Pioneering, determined and quietly hopeful. A restrained analog bass sequence in steady sixteenth notes, dry punchy kick, metallic percussion and mechanical ticks like machinery at work, warm brass-like synth swells, a lonely twangy baritone guitar motif drenched in desert reverb, dusty wind-like noise textures and faint radio blips. It conveys hard work, isolation, vast red desert and human resolve. Polished modern production, wide and spacious. Energy: opens sparse with the bass pulse, wind and guitar for eight bars, drums enter, layers build to a steady determined plateau that holds until the end. No vocals, no harsh drops, no noisy risers, no sudden breaks.
+
+- **Aufbereitung** (beide Stücke haben 122 BPM wie das Hauptstück; die Erde-Datei klingt ab Sekunde 78 aus und wird davor abgeschnitten):
+
+  ```
+  python tools/audio/loop.py --from=16 --end=79 --bars=24 work/el/music_earth.mp3 public/audio/music-earth.mp3 14 12 15
+  python tools/audio/loop.py --from=60 --end=122 --bars=32,24,16 work/el/music_mars.mp3 public/audio/music-mars.mp3
+  ```
+
+  `loop.py` kennt dafür zusätzlich `--from` (frühester Schleifenanfang), `--end` (Quelle abschneiden) und `--bars`
+  (erlaubte Schleifenlängen). Der leise Auftakt der Erde wird um bis zu 14 dB angehoben (bis Sekunde 12, ausgelaufen bei 15).
+  Werte in `AU`: Erde `loop0` 20,1252, `loop1` 67,3461, `grid0` 0,4499 (24 Takte); Mars `loop0` 83,0884, `loop1` 114,569,
+  `grid0` 0,4519 (16 Takte). Beide Stücke beginnen beim Anflug mit ihrem Auftakt (auf einem Schlag des Hauptstücks) und gehen
+  danach in die Schleife; Lautheit −17,0 (Erde) und −16,4 LUFS (Mars) nach dem MP3-Kodieren, das Hauptstück misst −17,2.
+  Der Mars-Pegel wird im Programm um 0,8 dB gesenkt (`TRACKS.mars.gain`).
+
+## Effekte (Version 9)
+
+- **Dienst:** ElevenLabs, Modell `eleven_text_to_sound_v2`, zusammen 267 Credits, je eine Fassung; die Schleifen mit der Option
+  „loop“. Flow-ID wie bisher `xg8wz5tgqyq6Xg6rX8Lw`.
+- **Dateien** (`public/audio/sfx/<name>.mp3`, Rohdaten `work/el/sfx/`, Aufbereitung `python tools/audio/sfx.py`):
+
+  | Name | Dauer | Wofür |
+  | --- | --- | --- |
+  | `whoosh` | 4 s | Vorbeiflug, Flug zwischen Himmelskörpern |
+  | `arrive` | 4 s | weicher Ankunftsschlag |
+  | `stage` | 3 s | Übergang zum nächsten Kapitel eines Körpers (steigert sich bis zur Ankunft) |
+  | `dive` | 6 s | Sturzflug durch Wolken und Atmosphäre: Erde Abschnitt 1, Abstieg zur Marsoberfläche |
+  | `cut` | 5 s | Aufschneiden der Erde (Abschnitt 2, Stichwort `open`) |
+  | `mars_wind` | 12 s, Schleife | Atmosphäre der Marsoberfläche |
+  | `base_hum` | 10 s, Schleife | Maschinenbrummen der Kolonie, leise unter dem Wind |
+  | `lander` | 9 s | landende Fähre, zum Stichwort `pad` der Marsbasis |
+  | `sun` | 10 s, Schleife | Grollen der Sonne |
+  | `belt` | 7 s | Asteroidengürtel bei Ankunft |
+  | `rings` | 7 s | Eiskristall-Schimmern bei Ankunft am Saturn |
+  | `ui_tick` | 0,5 s | Klick für Knöpfe |
+  | `start` | 3 s | Start der Reise |
+
+- **Aufbereitung:** Ränder kürzen, Ein- und Ausblendung, Lautheit je Effekt auf einen Zielwert (−17 bis −24 LUFS, Atmo −25 und
+  −31; der Tick auf eine Spitze von −24 dBFS), Spitzen unter −1 dBFS, MP3 mit 96 bis 112 kbit/s. Schleifen werden zyklisch gebaut
+  (Überblendung des Schlusses in den Anfang, je 0,15 s Vorlauf und Nachlauf), damit sie unabhängig vom Randverhalten des
+  MP3-Dekoders nahtlos laufen (`loopStart`/`loopEnd`).
+
 ## 3D-Modelle
 
 Alle Modelle stammen aus dem Archiv „NASA 3D Resources“ und wurden für das Web verkleinert:
