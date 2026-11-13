@@ -1,7 +1,6 @@
 // ui/controls – Eingaben: Knöpfe, Tastatur, Zeiger (Ziehen, Kneifen, Rad).
 // Exporte: ptrs; initControls, initControls2
 // Hängt ab von: app/camera.js, app/tour.js, audio/engine.js, core/util.js, i18n/index.js, ui/credits.js, ui/dom.js, ui/fullscreen.js, ui/language-menu.js, ui/layout.js, ui/sound.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { user } from '../app/camera.js';

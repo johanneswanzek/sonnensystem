@@ -13,17 +13,16 @@
     "preview": "vite preview",
     "build:artifact": "node tools/artifact/build.mjs",
     "build:test": "vite build --mode test",
-    "split": "node tools/refactor/split.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "format": "prettier --write src tests",
+    "format:check": "prettier --check src tests",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "shots": "node tools/shots/run.js",
     "test:e2e:file": "node tools/e2e-file.mjs",
-    "test:e2e:dist": "playwright test --project=dist",
-    "format": "prettier --write src tests",
-    "format:check": "prettier --check src tests"
+    "shots": "node tools/shots/run.js",
+    "docs:map": "node tools/docs/modulkarte.mjs"
   },
   "dependencies": {
     "three": "0.128.0"
@@ -34,9 +33,7 @@
     "acorn": "^8.15.0",
     "acorn-walk": "^8.3.4",
     "eslint": "^9.39.0",
-    "eslint-scope": "^8.4.0",
     "globals": "^16.5.0",
-    "magic-string": "^0.30.21",
     "playwright": "^1.56.0",
     "prettier": "^3.10.1",
     "typescript": "^5.9.3",

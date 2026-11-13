@@ -1,7 +1,6 @@
 // render/canvas-textures – Kleine Canvas-Texturen: Ringe, Lichtpunkte, Strahlen; Wertrauschen.
 // Exporte: hash, radialTex, raysTex, ringTex, vnoise
 // Hängt ab von: core/util.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { TAU, ss } from '../core/util.js';

@@ -1,7 +1,6 @@
 // testing/hooks – Prüfhaken für Tests (window.__t). Nur im Testmodus (vite build --mode test) aufgerufen.
 // Exporte: installTestHooks
 // Hängt ab von: app/governor.js, app/tour.js, audio/engine.js, data/bodies.js, i18n/index.js, ui/fullscreen.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { PR, setPR } from '../app/governor.js';

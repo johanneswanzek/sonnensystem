@@ -1,7 +1,6 @@
 // render/bake – Backen auf der Grafikkarte: Shader in eine Textur rechnen (bake, bakeFlat).
 // Exporte: bake, bakeFlat, nextFrame; initBake
 // Hängt ab von: core/device.js, render/renderer.js, render/scene.js, render/shaders/bake.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { DESKTOP } from '../core/device.js';

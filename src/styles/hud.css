@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/hud – Kopfzeile: Uhr, Zeitraffer, Knöpfe oben rechts; Abdunklung über der hellen Marsoberfläche. Eingebunden von src/main.js. */
 /* Auf der hellen Marsoberfläche braucht die Kopfzeile etwas Dunkel im Rücken */
 .surf .hud{background:linear-gradient(to bottom,rgba(4,6,12,.46),rgba(4,6,12,0))}
 .hud > *{pointer-events:auto}

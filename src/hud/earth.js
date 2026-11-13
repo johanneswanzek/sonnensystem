@@ -1,7 +1,6 @@
 // hud/earth – Messmarken der Erde: Ozeane und Kontinente, Aufbau im Schnitt, Wolkenflug.
 // Exporte: cloudFX, coreHUD, geoHUD; initEarth
 // Hängt ab von: app/tour.js, core/util.js, hud/draw.js, i18n/index.js, render/canvas-textures.js, render/scene.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../core/state.js';

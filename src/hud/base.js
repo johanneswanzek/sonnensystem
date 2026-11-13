@@ -1,7 +1,6 @@
 // hud/base – Beschriftungen der Stationen der Marsbasis.
 // Exporte: baseHUD
 // Hängt ab von: core/util.js, data/voice.js, hud/draw.js, mars/base.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { TAU, clamp, easeO, ss } from '../core/util.js';

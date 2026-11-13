@@ -1,4 +1,4 @@
-/* Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html */
+/* styles/fullscreen – Vollbild- und Kinoansicht. Eingebunden von src/main.js. */
 /* Vollbild: nur Szene, Messmarken, Name und die Knöpfe für Ton und Verlassen */
 .cine .clock,.cine #tour,.cine .langbox,.cine #blurb,.cine .rail{display:none}
 .cine .hud{justify-content:flex-end}

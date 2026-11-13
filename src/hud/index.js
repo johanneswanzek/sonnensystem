@@ -1,7 +1,6 @@
 // hud/index – drawHUD: zeichnet die Messmarken des aktuellen Körpers.
 // Exporte: drawHUD
 // Hängt ab von: app/tour.js, audio/engine.js, core/util.js, data/bodies.js, hud/base.js, hud/belt.js, hud/draw.js, hud/earth.js, hud/overview.js, hud/planet.js, hud/sun.js, i18n/index.js, render/scene.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { BELT, EARTH, cur, stage } from '../app/tour.js';

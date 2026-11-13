@@ -1,7 +1,6 @@
 // hud/sun – Messmarken der Sonne.
 // Exporte: sunHUD
 // Hängt ab von: app/camera.js, app/tour.js, core/util.js, data/bodies.js, hud/draw.js, i18n/index.js, render/scene.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { tmp } from '../app/camera.js';

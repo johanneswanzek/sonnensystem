@@ -1,7 +1,6 @@
 // render/surfaces – SURF: prozedurale Oberflächen der Himmelskörper als Shader-Bausteine.
 // Exporte: SURF; initSurfaces
 // Hängt ab von: render/shaders/bake.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { EARTH_GEO } from './shaders/bake.js';
 

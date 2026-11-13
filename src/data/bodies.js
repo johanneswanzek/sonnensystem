@@ -1,6 +1,5 @@
 // data/bodies – Himmelskörper (BODIES) mit Bahnelementen, Monden und Texten; Halley, Szenenradius, Zeitraffer.
 // Exporte: BODIES, DWELL0, HALLEY, RMAX, SPEEDS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Daten ---------- */
 // Bahnelemente J2000 (JPL, Standish): a [AE], e, I, L, w = Länge des Perihels, O = Knotenlänge [Grad], dL [Grad/Jahrhundert]

@@ -1,7 +1,6 @@
 // ui/fullscreen – Vollbild und Kinoansicht.
 // Exporte: cine, fullBtn; initFullscreen
 // Hängt ab von: app/tour.js, core/util.js, i18n/index.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { setSpeed, setTour, speedIdx, tour } from '../app/tour.js';

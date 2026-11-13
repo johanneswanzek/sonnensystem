@@ -1,6 +1,5 @@
 // render/shaders/space – GLSL der Weltraumszene: Planeten, Wolken, Schnitt, Halo, Sonne, Ringe, Bahnen.
 // Exporte: CLOUD_FS, CORONA_FS, CORONA_VS, HALO_FS, LAYER_FS, ORBIT_FS, ORBIT_VS, PLANET_FS, RING_FS, SUN_FS, VS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Shader ---------- */
 const VS = `

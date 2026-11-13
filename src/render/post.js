@@ -1,7 +1,6 @@
 // render/post – Nachbearbeitung (POST): HDR-Ziel mit MSAA, Bloom in Stufen, Belichtung, Tonemapping, Vignette, Korn.
 // Exporte: POST; initPost
 // Hängt ab von: core/device.js, render/renderer.js, render/scene.js, render/shaders/post.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { DESKTOP } from '../core/device.js';

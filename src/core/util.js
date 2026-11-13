@@ -1,6 +1,5 @@
 // core/util – Kleine Hilfen: DOM-Abfrage $, Winkel, clamp, Glättung und Easing, reduzierte Bewegung.
 // Exporte: $, DEG, TAU, clamp, easeIO, easeO, easeQ, reduced, ss; initUtil
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 // Belegt in initUtil() (Reihenfolge des Starts, siehe main.js)
 let reduced;

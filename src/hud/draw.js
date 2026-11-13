@@ -1,7 +1,6 @@
 // hud/draw – Messmarken: Grundformen auf dem Overlay-Canvas (Linien, Beschriftungen, Maßstäbe).
 // Exporte: DIM, FONT, GROUP_T, INK, MARKS, MONO, SUNC, corner, d0, d1, dimension, disc, gauge, hits, label, lightShort, lightTxt, line, nf0, nf1, nf2, nf3, onScreen, rects, rgba, ring, rv, s0, s1, scr, screenDir, side; initDraw
 // Hängt ab von: app/camera.js, core/util.js, i18n/index.js, render/scene.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../core/state.js';

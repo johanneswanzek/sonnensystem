@@ -1,7 +1,6 @@
 // render/scene/minor – Kleinkörper: Vesta, Asteroiden des Gürtels und Felsbrocken beim Durchflug.
 // Exporte: buildMinor, flightRocks, rockGeo, scatterFlight, setVesta
 // Hängt ab von: app/camera.js, app/tour.js, core/util.js, data/bodies.js, orbit/kepler.js, render/canvas-textures.js, render/scene.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../../core/state.js';

@@ -1,17 +1,16 @@
-# Erzeugtes
+# Erzeugtes: Bauten, Testseite, Bildschirmfotos, Testberichte
 dist/
+dist-artifact/
 .test/
 .artifact/
 .shots/
-dist-artifact/
+playwright-report/
+test-results/
 # Rohmaterial und Modelle der Tonaufbereitung
 work/
 # Abhängigkeiten und Zwischendateien
-node_modules/
+node_modules
 __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
-# Berichte der E2E-Läufe
-test-results/
-playwright-report/

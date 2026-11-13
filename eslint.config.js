@@ -4,7 +4,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/', 'dist-artifact/', '.test/', '.artifact/', '.shots/', 'public/', 'node_modules/', 'tools/test/', 'tools/models/node_modules/', 'work/'] },
+  { ignores: ['dist/', 'dist-artifact/', '.test/', '.artifact/', '.shots/', 'public/', 'node_modules/', 'playwright-report/', 'test-results/', 'tools/models/node_modules/', 'work/'] },
   {
     files: ['src/**/*.js'],
     languageOptions: {

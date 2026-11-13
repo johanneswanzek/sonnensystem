@@ -1,7 +1,6 @@
 // app/boot – Start: Karten und Oberflächen vorbereiten, Szene bauen, Modelle nachladen.
 // Exporte: initBoot
 // Hängt ab von: app/camera.js, app/loop.js, app/tour.js, core/device.js, core/target.js, data/bodies.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/bake.js, render/renderer.js, render/scene.js, render/scene/backdrop.js, render/scene/extras.js, render/scene/minor.js, render/scene/planets.js, render/scene/sun.js, render/surfaces.js, testing/hooks.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';

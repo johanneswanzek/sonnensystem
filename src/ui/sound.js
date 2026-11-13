@@ -1,7 +1,6 @@
 // ui/sound – Tonknopf, Hinweise (toast), Tonmodus.
 // Exporte: setSound, showSound, soundBtn; initSound
 // Hängt ab von: audio/engine.js, core/util.js, i18n/index.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { AU } from '../audio/engine.js';

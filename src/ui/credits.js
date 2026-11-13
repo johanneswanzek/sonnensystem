@@ -1,7 +1,6 @@
 // ui/credits – Dialog „Quellen“, Impressum und Datenschutz (nur Website), Titel und Beschreibung je Sprache.
 // Exporte: creditsEl; initCredits
 // Hängt ab von: core/target.js, core/util.js, i18n/index.js, ui/dom.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { SITE_CFG } from '../core/target.js';
 import { $ } from '../core/util.js';

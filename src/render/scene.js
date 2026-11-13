@@ -1,7 +1,6 @@
 // render/scene – Weltraumszene: Szene, Kamera, gemeinsame Hilfen (Punktwolken, Halo, Bahnlinien, Marker), geteilte Texturen.
 // Exporte: add, blackTex, camera, halo, marker, orbitLine, planetTime, points, rays, rockMat, scene; initScene
 // Hängt ab von: core/util.js, orbit/kepler.js, render/canvas-textures.js, render/renderer.js, render/shaders/space.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { TAU } from '../core/util.js';

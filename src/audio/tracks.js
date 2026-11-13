@@ -1,6 +1,5 @@
 // audio/tracks – Tondaten: Hauptstück (MUSIC, BEAT), Zusatzstücke je Halt (TRACKS), Effekt-Samples (SFX).
 // Exporte: BEAT, MUSIC, SFX, TRACKS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 // Musik: Hauptstück mit ruhigem Auftakt, danach läuft der Mittelteil als nahtlose Schleife (32 Takte bei 122 BPM).
 // loop0 und loop1 sind die Schleifenpunkte in Sekunden, grid0 ist der erste Schlag, beat die Schlaglänge.

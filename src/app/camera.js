@@ -1,7 +1,6 @@
 // app/camera – Kamera: Sollposition je Körper und Abschnitt (desired), Kamerapfad, Eingriffe des Nutzers.
 // Exporte: camAt, dPos, dTgt, desired, fromOff, fromTgt, pos, tgt, tmp, tmp2, user; initCamera
 // Hängt ab von: app/tour.js, core/util.js, data/bodies.js, render/scene.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../core/state.js';

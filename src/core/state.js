@@ -1,8 +1,7 @@
 // @ts-check
 // core/state – Gemeinsamer veränderlicher Zustand: Variablen, die mehrere Module schreiben (ES-Module erlauben
-// Zuweisungen nur im eigenen Modul). Liste in tools/refactor/map.mjs (state); Anfangswerte aus dem Monolithen,
-// Werte, die erst beim Start feststehen, setzen die init…()-Funktionen der Besitzer-Module.
-// Erzeugt von tools/refactor/split.mjs – bis zum Ende des Umbaus nicht von Hand ändern.
+// Zuweisungen nur im eigenen Modul). Gelesen und geschrieben wird überall als S.<name>. Neue gemeinsame Variablen
+// hier mit Anfangswert eintragen; was nur ein Modul schreibt, bleibt dort und wird exportiert.
 
 /** @type {Record<string, any>} */
 export const S = {

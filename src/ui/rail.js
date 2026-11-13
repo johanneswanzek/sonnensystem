@@ -1,7 +1,6 @@
 // ui/rail – Leiste der Himmelskörper und Beschriftungen in der Szene.
 // Exporte: initRail
 // Hängt ab von: app/tour.js, data/bodies.js, i18n/index.js, ui/dom.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { focus } from '../app/tour.js';
 import { BODIES } from '../data/bodies.js';

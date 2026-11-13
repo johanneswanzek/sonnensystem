@@ -1,7 +1,6 @@
 // app/loop – Schleife frame(): Kamera, Szenenwechsel mit Staubschleier, Rendern.
 // Exporte: frame; initLoop
 // Hängt ab von: app/camera.js, app/governor.js, app/tour.js, audio/engine.js, core/util.js, data/bodies.js, hud/index.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/post.js, render/scene.js, render/scene/minor.js, ui/controls.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { camAt, desired, pos, tgt, tmp } from './camera.js';

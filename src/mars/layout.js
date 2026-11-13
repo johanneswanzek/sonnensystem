@@ -1,6 +1,5 @@
 // mars/layout – Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Dunst (HZ), Krater, Teilchenfarben.
 // Exporte: AST_YAW, CRATERS, DUST, FLAT, HAB, OBST, ROVER_YAW, STEAM
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 const FLAT = [[120,-40,420],[430,-40,115]];                                // eingeebnete Flächen: x, z, Radius
 // Bauten, über die die Kamera steigt, statt hindurchzufahren: x, z, Radius, Höhe

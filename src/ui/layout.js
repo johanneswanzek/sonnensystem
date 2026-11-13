@@ -1,7 +1,6 @@
 // ui/layout – Layout: measure() setzt Maßstab ui, Querformat wide, freie Flächen und Schutzzonen.
 // Exporte: availH, dpr, guard, gx, measure, shiftTarget, ui, wide
 // Hängt ab von: app/governor.js, app/tour.js, core/util.js, data/bodies.js, render/renderer.js, render/scene.js, ui/dom.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { prLimits, setPR } from '../app/governor.js';

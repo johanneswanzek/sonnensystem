@@ -1,7 +1,6 @@
 // ui/language-menu – Sprachwahl oben rechts.
 // Exporte: langBtn, langMenu, openLang; initLanguageMenu
 // Hängt ab von: core/util.js, i18n/index.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { $ } from '../core/util.js';
 import { LANG, LANGS, setLang } from '../i18n/index.js';

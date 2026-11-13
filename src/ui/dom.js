@@ -1,7 +1,6 @@
 // ui/dom – Elemente der Seite, Übersetzen der festen Texte (data-t, aria-label).
 // Exporte: app, c2, canvas, caption, clockEl, elBlurb, elDate, elEff, elKind, elName, elSpeed, elSr, fx, hudEl, hudR, labelsEl, loader, navEl, rail, startEl, tourBtn, tourIcon; initDom
 // Hängt ab von: core/util.js, data/bodies.js, i18n/index.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { $ } from '../core/util.js';
 import { BODIES } from '../data/bodies.js';

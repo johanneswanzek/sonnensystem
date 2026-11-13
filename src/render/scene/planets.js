@@ -1,7 +1,6 @@
 // render/scene/planets – Planeten mit Atmosphäre, Wolken, Ringen, Monden und Bahnen.
 // Exporte: buildPlanet
 // Hängt ab von: core/util.js, orbit/kepler.js, render/canvas-textures.js, render/scene.js, render/shaders/space.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../../core/state.js';

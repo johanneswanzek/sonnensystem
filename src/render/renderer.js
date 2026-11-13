@@ -1,7 +1,6 @@
 // render/renderer – WebGL-Renderer und Fehleranzeige, wenn WebGL fehlt.
 // Exporte: fail, renderer; initRenderer
 // Hängt ab von: i18n/index.js, ui/dom.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { tr } from '../i18n/index.js';

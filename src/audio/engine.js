@@ -1,7 +1,6 @@
 // audio/engine – Ton (AU): Web Audio, Musikstück als Schleife, Sprecher-Clips, Effekte, Absenken der Musik unter der Stimme.
 // Exporte: AU; initEngine
 // Hängt ab von: audio/tracks.js, data/bodies.js, data/voice.js, i18n/index.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { BEAT, MUSIC, SFX, TRACKS } from './tracks.js';
 import { BODIES } from '../data/bodies.js';

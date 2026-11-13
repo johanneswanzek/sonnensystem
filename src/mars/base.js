@@ -1,7 +1,6 @@
 // mars/base – Marsbasis (MB): eigene Szene auf der Oberfläche in Metern – Gelände, Bauten, Fahrzeuge, Kamerafahrt, Teilchen.
 // Exporte: MB; initBase
 // Hängt ab von: core/device.js, core/util.js, data/voice.js, i18n/index.js, mars/layout.js, mars/shaders.js, render/canvas-textures.js, render/post.js, render/renderer.js, render/scene/minor.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../core/state.js';

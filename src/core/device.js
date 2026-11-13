@@ -1,7 +1,6 @@
 // core/device – Geräteklasse: DESKTOP schaltet die teure Ausstattung frei (Maus, große Texturen).
 // Exporte: DESKTOP; initDevice
 // Hängt ab von: render/renderer.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { renderer } from '../render/renderer.js';
 

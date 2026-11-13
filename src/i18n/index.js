@@ -1,7 +1,6 @@
 // i18n/index – Sprache: LANG, LOC, Übersetzung tr/fill (Schlüssel ist der deutsche Text), setLang. Wörterbücher in en.json, pl.json.
 // Exporte: LANG, LANGS, LOC, fill, setLang, tr; initI18n
 // Hängt ab von: core/target.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { SITE_CFG } from '../core/target.js';
 import en from './en.json';

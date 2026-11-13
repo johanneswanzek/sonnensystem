@@ -1,7 +1,6 @@
 // render/scene/extras – Zusätze der Szene: Komet Halley, Kuipergürtel, Lichtpuls.
 // Exporte: buildExtras
 // Hängt ab von: core/util.js, data/bodies.js, orbit/kepler.js, render/scene.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../../core/state.js';

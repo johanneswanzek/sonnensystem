@@ -6,7 +6,7 @@
 # Wahlfrei: --from=S frühester Schleifenanfang, --end=S Quelle dort abschneiden (wenn das Stück vorher ausläuft),
 # --bars=… erlaubte Schleifenlängen in Takten (Vorgabe 64,56,48,40,32,24,16).
 #
-# Die ausgegebenen Werte (loop0, loop1, beat, grid0) gehören in die Konstante MUSIC in src/sonnensystem.html.
+# Die ausgegebenen Werte (loop0, loop1, beat, grid0) gehören in die Konstante MUSIC in src/audio/tracks.js (für Zusatzstücke: TRACKS).
 # Die aktuelle Musik entstand mit: loop.py work/el/music_b.mp3 public/audio/music.mp3 8 24 31
 # Braucht ffmpeg im Pfad und: pip install numpy scipy soundfile pyloudnorm
 import os, sys, json, subprocess, tempfile, numpy as np, soundfile as sf

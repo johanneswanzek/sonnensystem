@@ -1,7 +1,6 @@
 // data/voice – Sprecher-Clips je Sprache: Dauer und Zeitmarken (voice.<sprache>.json, geschrieben von tools/audio/finalize.py).
 // Exporte: VOICE; initVoice
 // Hängt ab von: i18n/index.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { LANG } from '../i18n/index.js';
 import voiceDe from './voice.de.json';

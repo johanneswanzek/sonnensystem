@@ -1,7 +1,6 @@
 // hud/planet – Messmarken eines Planeten und seiner Monde.
 // Exporte: planetHUD
 // Hängt ab von: app/camera.js, core/util.js, hud/draw.js, i18n/index.js, orbit/kepler.js, render/scene.js, ui/dom.js, ui/layout.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
 import { tmp } from '../app/camera.js';

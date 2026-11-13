@@ -1,6 +1,5 @@
 // mars/shaders – GLSL der Marsszene: Luftperspektive und Bodendetail (MB_GLSL), Himmel (SKY_FS).
 // Exporte: MB_GLSL, SKY_FS
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 /* ---------- Mars-Basis: eigene Szene auf der Oberfläche, Einheit Meter ---------- */
 // Gemeinsame Bausteine der Marsszene: Rauschen in Weltkoordinaten und Luftperspektive (Staubdunst, der mit der Höhe abnimmt und zur Sonne hin aufhellt)

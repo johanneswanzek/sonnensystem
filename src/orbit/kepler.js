@@ -1,7 +1,6 @@
 // orbit/kepler – Bahnmechanik: Kepler-Bahnen aus Bahnelementen für ein Datum (reine Funktionen).
 // Exporte: basis, place, solve
 // Hängt ab von: core/util.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { DEG, TAU } from '../core/util.js';
 

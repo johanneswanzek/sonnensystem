@@ -1,7 +1,6 @@
 // render/scene/backdrop – Hintergrund: Sterne und Milchstraße.
 // Exporte: buildBackdrop
 // Hängt ab von: core/util.js, render/canvas-textures.js, render/post.js, render/scene.js, core/state.js
-// Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
 import { S } from '../../core/state.js';
