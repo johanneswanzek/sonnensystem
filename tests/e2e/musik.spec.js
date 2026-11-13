@@ -3,7 +3,7 @@ const fs = require('fs'),
   path = require('path');
 const { test, expect } = require('playwright/test');
 const L = require('./lib');
-const { ROOT } = require('../server');
+const { ROOT } = require('./server');
 
 test.describe.serial('Musik und Effekte', () => {
   let s, page;
