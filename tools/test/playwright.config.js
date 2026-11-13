@@ -29,6 +29,6 @@ module.exports = defineConfig({
   projects: [
     { name: 'testseite', testIgnore: /build\.spec\.js/ },
     // dist/ hat keine Prüfhaken: nur Abläufe, die über DOM, Netz und Konsole prüfbar sind
-    { name: 'dist', testMatch: /(lade|start|sprache|build|robust)\.spec\.js/ },
+    { name: 'dist', testMatch: /(lade|start|sprache|build|robust|musik)\.spec\.js/ },
   ],
 });
