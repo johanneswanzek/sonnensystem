@@ -102,6 +102,9 @@ weil dort `.glb` nicht ausgeliefert wird.
 - `mars.jpg`, `jupiter.jpg`: aus „NASA 3D Resources“, Ordner „Images and Textures“.
 
 Sonne, Merkur, Venus, Saturn, Uranus, Neptun, die Monde und der Marsboden werden im Browser berechnet.
+Ebenso das Band der Milchstraße (`SURF.milky`, einmal gebacken). Die Sonne, ihre Korona mit Protuberanzen und der
+Schnitt durch die Erde sind Shader, die in jedem Bild neu rechnen. Für Version 9 kamen keine neuen Bilddateien hinzu;
+NASA 3D Resources bietet keine Karten, die die berechneten Oberflächen sichtbar übertreffen würden, ohne viele MB zu kosten.
 
 ## Schriften und Bibliotheken
 
