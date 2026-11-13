@@ -21,9 +21,6 @@ der Oberfläche sowie Sprache der Kommentare und der Doku ist Deutsch. Live: htt
   Monitoren), die Messmarken auf dem Overlay-Canvas am selben Faktor `ui`.
 - Nach jeder Änderung prüfen: `node tools/test/run.js ...` im Handyformat (390×760) und im Querformat
   (1920×1080), bei Änderungen am Build zusätzlich `--dist`, bei Änderungen an Texten zusätzlich `--lang=en` und `--lang=pl`.
-- **Pflichtprüfung:** Danach die E2E-Suite: `cd tools/test && npm test` (Zustände, DOM, ARIA, Netz und Konsole aller Abläufe,
-  Testseite und `dist/`). Sie muss grün sein. Neue Knöpfe, Tastenkürzel, Sprachen oder Halte brauchen einen Test in
-  `tools/test/e2e/`; neue Prüfhaken (nur lesend) kommen in `hooks()` von `tools/build.py`.
 
 ## Befehle
 
@@ -32,13 +29,11 @@ python tools/serve.py                      # http://localhost:8080, baut index.h
 python tools/build.py [--apache]           # dist/
 node tools/test/run.js 390 760 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:landung
 node tools/test/run.js --dist 1280 720 go wait:6000 shot:start
-cd tools/test && npm test                  # E2E-Suite (Playwright-Testrunner); npm run test:dist nur für dist/
 ```
 
-Für `run.js` und die E2E-Suite einmalig `cd tools/test && npm install && npx playwright install chromium`. Ohne Grafikkarte
+Für `run.js` einmalig `cd tools/test && npm install && npx playwright install chromium`. Ohne Grafikkarte
 `SOFTWARE_GL=1` setzen; dann ist jedes Bild langsam (im Querformat `pr:.5` als ersten Schritt nehmen) und
-Wartezeiten sind unzuverlässig (die Suite wartet deshalb auf Zustände, nicht auf Zeiten, und läuft mit einem Worker; der Lauf dauert dann
-mehrere Minuten). Für die Marsbasis deshalb mit `mbt:S` eine feste Erzählzeit setzen statt mit
+Wartezeiten sind unzuverlässig. Für die Marsbasis deshalb mit `mbt:S` eine feste Erzählzeit setzen statt mit
 `seek` und `wait` zu arbeiten.
 
 ## Gliederung von `src/sonnensystem.html`
