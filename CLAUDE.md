@@ -103,8 +103,8 @@ Die Abschnitte sind mit `/* ---------- Name ---------- */` markiert:
   (sun, mars_wind, base_hum) über `rumble`/`wind`. Knopfklicks: ein Hörer in `AU` (capture). Die Schleifen tragen 0,15 s
   zyklischen Vorlauf (`SFX.loop` = [Anfang, Ende]). `blip` und `ping` bleiben synthetisch. Prüfhaken: `window.__au.st`.
 - **Nachbearbeitung (`POST`, Abschnitt Szene):** `POST.render(scene, camera, {lin, exposure, bloom, thr, knee, vig})`
-  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit 4×MSAA, so groß
-  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 5 Stufen (Desktop 6) ab halber
+  ersetzt `renderer.render` für beide Szenen. Gezeichnet wird in ein HalfFloat-Ziel (unter WebGL2 mit MSAA, Desktop 4×, Handy 2×, so groß
+  wie der Bildspeicher, folgt also `PR`/`setPR` und `measure`), dann Bloom über 4 Stufen (Desktop 6) ab halber
   Auflösung (Hell-Pass mit weichem Knie, Dual-Filter abwärts und aufwärts), zuletzt in einem Schritt Belichtung,
   Tonemapping, Vignette und Korn. Weltraum (`lin:0`): die Shader liefern Werte fürs Display, nur Lichter über 1 laufen
   weich aus; Sonne, Korona, Stadtlichter, Meeresglanz und der Erdkern liefern bewusst Werte über 1 und leuchten dadurch.
