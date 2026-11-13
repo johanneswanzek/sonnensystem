@@ -21,7 +21,9 @@
     "test:e2e": "playwright test",
     "shots": "node tools/shots/run.js",
     "test:e2e:file": "node tools/e2e-file.mjs",
-    "test:e2e:dist": "playwright test --project=dist"
+    "test:e2e:dist": "playwright test --project=dist",
+    "format": "prettier --write src tests",
+    "format:check": "prettier --check src tests"
   },
   "dependencies": {
     "three": "0.128.0"
@@ -36,6 +38,7 @@
     "globals": "^16.5.0",
     "magic-string": "^0.30.21",
     "playwright": "^1.56.0",
+    "prettier": "^3.10.1",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
     "vitest": "^3.2.4"

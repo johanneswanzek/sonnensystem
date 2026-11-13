@@ -42,10 +42,12 @@ function siteHead() {
 }
 
 // Prüfung „keine fremde Adresse“ und Aufräumen der alten Bibliotheken aus public/vendor (bis Phase B entfernt)
-function checkOutput(outDir) {
+function checkOutput() {
+  let outDir;
   return {
     name: 'sonnensystem-pruefung',
     apply: 'build',
+    configResolved(c) { outDir = path.resolve(c.root, c.build.outDir); },
     closeBundle() {
       for (const f of ['vendor/three.min.js', 'vendor/GLTFLoader.js']) fs.rmSync(path.join(outDir, f), { force: true });
       const bad = foreignUrls(outDir);
@@ -66,7 +68,7 @@ export default defineConfig(({ mode }) => {
       __TARGET__: JSON.stringify(target),
       __SITE__: target === 'site' ? JSON.stringify(siteCfg) : 'undefined',
     },
-    plugins: target === 'site' ? [siteHead(), ...(test ? [] : [checkOutput(outDir)])] : [],
+    plugins: target === 'site' ? [siteHead(), ...(test ? [] : [checkOutput()])] : [],
     build: {
       outDir,
       emptyOutDir: true,
