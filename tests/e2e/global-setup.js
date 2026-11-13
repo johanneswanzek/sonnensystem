@@ -1,5 +1,5 @@
 // Baut Testseite und dist/ und startet je einen Server. Die Adressen gehen über Umgebungsvariablen an die Tests.
-const { startServer, build, targets } = require('../server');
+const { startServer, build, targets } = require('./server');
 
 module.exports = async () => {
   build('test');

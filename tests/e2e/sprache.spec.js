@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const { test, expect } = require('playwright/test');
 const L = require('./lib');
-const { ROOT } = require('../server');
+const { ROOT } = require('./server');
 
 const TITLE = { de: 'Sonnensystem – eine Kamerafahrt', en: 'Solar System – a camera flight', pl: 'Układ Słoneczny – lot kamery' };
 const GO = { de: 'Reise starten', en: 'Start the journey', pl: 'Rozpocznij podróż' };
@@ -144,13 +144,10 @@ test.describe.serial('Sprachmenü', () => {
 
 // Sprecher-Clips und Zeitmarken: ohne Browser
 test.describe('Sprecher-Clips und VOICE', () => {
-  const voice = html => {
+  // Zeitmarken je Sprache: src/data/voice.<sprache>.json (geschrieben von tools/audio/finalize.py, gebündelt in die Seite)
+  const voice = () => {
     const o = {};
-    for (const l of ['DE', 'EN', 'PL']) {
-      const m = html.match(new RegExp('const VOICE_' + l + ' = (\\{.*\\});'));
-      expect(m, 'VOICE_' + l + ' im Quelltext').not.toBeNull();
-      o[l.toLowerCase()] = JSON.parse(m[1]);
-    }
+    for (const l of ['de', 'en', 'pl']) o[l] = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/voice.' + l + '.json'), 'utf8')).clips;
     return o;
   };
 
@@ -170,7 +167,7 @@ test.describe('Sprecher-Clips und VOICE', () => {
   });
 
   test('VOICE hat für alle Clips Dauer und aufsteigende Zeitmarken, in allen Sprachen dieselben Marker', async ({}, info) => {
-    const v = voice(L.indexHtml(info));
+    const v = voice();
     for (const lang of ['de', 'en', 'pl']) {
       expect(Object.keys(v[lang]).sort(), lang + ': Clips').toEqual([...L.CLIPS].sort());
       for (const id of L.CLIPS) {
@@ -191,7 +188,7 @@ test.describe('Sprecher-Clips und VOICE', () => {
   });
 
   test('Dauer in VOICE passt grob zur Dateigröße des Clips (Bitrate zwischen 32 und 320 kbit/s)', async ({}, info) => {
-    const v = voice(L.indexHtml(info));
+    const v = voice();
     const dir = path.join(ROOT, 'public/voice');
     for (const lang of ['de', 'en', 'pl']) for (const id of L.CLIPS) {
       const kbps = fs.statSync(path.join(dir, lang === 'de' ? '' : lang, id + '.mp3')).size * 8 / v[lang][id].d / 1000;

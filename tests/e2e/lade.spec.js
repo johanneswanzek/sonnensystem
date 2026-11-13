@@ -45,6 +45,6 @@ test.describe.serial('Laden', () => {
   test('keine Konsolenfehler, keine fremden Adressen, keine fehlgeschlagenen Anfragen', async () => {
     await s.page.waitForTimeout(1500);       // Modelle laden nach dem Start nach
     expect(L.problems(s.log)).toEqual([]);
-    expect(s.log.requests.some(u => /^\/vendor\/three\.min\.js/.test(u))).toBe(true);
+    expect(s.log.requests.some(u => /^\/assets\/index-[\w-]+\.js/.test(u)), 'gebündeltes Programm samt three.js geladen').toBe(true);
   });
 });

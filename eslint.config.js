@@ -23,7 +23,14 @@ export default [
     rules: { ...js.configs.recommended.rules, 'no-unused-vars': 'warn' },
   },
   {
-    files: ['tools/shots/**/*.js', 'tests/e2e/**/*.js'],
+    files: ['tools/shots/**/*.js'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
+    // E2E-Suite: CommonJS (tests/e2e/package.json), Code läuft teils im Browser (page.evaluate).
+    // Playwright verlangt das leere Muster ({}, info) für Tests ohne Fixtures; Regeln mit geschütztem Leerzeichen sind Absicht.
+    files: ['tests/e2e/**/*.js'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node, ...globals.browser } },
+    rules: { 'no-empty-pattern': 'off', 'no-empty': ['error', { allowEmptyCatch: true }], 'no-irregular-whitespace': 'off', 'no-unused-vars': ['warn', { args: 'none', caughtErrors: 'none' }] },
   },
 ];

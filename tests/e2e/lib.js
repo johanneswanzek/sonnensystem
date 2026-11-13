@@ -1,20 +1,21 @@
 // Gemeinsame Hilfen der E2E-Tests.
 const fs = require('fs'), path = require('path');
-const { ROOT } = require('../server');
+const { ROOT, delivered } = require('./server');
 
 const SOFT = !!process.env.SOFTWARE_GL;
 const LOAD_TIMEOUT = SOFT ? 300000 : 90000;
 
 const isDist = info => info.project.name === 'dist';
 const originOf = info => process.env['E2E_ORIGIN_' + info.project.name.toUpperCase()];
-// Quelltext der gelieferten Seite (für Prüfungen ohne Browser)
-const indexHtml = info => fs.readFileSync(path.join(ROOT, isDist(info) ? 'dist/index.html' : '.test/index.html'), 'utf8');
+// Quelltext der gelieferten Seite: index.html samt gebündelten Skripten und Stilen (für Prüfungen ohne Browser)
+const indexHtml = info => delivered(isDist(info) ? 'dist' : '.test');
 
 const IGNORE = t => /GPU stall|swiftshader|GroupMarkerNotSet|Automatic fallback to software WebGL/i.test(t);
 
 // Öffnet die Seite in einem frischen Kontext. Fremde Adressen werden abgebrochen und gesammelt, ebenso Konsolenfehler,
 // Seitenfehler, fehlgeschlagene Anfragen (Status >= 400) und alle Anfragen (für Netzprüfungen).
 //   opts: viewport, locale, query ('?lang=en'), init (Skript vor dem Laden), light (three.js sperren: nur Oberfläche, schnell),
+//         (light: WebGL wird verweigert, die Seite zeigt nur die Oberfläche – wie früher das Sperren von three.min.js)
 //         wait ('ready' = Startknöpfe sichtbar, 'ui' = Oberfläche aufgebaut, sonst nichts), storage ({key: value} in localStorage vor dem Laden),
 //         block (RegExp: weitere Anfragen abbrechen)
 async function open(browser, info, opts = {}) {
@@ -29,7 +30,6 @@ async function open(browser, info, opts = {}) {
   await ctx.route('**/*', r => {
     const u = r.request().url();
     if (u.startsWith(origin) || u.startsWith('data:') || u.startsWith('blob:')) {
-      if (opts.light && /\/vendor\/three\.min\.js/.test(u)) return r.abort();
       if (opts.block && opts.block.test(u)) return r.abort();
       return r.continue();
     }
@@ -45,11 +45,15 @@ async function open(browser, info, opts = {}) {
       AC.prototype.resume = function () { window.__audio.resume++; return r.apply(this, arguments); };
     }
   });
+  if (opts.light) await ctx.addInitScript(() => {
+    const g = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (t) { return /webgl/i.test(String(t)) ? null : g.apply(this, arguments); };
+  });
   if (opts.storage) await ctx.addInitScript(s => { for (const k in s) try { localStorage.setItem(k, s[k]); } catch (e) {} }, opts.storage);
   if (opts.init) await ctx.addInitScript(opts.init);
   const page = await ctx.newPage();
   page.on('response', r => { if (r.status() >= 400) log.failed.push(r.status() + ' ' + r.url().replace(origin, '')); });
-  page.on('requestfailed', r => { const u = r.url(); if (!u.startsWith(origin) && !u.startsWith('data:') && !u.startsWith('blob:')) return; if (opts.light && /three\.min\.js/.test(u)) return; if (opts.block && opts.block.test(u)) return; log.failed.push('fehlgeschlagen ' + u.replace(origin, '') + ' ' + (r.failure() || {}).errorText); });
+  page.on('requestfailed', r => { const u = r.url(); if (!u.startsWith(origin) && !u.startsWith('data:') && !u.startsWith('blob:')) return; if (opts.block && opts.block.test(u)) return; log.failed.push('fehlgeschlagen ' + u.replace(origin, '') + ' ' + (r.failure() || {}).errorText); });
   page.on('request', r => log.requests.push(r.url().replace(origin, '')));
   page.on('console', m => { const t = m.text(); if (!IGNORE(t) && (m.type() === 'error' || m.type() === 'warning')) log.errors.push('[' + m.type() + '] ' + t.slice(0, 500)); });
   page.on('pageerror', e => log.errors.push('[pageerror] ' + e.message));

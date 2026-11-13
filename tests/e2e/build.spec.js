@@ -1,19 +1,22 @@
-// Ablauf 13: Build (dist/): keine fremden Adressen, hreflang, window.SITE, alle referenzierten Dateien vorhanden
+// Ablauf 13: Build (dist/): keine fremden Adressen, hreflang, Angaben aus site.json, alle referenzierten Dateien vorhanden.
+// Geprüft wird index.html samt den gebündelten Skripten unter assets/ (Vite).
 const fs = require('fs'), path = require('path');
 const { test, expect } = require('playwright/test');
-const { ROOT } = require('../server');
+const { ROOT, delivered } = require('./server');
 const L = require('./lib');
 
 const DIST = path.join(ROOT, 'dist');
 const html = () => fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+const all = () => delivered('dist');
 const cfg = () => JSON.parse(fs.readFileSync(path.join(ROOT, 'site.json'), 'utf8'));
 const exists = f => fs.existsSync(path.join(DIST, f));
 
 test.describe('Build dist/', () => {
   test('keine fremden Adressen: nur die eigene Domain (Kopfzeilen) und der XML-Namensraum', () => {
     const own = cfg().url.replace(/\/$/, '');
-    const urls = html().match(/https?:\/\/[^\s"'<>)\\]+/g) || [];
-    const foreign = urls.filter(u => !u.startsWith(own) && !u.startsWith('http://www.w3.org/'));
+    const urls = all().match(/https?:\/\/[^\s"'`<>)\\]+/g) || [];
+    // three.js nennt in Warntexten seine Projektseiten; geladen wird von dort nichts (Netzprüfung in lade.spec.js)
+    const foreign = urls.filter(u => !u.startsWith(own) && !u.startsWith('http://www.w3.org/') && !/^https:\/\/(threejs\.org|github\.com\/mrdoob)\//.test(u));
     expect(foreign).toEqual([]);
     // Geladen wird nichts von der eigenen Adresse: Skripte, Stile und Medien sind relativ
     const loads = html().match(/<(script|link|img|audio|source)\b[^>]*\b(src|href)="[^"]+"/g) || [];
@@ -37,22 +40,21 @@ test.describe('Build dist/', () => {
     expect(Object.keys(c.i18n).sort()).toEqual(['en', 'pl']);
   });
 
-  test('window.SITE ist gesetzt und enthält i18n, Impressum und Datenschutz', () => {
-    const m = html().match(/<script>window\.SITE = (\{.*\});<\/script>/);
-    expect(m).not.toBeNull();
-    const site = JSON.parse(m[1].replace(/<\\\//g, '</'));
-    expect(site).toHaveProperty('impressum'); expect(site).toHaveProperty('datenschutz');
-    expect(site.i18n.en.title).toBeTruthy(); expect(site.i18n.pl.description).toBeTruthy();
+  test('Angaben aus site.json (Impressum, Datenschutz, Titel und Beschreibung je Sprache) sind eingebaut', () => {
+    const a = all(), c = cfg();
+    // vite.config.js setzt sie als Bauzeit-Konstante (__SITE__ -> SITE_CFG in src/core/target.js)
+    expect(a).toContain(JSON.stringify(c.i18n.en.title));
+    expect(a).toContain(JSON.stringify(c.i18n.pl.description));
+    expect(a).toMatch(/impressum:/); expect(a).toMatch(/datenschutz:/);
   });
 
   test('dist/ enthält keine Prüfhaken und keine Artefakt-Reste', () => {
-    const h = html();
-    expect(h).not.toContain('window.__t');
-    expect(h).not.toContain('window.__mbt');
-    expect(h).not.toMatch(/DESKTOP = false &&/);
-    expect(h).not.toContain('claude:viewport-fit-sides');
-    expect(h).not.toContain("models/' + n + '.json'");
-    expect(h).toContain("models/' + n + '.glb'");
+    const a = all();
+    for (const k of ['__t', '__mbt', '__clk', '__cam', '__au']) expect(a, k).not.toMatch(new RegExp('window\\.' + k + '\\b|\\b' + k + '='));
+    expect(a).not.toContain('claude:viewport-fit-sides');
+    expect(a).not.toContain('fonts.googleapis.com');
+    expect(a).toMatch(/["']\.glb["']/);
+    expect(a).not.toMatch(/["']\.json["']/);
   });
 
   test('alle im Dokument referenzierten Dateien (script, link, icon) existieren', () => {
@@ -62,12 +64,13 @@ test.describe('Build dist/', () => {
   });
 
   test('alle im Programm genannten Dateien (img, voice, audio, vendor, models) existieren', () => {
-    const h = html();
+    const h = all();
     const lits = new Set([...h.matchAll(/['"`]((?:img|audio|vendor|voice)\/[\w\-./]+\.\w{2,5})['"`]/g)].map(m => m[1]));
     expect(lits.size).toBeGreaterThan(4);
     for (const f of lits) expect(exists(f), f).toBe(true);
     // Modelle: Namen aus loadModels()
-    const lm = h.slice(h.indexOf('function loadModels'), h.indexOf('async function boot'));
+    const src = fs.readFileSync(path.join(ROOT, 'src/app/boot.js'), 'utf8');
+    const lm = src.slice(src.indexOf('function loadModels'), src.indexOf('async function boot'));
     const names = new Set([...lm.matchAll(/(?:get\(|\[)\s*'(\w+)'/g), ...[...lm.matchAll(/\[((?:'\w+',?\s*)+)\]/g)].flatMap(m => [...m[1].matchAll(/'(\w+)'/g)])].map(m => m[1]));
     expect(names.size).toBeGreaterThanOrEqual(7);
     for (const n of names) expect(exists('models/' + n + '.glb'), 'models/' + n + '.glb').toBe(true);
@@ -84,6 +87,8 @@ test.describe('Build dist/', () => {
   });
 
   test('Vorschaubild, Favicon und Lizenzdatei sind dabei', () => {
-    for (const f of ['vorschau.jpg', 'favicon.svg', 'LIZENZEN.txt', 'vendor/three.min.js', 'vendor/GLTFLoader.js']) expect(exists(f), f).toBe(true);
+    for (const f of ['vorschau.jpg', 'favicon.svg', 'LIZENZEN.txt', '.htaccess']) expect(exists(f), f).toBe(true);
+    // three.js und GLTFLoader sind gebündelt
+    for (const f of ['vendor/three.min.js', 'vendor/GLTFLoader.js']) expect(exists(f), f).toBe(false);
   });
 });

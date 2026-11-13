@@ -1,5 +1,5 @@
 // app/tour – Tour: Erzählzeit (narT, cue), focus, setStage, narrate, showInfo, Schritte, Zeitraffer, Beginn.
-// Exporte: BELT, EARTH, MARS, begin, cue, cur, cutS, durCur, dwell, focus, narT, rollDir, setSpeed, setStage, setTour, speedIdx, stage, stageCount, step, tour, travel; initTour
+// Exporte: BELT, EARTH, MARS, begin, cue, cur, cutS, durCur, dwell, focus, narId, narT, rollDir, setSpeed, setStage, setTour, speedIdx, stage, stageCount, step, tour, travel; initTour
 // Hängt ab von: app/camera.js, audio/engine.js, core/util.js, data/bodies.js, data/voice.js, i18n/index.js, mars/base.js, render/scene/minor.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
@@ -115,4 +115,4 @@ S.hudKey = 0, S.hudVis = 0, S.hudT = reduced ? 10 : 0, S.camLen = 200, S.blipI =
 EARTH = 4, MARS = BODIES.findIndex(b => b.id === 'mars'), BELT = BODIES.findIndex(b => b.id === 'belt');
 }
 
-export { BELT, EARTH, MARS, begin, cue, cur, cutS, durCur, dwell, focus, narT, rollDir, setSpeed, setStage, setTour, speedIdx, stage, stageCount, step, tour, travel };
+export { BELT, EARTH, MARS, begin, cue, cur, cutS, durCur, dwell, focus, narId, narT, rollDir, setSpeed, setStage, setTour, speedIdx, stage, stageCount, step, tour, travel };

@@ -111,9 +111,10 @@ export const swaps = [
   ['boot().catch(err => { console.error(err); fail(); });\n})();\n', 'boot().catch(err => { console.error(err); fail(); });\n' +
     '// Prüfhaken für die Tests (window.__t), nur im Testmodus aufgerufen\n' +
     'function installTestHooks(){\n' +
-    '  window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, ' +
+    '  window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, tourEnd: () => { tourT = dwell; }, ' +
     'pr: x => { PR.v = [x,x]; PR.hi = [x,x]; PR.lo = x; PR.fix = true; setPR(); }, ' +
-    'get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }};\n' +
+    'get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }, ' +
+    'get ex(){ return {tour,begun,soundMode,speedIdx,cine,LANG,narId,loops,simDays,dwell,tourT,clock,auStarted:AU.started,auActive:AU.active,speeds:SPEEDS,nBodies:BODIES.length,ids:BODIES.map(b => b.id)}; }};\n' +
     '}\n})();\n'],
   ['boot().catch', 'if (' + TEST + ') installTestHooks();\nboot().catch'],
   ['cam.lookAt(v1.x+Math.sin(v2.x)*cp*50,v1.y+Math.sin(v2.y)*50,v1.z+Math.cos(v2.x)*cp*50);',
