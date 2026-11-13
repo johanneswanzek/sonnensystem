@@ -1830,9 +1830,9 @@ const MB = (function(){
       pad:new THREE.MeshStandardMaterial({color:lin(0x3d312b), roughness:.92}),
       paint:new THREE.MeshStandardMaterial({color:lin(0xe6dcc6), roughness:.8}),
       road:new THREE.MeshStandardMaterial({color:lin(0x3a2216), roughness:1, transparent:true, opacity:.72, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
-      leaf:new THREE.MeshStandardMaterial({color:lin(0x2f8a22), roughness:.6, emissive:lin(0x3a8a1c), emissiveIntensity:.5}),
+      leaf:new THREE.MeshStandardMaterial({color:lin(0x24781a), roughness:.6, emissive:lin(0x2a7014), emissiveIntensity:.3}),
       // Lichter deutlich über 1 (HDR): sie sollen in der Nachbearbeitung überstrahlen
-      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(9,6.6,4)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(11,2.6,9)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(14,1.2,.5)})
+      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(9,6.6,4)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(5.5,1.1,4.4)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(14,1.2,.5)})
     };
 
     // Gelände: Gitter zur Mitte hin verdichtet, Höhen aus Rauschen, an den Bauplätzen eingeebnet
@@ -1930,7 +1930,7 @@ const MB = (function(){
     // Solarfeld: zur Sonne geneigte Module auf Pfosten
     const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#0a1638'; x.fillRect(0,0,128,64); x.fillStyle = '#12224e'; for (let i = 0; i < 128; i += 8) for (let j = 0; j < 64; j += 8) if ((i+j)%16) x.fillRect(i+1,j+1,6,6); x.strokeStyle = '#8a96b0'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
     const pq = new THREE.Quaternion().setFromUnitVectors(up,v2.set(sunDir.x*.55,1,sunDir.z*.55).normalize());
-    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0xb4bccc), roughness:.1, metalness:.4, envMapIntensity:2.2}),48);
+    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0xb4bccc), roughness:.1, metalness:.4, envMapIntensity:1.5}),48);
     const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(.09,.09,2.2,6),M.metal,48);
     for (let r = 0, n = 0; r < 6; r++) for (let c = 0; c < 8; c++, n++) {
       const x = -10+(c-3.5)*7.6, z = 95+(r-2.5)*6.2, y = hgt(x,z);
@@ -2031,9 +2031,9 @@ const MB = (function(){
     // Staubschleier, die mit dem Wind dicht über den Boden ziehen; sie bleiben um die Kamera herum
     anim.push((t,dt,clk) => {
       const S = 360, cx = cam.position.x, cz = cam.position.z;
-      for (let i = 0; i < (DESKTOP ? 42 : 26); i++) {
+      for (let i = 0; i < (DESKTOP ? 30 : 18); i++) {
         const x = cx+((hash(i,1,93)*S-clk*7-cx)%S+S)%S-S/2, z = cz+((hash(i,2,93)*S+clk*4.5-cz)%S+S)%S-S/2, d = Math.hypot(x-cx,z-cz);
-        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.025+.035*hash(i,5,93))*ss(18,70,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
+        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.01+.016*hash(i,5,93))*ss(30,90,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
       }
     });
     // Staubteufel in der Ferne: schlanker, sich wiegender Schlauch aus wirbelndem Staub
@@ -2274,7 +2274,7 @@ const MB = (function(){
     },
     render(shiftY){
       cam.aspect = W/H; cam.fov = 46-11*ss(1,1.7,W/H); cam.setViewOffset(W,H,0,shiftY,W,H);
-      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.35, thr:1.6, knee:.8, vig:.18});
+      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.26, thr:2, knee:.8, vig:.24});
     },
     project(v,out){ v2.copy(v).project(cam); out.x = (v2.x*.5+.5)*W; out.y = (-v2.y*.5+.5)*H; out.z = v2.z; return out; }
   };
