@@ -35,6 +35,7 @@ tools/
   build.py                 baut dist/ (und die Testseite)
   serve.py                 lokaler Entwicklungsserver
   test/run.js              Prüfung im Browser ohne Fenster, mit Bildschirmfotos
+  test/e2e/                E2E-Suite (Playwright-Testrunner), Konfiguration in test/playwright.config.js
   audio/                   Aufbereitung von Sprecher und Musik (Lautheit, Zeitmarken, Schleife)
   models/                  Modelle verkleinern und für claude.ai-Artefakte umwandeln
 docs/
@@ -85,18 +86,37 @@ Alle Texte stehen deutsch in `src/sonnensystem.html`; die Übersetzungen liegen 
 
 ## Testen
 
-Die Prüfung läuft in einem Chrome ohne Fenster (Playwright) und legt Bildschirmfotos nach `.test/shots/`.
+Zwei Werkzeuge, beide mit Playwright in einem Chrome ohne Fenster:
+
+**E2E-Suite** (`tools/test/e2e/`): prüft alle Abläufe und Knöpfe der Seite (Laden, Start mit und ohne Ton, Tour, Navigation,
+Zeitraffer, Ton, Vollbild, Sprachen, Dialog „Quellen“, Erde und Mars, Layout in vier Formaten, Robustheit ohne WebGL, Build).
+Sie prüft Zustände, DOM, ARIA, Netz und Konsole, keine Bildvergleiche. Jede Anfrage an eine fremde Adresse, jede
+fehlgeschlagene Anfrage und jeder Konsolenfehler gilt als Fehler.
 
 ```
-cd tools/test && npm install && npx playwright install chromium && cd ../..
+cd tools/test
+npm install && npx playwright install chromium     # einmalig
+npm test                                           # alles: Testseite mit Prüfhaken und dist/
+npm run test:dist                                  # nur dist/, so wie es veröffentlicht wird
+npm run test:headed                                # mit sichtbarem Browser
+npx playwright test tour.spec.js                   # eine Datei
+npm run report                                     # HTML-Bericht (playwright-report/) öffnen
+```
 
+Die Suite baut vorher selbst (`python tools/build.py --test` und `python tools/build.py`; Python über `PYTHON`
+wählbar) und startet lokale Server. Ohne Grafikkarte `SOFTWARE_GL=1` setzen (dann deutlich langsamer, die Zeitgrenzen
+wachsen mit); `CHROME_PATH` nimmt einen vorhandenen Chrome statt des von Playwright installierten.
+
+**Bildschirmfotos** (`run.js`): legt Bilder nach `.test/shots/`.
+
+```
 node tools/test/run.js 390 760 start focus:8 wait:8000 shot:saturn-handy
 node tools/test/run.js 1920 1080 start focus:5 wait:5000 stage:1 wait:8000 mbt:45 wait:2000 shot:mars-landung
 node tools/test/run.js --dist 1280 720 go wait:6000 shot:start      # prüft dist/ so, wie es veröffentlicht wird
 node tools/test/run.js --lang=pl 390 760 start focus:4 wait:5000 shot:erde-polnisch
 ```
 
-Alle Schritte stehen im Kopf von `tools/test/run.js`. Jede Anfrage an eine fremde Adresse gilt als Fehler.
+Alle Schritte stehen im Kopf von `tools/test/run.js`.
 
 ## Quellen und Lizenzen
 

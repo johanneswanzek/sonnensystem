@@ -12,3 +12,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+# Berichte der E2E-Läufe
+test-results/
+playwright-report/

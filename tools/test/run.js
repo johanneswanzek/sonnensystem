@@ -23,8 +23,8 @@
 //            SOFTWARE_GL=1  Software-Rendering (für Rechner ohne Grafikkarte)
 //            DSF=2          Gerätepixel je CSS-Pixel (Vorgabe 1)
 const { chromium } = require('playwright');
-const { spawnSync } = require('child_process');
-const fs = require('fs'), http = require('http'), path = require('path');
+const fs = require('fs'), path = require('path');
+const { startServer, build, targets } = require('./server');
 
 const ROOT = path.resolve(__dirname, '../..');
 const argv = process.argv.slice(2);
@@ -34,27 +34,13 @@ const LANG = (argv.find(a => a.startsWith('--lang=')) || '').slice(7); if (LANG)
 const [w, h, ...steps] = argv;
 if (!+w || !+h) { console.log(fs.readFileSync(__filename, 'utf8').split('\n').filter(l => l.startsWith('//')).map(l => l.slice(3)).join('\n')); process.exit(1); }
 
-if (!DIST) {
-  const py = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
-  const r = spawnSync(py, [path.join(ROOT, 'tools/build.py'), '--test'].concat(DESK ? ['--desk'] : []), { stdio: 'inherit' });
-  if (r.status !== 0) process.exit(1);
-}
-const BASE = DIST ? path.join(ROOT, 'dist') : path.join(ROOT, 'public');
-const INDEX = DIST ? path.join(ROOT, 'dist/index.html') : path.join(ROOT, '.test/index.html');
+if (!DIST) { try { build('test', DESK ? ['--desk'] : []); } catch (e) { console.error(e.message); process.exit(1); } }
+const T = targets[DIST ? 'dist' : 'test'];
 const SHOTS = path.join(ROOT, '.test/shots');
 fs.mkdirSync(SHOTS, { recursive: true });
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.mp3': 'audio/mpeg', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.glb': 'model/gltf-binary' };
-const srv = http.createServer((q, r) => {
-  const u = decodeURIComponent(q.url.split('?')[0]);
-  const f = u === '/' || u === '/index.html' ? INDEX : path.join(BASE, u);
-  if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end(); }
-  r.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' });
-  r.end(fs.readFileSync(f));
-});
-
 (async () => {
-  await new Promise(ok => srv.listen(0, '127.0.0.1', ok));
-  const origin = 'http://127.0.0.1:' + srv.address().port;
+  const srv = await startServer(T);
+  const origin = srv.origin;
   const args = ['--autoplay-policy=no-user-gesture-required'];
   if (process.env.SOFTWARE_GL) args.push('--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist');
   if (process.getuid && process.getuid() === 0) args.push('--no-sandbox');

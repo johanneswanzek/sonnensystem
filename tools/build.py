@@ -87,9 +87,10 @@ html,body{margin:0}
 def hooks(s, desk):
     """Prüfhaken für tools/test/run.js: Zugriff auf Fokus, Zeit und Kamera. Nur in der Testseite, nie in dist/."""
     s = swap(s, 'boot().catch',
-             "window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, "
+             "window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, tourEnd: () => { tourT = dwell; }, "
              "pr: x => { PR.v = [x,x]; PR.hi = [x,x]; PR.lo = x; PR.fix = true; setPR(); }, "
-             "get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }};\n"
+             "get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }, "
+             "get ex(){ return {tour,begun,soundMode,speedIdx,cine,LANG,narId,loops,simDays,dwell,tourT,clock,auStarted:AU.started,auActive:AU.active,speeds:SPEEDS,nBodies:BODIES.length,ids:BODIES.map(b => b.id)}; }};\n"
              "boot().catch")
     # Ton: lesender Zustand von AU (aktive Musik, Pegel, laufende Effekte) für die Prüfung der Überblendungen
     ease = "  const ease = s => s*s*(3-2*s);"
