@@ -1282,9 +1282,9 @@ void main(){
   gl_FragColor=vec4(col*1.55,1.0);
 }`;
 // Korona, Chromosphäre und Protuberanzen: eine Fläche um die Sonne, die stets zur Kamera zeigt (additiv, HDR)
-const CORONA_VS = `varying vec2 vQ; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
+const CORONA_VS = `varying vec2 vQ; varying float vD; void main(){ vQ=position.xy; vec4 c=viewMatrix*vec4(modelMatrix[3].xyz,1.0); vD=length(c.xyz); c.xy+=position.xy; gl_Position=projectionMatrix*c; }`;
 const CORONA_FS = `
-uniform float time; uniform float R; uniform float k; varying vec2 vQ;
+uniform float time; uniform float R; uniform float k; varying vec2 vQ; varying float vD;
 ` + SUN_NOISE + `
 void main(){
   float r=length(vQ)/R; if(r<0.985 || r>6.0) discard;
@@ -1305,7 +1305,9 @@ void main(){
       col+=vec3(1.0,0.34,0.14)*pm*2.4;
     }
   }
-  gl_FragColor=vec4(col*k,1.0);
+  // Nah an der Sonne (Merkur, Venus) bliebe sonst das ganze Bild ein Schleier: Korona nur bis rund 35–55° um die Sonnenmitte
+  float ang=r*R/vD;
+  gl_FragColor=vec4(col*k*(1.0-smoothstep(0.6,1.0,ang)),1.0);
 }`;
 // Saturnringe mit Schatten des Planeten
 const RING_FS = `
@@ -1524,7 +1526,9 @@ function buildSun(b){
   b.mesh = new THREE.Mesh(new THREE.SphereGeometry(b.R,64,48), sunMat);
   b.fitR = b.R;
   scene.add(b.mesh);
-  scene.add(halo(b.R*1.55,b.R,[1,.5,.14],.5,1));
+  // Saum der Sonne; steht die Kamera in dieser Kugel (Merkur bei Sonnennähe), färbte ihre Rückseite das ganze Bild: dann ausblenden
+  const sh = halo(b.R*1.55,b.R,[1,.5,.14],.5,1); scene.add(sh);
+  sh.onBeforeRender = (r,sc,cam) => { sh.material.uniforms.k.value = .5*ss(b.R*1.65,b.R*2.3,cam.position.distanceTo(sh.position)); };
   // Korona mit Protuberanzen; sie leuchtet über den Bloom, deshalb sind Schein und Strahlen nur noch ein Hauch
   b.corona = new THREE.Mesh(new THREE.PlaneGeometry(b.R*12,b.R*12), new THREE.ShaderMaterial({uniforms:{time:{value:0}, R:{value:b.R}, k:{value:POST.ok ? 1 : .6}},
     vertexShader:CORONA_VS, fragmentShader:CORONA_FS, blending:add, transparent:true, depthWrite:false}));
@@ -1532,14 +1536,18 @@ function buildSun(b){
   scene.add(b.corona);
   const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:radialTex([[0,'rgba(255,214,130,.9)'],[.28,'rgba(255,170,60,.42)'],[.55,'rgba(255,130,30,.12)'],[1,'rgba(255,110,20,0)']]), blending:add, depthWrite:false, transparent:true, opacity:POST.ok ? .35 : 1}));
   glow.scale.set(13,13,1); scene.add(glow);
-  // Nah an der Sonne (Flug zur Erde) läge der große Schein als weißer Schleier über dem Bild; dort tritt er zurück
+  // Nah an der Sonne (Merkur, Venus, Flug zur Erde) würden die großen Scheine das ganze Bild füllen: Unter dem Abstand der
+  // Sonnen-Nahansicht (GLARE_D) schrumpfen sie mit dem Abstand, ihr scheinbarer Radius bleibt also begrenzt; der Rand gehört der Korona
+  const GLARE_D = 20, cap = sp => { const s0 = sp.scale.x;
+    sp.onBeforeRender = (r,sc,cam) => { sp.scale.setScalar(s0*Math.min(1,cam.position.distanceTo(sp.position)/GLARE_D)); sp.updateMatrixWorld(); }; };
   const glowOp = glow.material.opacity;
-  glow.onBeforeRender = (r,s,cam) => { glow.material.opacity = glowOp*(.25+.75*ss(12,36,cam.position.length())); };
-  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = POST.ok ? .4 : 1; scene.add(wide); rays.push(wide);
+  cap(glow); const glowCap = glow.onBeforeRender;
+  glow.onBeforeRender = (r,sc,cam) => { glowCap(r,sc,cam); glow.material.opacity = glowOp*(.5+.5*ss(8,30,cam.position.length())); };
+  const wide = new THREE.Sprite(glow.material.clone()); wide.scale.set(27,27,1); wide.userData.op = POST.ok ? .4 : 1; scene.add(wide); rays.push(wide); cap(wide);
   [1,2].forEach(k => {
     const op = (k === 1 ? .5 : .35)*(POST.ok ? .45 : 1);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({map:raysTex(k), blending:add, depthWrite:false, transparent:true, opacity:op}));
-    s.scale.set(30+k*5,30+k*5,1); s.userData.op = op; scene.add(s); rays.push(s);
+    s.scale.set(30+k*5,30+k*5,1); s.userData.op = op; scene.add(s); rays.push(s); cap(s);
   });
 }
 
