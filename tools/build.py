@@ -87,9 +87,10 @@ html,body{margin:0}
 def hooks(s, desk):
     """Prüfhaken für tools/test/run.js: Zugriff auf Fokus, Zeit und Kamera. Nur in der Testseite, nie in dist/."""
     s = swap(s, 'boot().catch',
-             "window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, "
+             "window.__t = {focus, setStage, step, seek: x => { narStart = performance.now()-x*1000; }, tourEnd: () => { tourT = dwell; }, "
              "pr: x => { PR.v = [x,x]; PR.hi = [x,x]; PR.lo = x; PR.fix = true; setPR(); }, "
-             "get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }};\n"
+             "get st(){ return {cur,stage,trans,surfOn,veil,grp,mbT,pr:PR.v[surfOn ? 1 : 0],ui,wide,topH,botH,dwell,durCur}; }, get PR(){ return PR; }, "
+             "get ex(){ return {tour,begun,soundMode,speedIdx,cine,LANG,narId,loops,simDays,dwell,tourT,clock,auStarted:AU.started,auActive:AU.active,speeds:SPEEDS,nBodies:BODIES.length,ids:BODIES.map(b => b.id)}; }};\n"
              "boot().catch")
     # Marsbasis: freie Kamera (window.__cam = [x,y,z, lx,ly,lz]), feste Erzählzeit (window.__mbt) und feste Uhr (window.__clk)
     a = "cam.lookAt(v1.x+Math.sin(v2.x)*cp*50,v1.y+Math.sin(v2.y)*50,v1.z+Math.cos(v2.x)*cp*50);"
