@@ -1,6 +1,6 @@
 // app/tour – Tour: Erzählzeit (narT, cue), focus, setStage, narrate, showInfo, Schritte, Zeitraffer, Beginn.
 // Exporte: BELT, EARTH, MARS, begin, cue, cur, cutS, durCur, dwell, focus, narT, rollDir, setSpeed, setStage, setTour, speedIdx, stage, stageCount, step, tour, travel; initTour
-// Hängt ab von: app/camera.js, audio/engine.js, core/util.js, data/bodies.js, data/voice.js, i18n/index.js, mars/base.js, render/scene.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
+// Hängt ab von: app/camera.js, audio/engine.js, core/util.js, data/bodies.js, data/voice.js, i18n/index.js, mars/base.js, render/scene/minor.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
@@ -11,7 +11,7 @@ import { BODIES, DWELL0, SPEEDS } from '../data/bodies.js';
 import { VOICE } from '../data/voice.js';
 import { LOC, fill, tr } from '../i18n/index.js';
 import { MB } from '../mars/base.js';
-import { flightRocks, scatterFlight } from '../render/scene.js';
+import { flightRocks, scatterFlight } from '../render/scene/minor.js';
 import { caption, elBlurb, elKind, elName, elSpeed, elSr, rail, startEl, tourBtn, tourIcon } from '../ui/dom.js';
 import { measure } from '../ui/layout.js';
 import { showSound } from '../ui/sound.js';
@@ -46,7 +46,7 @@ function setStage(n){
   stage = n; S.tourT = 0; S.tStage = 0; S.trans = reduced ? 1 : 0; travel = 0; rollDir = 0;
   const base = cur === MARS && n === 1;
   durCur = base ? 3 : cur === EARTH && n === 1 ? 4.6 : 3.6;
-  if (!reduced) AU.flight(durCur);
+  if (!reduced) AU.flight(durCur, base || cur === EARTH && n === 1 ? 'dive' : 'stage');
   narrate(cur, base ? (reduced ? 1.2 : durCur+.8) : reduced ? .3 : 1.7);      // auf dem Mars beginnt der Text erst nach der Landung
   showInfo(true);
 }
@@ -62,6 +62,7 @@ function focus(i, byUser){
   tmp.subVectors(BODIES[i].pos,fromTgt); rollDir = Math.sign(tmp.x*fromOff.z-tmp.z*fromOff.x);      // liegt das Ziel links oder rechts der Blickrichtung
   // Dauer nach der Strecke; durch den Asteroidengürtel geht es langsam, der Sprecher beginnt unterwegs
   durCur = i === BELT ? 8.5 : clamp(3.3+.07*travel,3.6,6.2);
+  AU.place(i);
   if (!reduced) { if (i === BELT && flightRocks) scatterFlight(); AU.flight(durCur); }
   narrate(i, reduced ? .3 : i === BELT ? 1.2 : durCur-2.5);
   showInfo(true);

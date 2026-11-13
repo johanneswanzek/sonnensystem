@@ -23,11 +23,12 @@ function vnoise(x,y,z){
   return y1+(y2-y1)*w;
 }
 function ringTex(){
-  const w = 2048, c = document.createElement('canvas'); c.width = w; c.height = 4;
+  const w = 4096, c = document.createElement('canvas'); c.width = w; c.height = 4;
   const ctx = c.getContext('2d'), img = ctx.createImageData(w,4), d = img.data, c1 = [168,146,106], c2r = [236,224,196];
   for (let x = 0; x < w; x++) {
-    const r = x/(w-1), n = vnoise(r*70,1.5,2.5)*.5+vnoise(r*260,4.5,.5)*.3+vnoise(r*900,7.5,3.5)*.2;
+    const r = x/(w-1), n = vnoise(r*70,1.5,2.5)*.45+vnoise(r*260,4.5,.5)*.27+vnoise(r*900,7.5,3.5)*.16+vnoise(r*2800,2.5,9.5)*.12;
     let a = .42+.58*n;
+    if (r > .3 && r < .6) a = Math.min(1,a*1.25);                 // dichter, heller B-Ring
     if (r < .22) a *= .25+r*1.5;                              // schwacher C-Ring
     a *= 1-.94*ss(.6,.615,r)*(1-ss(.66,.675,r));             // Cassinische Teilung
     a *= 1-.7*ss(.9,.905,r)*(1-ss(.915,.92,r));              // Encke-Lücke

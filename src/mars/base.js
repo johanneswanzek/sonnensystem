@@ -1,6 +1,6 @@
 // mars/base – Marsbasis (MB): eigene Szene auf der Oberfläche in Metern – Gelände, Bauten, Fahrzeuge, Kamerafahrt, Teilchen.
 // Exporte: MB; initBase
-// Hängt ab von: core/device.js, core/util.js, data/voice.js, i18n/index.js, mars/sky-shader.js, render/canvas-textures.js, render/renderer.js, render/scene.js, core/state.js
+// Hängt ab von: core/device.js, core/util.js, data/voice.js, i18n/index.js, mars/layout.js, mars/shaders.js, render/canvas-textures.js, render/post.js, render/renderer.js, render/scene/minor.js, core/state.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import * as THREE from 'three';
@@ -9,10 +9,12 @@ import { DESKTOP } from '../core/device.js';
 import { TAU, clamp, ss } from '../core/util.js';
 import { VOICE } from '../data/voice.js';
 import { tr } from '../i18n/index.js';
-import { SKY_FS } from './sky-shader.js';
+import { AST_YAW, CRATERS, DUST, FLAT, HAB, OBST, ROVER_YAW, STEAM } from './layout.js';
+import { MB_GLSL, SKY_FS } from './shaders.js';
 import { hash, vnoise } from '../render/canvas-textures.js';
+import { POST } from '../render/post.js';
 import { renderer } from '../render/renderer.js';
-import { rockGeo } from '../render/scene.js';
+import { rockGeo } from '../render/scene/minor.js';
 
 // Belegt in initBase() (Reihenfolge des Starts, siehe main.js)
 let MB;
@@ -22,10 +24,6 @@ MB = (function(){
   const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(46,1,.5,14000);
   const lin = h => new THREE.Color(h).convertSRGBToLinear();
   const sunDir = new THREE.Vector3(.73,.41,.55).normalize(), up = new THREE.Vector3(0,1,0);      // tief stehende Sonne von der Seite: lange Schatten
-  const FLAT = [[120,-40,420],[430,-40,115]];                                // eingeebnete Flächen: x, z, Radius
-  // Bauten, über die die Kamera steigt, statt hindurchzufahren: x, z, Radius, Höhe
-  const OBST = [[12,-30,6,5],[0,0,9.5,10.5],[-18,-4,7.5,8.5],[15,-11,7.5,8.5],[3,18,7.5,8.5],[42,17,16,5.5],[-46,38,9,7.5],[-30,-25,11,6.5],[-9,-36,11,6.5],[430,-40,10,15],[275,-85,16,14],[62,-72,9,12],[90,-94,2,15.5],[30,-58,9,8]];
-  const HAB = [[-18,-4,.35],[15,-11,2.7],[3,18,-1.35]];                       // Wohnmodule um die Kuppel: x, z, Drehung
   const v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
   const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), e4 = new THREE.Euler(), s4 = new THREE.Vector3();
   let ready = false, sunL = null, knots = null, frameN = 0, M = null, roverLabel = null;
@@ -33,10 +31,27 @@ MB = (function(){
   // Bewegtes: jede Funktion bekommt (t, dt, clk); t ist die Uhr des Sprechers, clk läuft frei
   const anim = [], padLights = [];
   let puffs = null, skyU = null, lander = null, shadowEvery = 4;
-  const DUST = [.64,.44,.29], STEAM = [.8,.8,.84];
-  const AST_YAW = 0, ROVER_YAW = 0;                 // Blickrichtung des Astronauten-Modells gegenüber der Laufrichtung
-  // Krater: x, z, Radius, Tiefe
-  const CRATERS = [[-185,-150,46,9],[150,235,58,11],[560,190,85,15],[-380,300,70,13],[420,-470,60,11],[-90,520,95,16]];
+  // Luftperspektive: Dunstfarbe, Aufhellung zur Sonne, Dichte am Boden (1/m), Abnahme mit der Höhe (1/m), Grunddichte (1/m)
+  const HZ = {mbSun:{value:sunDir}, mbHz:{value:lin(0xae8160)}, mbHzS:{value:lin(0xc89a70)}, mbHzP:{value:new THREE.Vector4(1/2600,1/170,1/16000,0)}, mbCam:{value:cam.position}};
+  // Hängt Luftperspektive (vor dem Tonemapping, damit sie auch mit HDR-Nachbearbeitung stimmt) und Staub auf nach oben weisenden Flächen an ein Material
+  function haze(m,dust){
+    if (!m || m.userData.mbHaze || !(m.isMeshStandardMaterial || m.isMeshBasicMaterial || m.isMeshLambertMaterial || m.isMeshPhongMaterial)) return m;
+    m.userData.mbHaze = true;
+    const prev = m.onBeforeCompile, key = String(prev);
+    m.onBeforeCompile = (sh,r) => {
+      prev.call(m,sh,r);
+      Object.assign(sh.uniforms,HZ);
+      sh.vertexShader = 'varying vec3 vMbW; varying float vMbUp;\n' + sh.vertexShader.replace('#include <fog_vertex>',
+        '#include <fog_vertex>\n{ vec4 hw=vec4(transformed,1.0); vec3 hn=vec3(0.0,1.0,0.0);\n#ifdef USE_INSTANCING\nhw=instanceMatrix*hw;\n#endif\nvMbW=(modelMatrix*hw).xyz;\n' +
+        '#ifndef FLAT_SHADED\n#ifdef USE_INSTANCING\nhn=normalize(mat3(modelMatrix)*mat3(instanceMatrix)*normal);\n#else\nhn=normalize(mat3(modelMatrix)*normal);\n#endif\n#endif\nvMbUp=hn.y; }');
+      sh.fragmentShader = 'varying vec3 vMbW; varying float vMbUp;\n' + MB_GLSL + sh.fragmentShader
+        .replace('#include <color_fragment>', '#include <color_fragment>\n' + (dust ? 'diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.42,0.26,0.16),' + dust.toFixed(3) + '*smoothstep(0.35,0.95,vMbUp)*(0.6+0.4*mbN(vMbW.xz*1.7+vMbW.y)));' : ''))
+        .replace('#include <tonemapping_fragment>', 'gl_FragColor.rgb=mbAir(gl_FragColor.rgb,vMbW);\n#include <tonemapping_fragment>')
+        .replace('#include <fog_fragment>', '');
+    };
+    m.customProgramCacheKey = () => 'mbhaze' + (dust || 0) + key;
+    return m;
+  }
   // Stationen: Stichwort des Sprechers, Ankerpunkt (Höhe über Grund), Name, Kennzeile
   const labels = [['hab',[0,10,0],'WOHNMODULE','DRUCKKABINEN · TUNNEL · SCHLEUSEN'],['berm',[-20,5,-30],'STRAHLENSCHUTZ','2 BIS 3 M MARSBODEN ALS SCHILD'],
     ['green',[42,5.5,17],'GEWÄCHSHÄUSER','NAHRUNG UND SAUERSTOFF'],['solar',[-10,5,95],'SOLARFELD','SONNE 43 % SO STARK WIE AUF DER ERDE'],
@@ -77,6 +92,19 @@ MB = (function(){
     const r = glow(new THREE.PlaneGeometry(Math.hypot(x2-x1,z2-z1),w),mat,(x1+x2)/2,hgt((x1+x2)/2,(z1+z2)/2)+y,(z1+z2)/2);
     r.rotation.x = -Math.PI/2; r.rotation.z = -Math.atan2(z2-z1,x2-x1); r.receiveShadow = true;
   }
+  // Weicher dunkler Fleck auf dem Gelände (Kontaktverdunklung); liegt dem Gelände auf, an Fahrzeugen eben unter dem Fahrzeug
+  let blobMat = null;
+  function blob(x,z,rx,rz,a,parent,ry){
+    if (!blobMat) { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'), gr = g.createRadialGradient(32,32,0,32,32,32);
+      gr.addColorStop(0,'rgba(0,0,0,1)'); gr.addColorStop(.45,'rgba(0,0,0,.7)'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0,0,64,64);
+      blobMat = new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c), color:0x000000, transparent:true, depthWrite:false, polygonOffset:true, polygonOffsetFactor:-4}); }
+    const geo = new THREE.PlaneGeometry(2,2,6,6), p = geo.attributes.position, c = Math.cos(ry || 0), s = Math.sin(ry || 0);
+    geo.rotateX(-Math.PI/2);
+    for (let i = 0; i < p.count; i++) { const lx = p.getX(i)*rx, lz = p.getZ(i)*rz, wx = x+lx*c+lz*s, wz = z-lx*s+lz*c; p.setXYZ(i,parent ? lx : wx,parent ? .06 : hgt(wx,wz)+.07,parent ? lz : wz); }
+    const m = new THREE.Mesh(geo,blobMat.clone()); m.material.opacity = a; m.renderOrder = 1; (parent || sc).add(m);
+    haze(m.material);
+    return m;
+  }
   function glow(geo,mat,x,y,z,parent){ const m = add(geo,mat,x,y,z,parent); m.castShadow = false; m.receiveShadow = false; return m; }
   // Staub und Dampf: weiche Scheiben, die sich zur Kamera drehen. Alle Teilchen werden in jedem Bild neu aus der Zeit berechnet.
   function Puffs(n,fogC){
@@ -110,31 +138,44 @@ MB = (function(){
   }
 
   function build(groundTex){
-    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;      // PCF mit Radius: weiche Kanten ohne Treppen
     // Himmel, Dunst, Licht
     const hor = lin(0xd0a680), sky = new THREE.Mesh(new THREE.SphereGeometry(9000,32,16), new THREE.ShaderMaterial({
-      uniforms:(skyU = {sun:{value:sunDir}, hor:{value:hor}, zen:{value:lin(0x7b5c47)}, time:{value:0}}),
+      uniforms:(skyU = Object.assign({sun:{value:sunDir}, hor:{value:lin(0xd2a47c)}, zen:{value:lin(0x6e5040)}, time:{value:0}},HZ)),
       vertexShader:`varying vec3 vD; void main(){ vD=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`, fragmentShader:SKY_FS, side:THREE.BackSide, depthWrite:false}));
     sc.add(sky);
     try { const es = new THREE.Scene(); es.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); sc.environment = pm.fromScene(es,0,1,12000).texture; pm.dispose(); } catch (e) {}
     sc.fog = new THREE.Fog(hor,280,5600);
     puffs = Puffs(320,hor);
-    sc.add(new THREE.HemisphereLight(lin(0xdcb894),lin(0x6a4c3a),.62));
-    sunL = new THREE.DirectionalLight(lin(0xffeedd),2.7); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
+    // Umgebungslicht: Himmel von oben, vom rötlichen Boden zurückgeworfenes Licht von unten; weniger als bisher, damit Schatten Tiefe haben
+    sc.add(new THREE.HemisphereLight(lin(0xd8b896),lin(0x5a3a28),.36));
+    sunL = new THREE.DirectionalLight(lin(0xfff0de),3.4); sunL.position.copy(sunDir).multiplyScalar(520).add(v1.set(205,0,-70)); sunL.target.position.set(205,0,-70);
     shadowEvery = DESKTOP ? 2 : 4;
-    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0005; sunL.shadow.normalBias = .3; sunL.shadow.autoUpdate = false;
-    const sca = sunL.shadow.camera; sca.left = -310; sca.right = 310; sca.top = 310; sca.bottom = -310; sca.near = 10; sca.far = 1400;
+    sunL.castShadow = true; sunL.shadow.mapSize.set(DESKTOP ? 4096 : 2048,DESKTOP ? 4096 : 2048); sunL.shadow.bias = -.0004; sunL.shadow.normalBias = .12; sunL.shadow.autoUpdate = false; sunL.shadow.radius = 2;
+    const sca = sunL.shadow.camera; sca.left = -310; sca.right = 310; sca.top = 310; sca.bottom = -310; sca.near = 10; sca.far = 1600;
     sc.add(sunL,sunL.target);
 
-    // Boden: dieselbe Textur in drei Maßstäben gegen sichtbare Wiederholung, im Nahbereich Relief aus der feinen Struktur, in der Ferne eine ruhige Fläche
+    // Boden: dieselbe Textur in drei Maßstäben gegen sichtbare Wiederholung, darüber Muster in Weltkoordinaten (vUv*36 = Meter):
+    // großflächig dunkler Basaltsand und heller Staub, Sandfelder mit Rippeln, Kies; im Nahbereich Relief aus Rippeln, Kies und feiner Struktur
     const soilDetail = m => {
       m.onBeforeCompile = sh => {
         sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',
-          'float dv=length(vViewPosition); vec4 texelColor=mapTexelToLinear(texture2D(map,vUv)); vec4 wide=mapTexelToLinear(texture2D(map,vUv*0.131+0.37,2.5)); vec4 fine=mapTexelToLinear(texture2D(map,vUv*5.7+0.11));' +
-          'texelColor=mix(texelColor,wide*1.06,0.38+0.5*smoothstep(50.0,520.0,dv)); texelColor.rgb*=mix(1.0,clamp(dot(fine.rgb,vec3(0.3,0.5,0.2))/0.13,0.5,1.7),0.6*(1.0-smoothstep(5.0,60.0,dv)));' +
-          'texelColor.rgb=mix(texelColor.rgb,vec3(0.235,0.1,0.045),0.7*smoothstep(380.0,1700.0,dv)); diffuseColor*=texelColor;')
-          .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n{ float hF=dot(texture2D(map,vUv*5.7+0.11).rgb,vec3(0.333)); vec3 gsx=dFdx(-vViewPosition), gsy=dFdy(-vViewPosition); vec3 gra=cross(gsy,normal), grb=cross(normal,gsx); float gdet=dot(gsx,gra);' +
-          ' normal=normalize(abs(gdet)*normal-0.06*(1.0-smoothstep(4.0,40.0,length(vViewPosition)))*sign(gdet)*(dFdx(hF)*gra+dFdy(hF)*grb)); }');
+          'float dv=length(vViewPosition); vec2 wq=vUv*36.0; float nf=1.0-smoothstep(8.0,90.0,dv);' +
+          'vec4 texelColor=mapTexelToLinear(texture2D(map,vUv)); vec4 wide=mapTexelToLinear(texture2D(map,vUv*0.131+0.37,2.5)); vec4 fine=mapTexelToLinear(texture2D(map,vUv*5.7+0.11));' +
+          'texelColor=mix(texelColor,wide*1.06,0.38+0.5*smoothstep(50.0,520.0,dv)); texelColor.rgb*=mix(1.0,clamp(dot(fine.rgb,vec3(0.3,0.5,0.2))/0.13,0.55,1.6),0.5*nf);' +
+          // Farbe beruhigen: weniger Orange, mehr Butterscotch und Braun
+          'float lu=dot(texelColor.rgb,vec3(0.3,0.55,0.15)); texelColor.rgb=mix(texelColor.rgb,lu*vec3(1.32,0.86,0.6),0.22)*0.8;' +
+          'float mA=mbN(wq*0.0085)*0.6+mbN(wq*0.031+7.0)*0.4, mS=smoothstep(0.5,0.7,mbN(wq*0.017+3.0)*0.72+mbN(wq*0.08+1.0)*0.28);' +
+          'texelColor.rgb*=mix(0.62,1.15,smoothstep(0.25,0.78,mA))*(0.93+0.14*mbN(wq*0.25));' +
+          'texelColor.rgb=mix(texelColor.rgb,vec3(0.15,0.095,0.07)*(0.9+0.25*mbN(wq*0.6)),mS*0.7);' +
+          // Rippel quer zum Wind, ihre Richtung schwankt langsam
+          'float ra=0.55+0.6*(mbN(wq*0.01+5.0)-0.5); vec2 rd=vec2(cos(ra),sin(ra)); float rp=dot(wq,rd)*6.6+mbN(wq*0.35)*5.0; float rip=pow(0.5+0.5*sin(rp),1.6);' +
+          'float gv=mbN(wq*2.7+3.1), gc=mbN(wq*0.85+9.0); float peb=smoothstep(0.66,0.82,gv)*(1.0-mS), cob=smoothstep(0.72,0.86,gc)*(1.0-mS);' +
+          'texelColor.rgb*=1.0-0.28*peb*nf-0.22*cob*smoothstep(160.0,20.0,dv); texelColor.rgb*=1.0+0.08*(rip-0.5)*mS*nf;' +
+          'float mbHt=(rip*0.035*mS+peb*0.014+cob*0.03)*nf;' +
+          'texelColor.rgb=mix(texelColor.rgb,vec3(0.2,0.105,0.06),0.45*smoothstep(500.0,2200.0,dv)); diffuseColor*=texelColor;')
+          .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n{ float hF=dot(texture2D(map,vUv*5.7+0.11).rgb,vec3(0.333))*0.05*(1.0-smoothstep(4.0,40.0,dv))+mbHt; vec3 gsx=dFdx(-vViewPosition), gsy=dFdy(-vViewPosition); vec3 gra=cross(gsy,normal), grb=cross(normal,gsx); float gdet=dot(gsx,gra);' +
+          ' normal=normalize(abs(gdet)*normal-sign(gdet)*(dFdx(hF)*gra+dFdy(hF)*grb)); }');
       };
       return m;
     };
@@ -144,7 +185,7 @@ MB = (function(){
       metal:new THREE.MeshStandardMaterial({color:lin(0x9aa0a6), roughness:.32, metalness:.9}),
       dark:new THREE.MeshStandardMaterial({color:lin(0x2a2c30), roughness:.6, metalness:.4}),
       gold:new THREE.MeshStandardMaterial({color:lin(0xc09a45), roughness:.38, metalness:.85}),
-      soil:soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, color:lin(0xf4f0ec), roughness:1, metalness:0})),
+      soil:soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, color:lin(0xf4f0ec), roughness:1, metalness:0, envMapIntensity:.6})),
       bed:new THREE.MeshStandardMaterial({color:lin(0x3a271c), roughness:1}),
       frost:new THREE.MeshStandardMaterial({color:lin(0xdfeaf2), roughness:.35, metalness:.1}),
       orange:new THREE.MeshStandardMaterial({color:lin(0xd2702c), roughness:.6}),
@@ -152,8 +193,9 @@ MB = (function(){
       pad:new THREE.MeshStandardMaterial({color:lin(0x3d312b), roughness:.92}),
       paint:new THREE.MeshStandardMaterial({color:lin(0xe6dcc6), roughness:.8}),
       road:new THREE.MeshStandardMaterial({color:lin(0x5a3828), roughness:1, transparent:true, opacity:.6, polygonOffset:true, polygonOffsetFactor:-2, depthWrite:false}),
-      leaf:new THREE.MeshStandardMaterial({color:lin(0x3f7d2c), roughness:.85}),
-      warm:new THREE.MeshBasicMaterial({color:0xffd9a0}), pink:new THREE.MeshBasicMaterial({color:0xff6ad5}), red:new THREE.MeshBasicMaterial({color:0xff4030})
+      leaf:new THREE.MeshStandardMaterial({color:lin(0x4a7a36), roughness:.7, emissive:lin(0x3a1030), emissiveIntensity:.35}),
+      // Lichter deutlich über 1 (HDR): sie sollen in der Nachbearbeitung überstrahlen
+      warm:new THREE.MeshBasicMaterial({color:new THREE.Color(5,3.7,2.3)}), pink:new THREE.MeshBasicMaterial({color:new THREE.Color(3.2,.75,2.6)}), red:new THREE.MeshBasicMaterial({color:new THREE.Color(7,.7,.35)})
     };
 
     // Gelände: Gitter zur Mitte hin verdichtet, Höhen aus Rauschen, an den Bauplätzen eingeebnet
@@ -165,7 +207,7 @@ MB = (function(){
       col[i*3] = t; col[i*3+1] = t*(.94+.1*vnoise(x*.002,8,z*.002)); col[i*3+2] = t*.9;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(col,3)); geo.computeVertexNormals();
-    const gm = soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, roughness:1, metalness:0, vertexColors:true}));
+    const gm = soilDetail(new THREE.MeshStandardMaterial({map:groundTex, bumpMap:groundTex, bumpScale:.22, roughness:1, metalness:0, vertexColors:true, envMapIntensity:.6}));
     const ground = new THREE.Mesh(geo,gm);
     ground.receiveShadow = true; sc.add(ground);
 
@@ -173,17 +215,20 @@ MB = (function(){
     const free = (x,z) => !(Math.hypot(x,z-10) < 75 || Math.hypot(x-430,z+40) < 60 || seg(x,z,-45,38,255,38) < 8 || seg(x,z,255,38,392,-30) < 8 || Math.hypot(x-275,z+85) < 36 ||
       (Math.abs(x+10) < 40 && Math.abs(z-95) < 26) || seg(x,z,270,-280,330,-220) < 22 || seg(x,z,178,-284,334,-128) < 22 || Math.hypot(x-62,z+72) < 14 || Math.hypot(x-30,z+58) < 12);
     const yard = (x,z) => OBST.every(o => Math.hypot(x-o[0],z-o[1]) > o[2]+1.2) && seg(x,z,-45,38,255,38) > 5 && seg(x,z,-10,41,-10,74) > 4 && !(Math.abs(x+10) < 34 && Math.abs(z-95) < 21) && Math.hypot(x-12,z+30) > 7;
+    // je Streuung drei Steinformen (eigene Instanzgruppen: eine rund, zwei kantig mit flachen Facetten), dazu flache Platten; Oberseiten tragen hellen Staub (Material über haze())
+    const rockMat = new THREE.MeshStandardMaterial({color:0xffffff, roughness:.92, metalness:0});
     const scatter = (n,seed,place,size,ok) => {
-      const im = new THREE.InstancedMesh(rockGeo(seed,1), new THREE.MeshStandardMaterial({color:0xffffff, roughness:1, metalness:0}), n), tint = new THREE.Color();
-      let k = 0;
-      for (let i = 0; k < n && i < n*9; i++) {
+      const ims = [0,1,2].map(j => new THREE.InstancedMesh(j ? (g => { g = g.toNonIndexed(); g.computeVertexNormals(); return g; })(rockGeo(seed+j*7,j-1)) : rockGeo(seed,1),rockMat,n)), cnt = [0,0,0], tint = new THREE.Color();
+      for (let i = 0, k = 0; k < n && i < n*9; i++) {
         const p = place(i); if (!(ok || free)(p[0],p[1])) continue;
-        const sz = size(i);
-        v1.set(p[0],hgt(p[0],p[1])+sz*.22,p[1]); e4.set(hash(i,4,seed)*6,hash(i,5,seed)*6,hash(i,6,seed)*6); q4.setFromEuler(e4); s4.set(sz*(.7+.6*hash(i,7,seed)),sz*.7,sz);
-        im.setMatrixAt(k,m4.compose(v1,q4,s4));
-        const v = .75+.5*hash(i,8,seed); im.setColorAt(k++,tint.setRGB(.19*v,.085*v*(.9+.3*hash(i,9,seed)),.045*v));
+        const sz = size(i), j = i%3, im = ims[j], fl = hash(i,10,seed) < .3 ? .38+.2*hash(i,11,seed) : .62+.3*hash(i,11,seed);
+        v1.set(p[0],hgt(p[0],p[1])+sz*fl*.26,p[1]); e4.set((hash(i,4,seed)-.5)*(fl < .6 ? .5 : 6),hash(i,5,seed)*6,(hash(i,6,seed)-.5)*(fl < .6 ? .5 : 6)); q4.setFromEuler(e4); s4.set(sz*(.7+.6*hash(i,7,seed)),sz*fl,sz);
+        im.setMatrixAt(cnt[j],m4.compose(v1,q4,s4));
+        const v = .62+.6*hash(i,8,seed), w = hash(i,12,seed);
+        im.setColorAt(cnt[j]++,w < .35 ? tint.setRGB(.085*v,.06*v,.05*v) : tint.setRGB(.2*v,.1*v*(.9+.3*hash(i,9,seed)),.06*v));      // dunkler Basalt oder rötlich verwittert
+        k++;
       }
-      im.count = k; im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false; sc.add(im);
+      ims.forEach((im,j) => { im.count = cnt[j]; im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false; sc.add(im); });
     };
     scatter(DESKTOP ? 1300 : 800,81, i => { const a = hash(i,1,81)*TAU, r = 26+Math.pow(hash(i,2,81),1.7)*1100; return [Math.cos(a)*r,Math.sin(a)*r]; }, i => .25+2.2*Math.pow(hash(i,3,81),3.2));
     scatter(DESKTOP ? 2200 : 1000,83, i => { const a = hash(i,1,83)*TAU, r = 14+Math.pow(hash(i,2,83),1.3)*210; return [70+Math.cos(a)*r*1.5,10+Math.sin(a)*r]; }, i => .07+.3*Math.pow(hash(i,3,83),2.4));
@@ -218,10 +263,10 @@ MB = (function(){
       for (let k = 0; k <= 8; k++) add(new THREE.TorusGeometry(R+.02,.08,6,22,Math.PI),M.white,-L/2+k*L/8,0,0,g).rotation.y = Math.PI/2;
       for (const sx of [-1,1]) { const e = add(new THREE.CircleGeometry(R,24,0,Math.PI),M.glass,sx*L/2,0,0,g); e.rotation.y = sx*Math.PI/2; e.castShadow = false; add(new THREE.BoxGeometry(.25,2.4,1.5),M.white,sx*(L/2+.1),1.2,0,g); }
       add(new THREE.BoxGeometry(L,.2,R*2-.2),M.dark,0,.1,0,g);
-      const pl = new THREE.InstancedMesh(new THREE.SphereGeometry(.36,7,5),M.leaf,150); let n = 0;
+      const pl = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.34,1),M.leaf,150); pl.geometry.computeVertexNormals(); let n = 0;
       for (const rz of [-19,0,19]) {
         add(new THREE.BoxGeometry(L-2,.5,1.1),M.bed,0,.45,rz/10,g);
-        for (let k = 0; k < 50; k++) { v1.set(-L/2+1.3+k*(L-2.6)/49,.85+.25*hash(k,rz+30,3),rz/10+(hash(k,7,rz+30)-.5)*.5); s4.set(1,.7+1.1*hash(k,9,rz+30),1); pl.setMatrixAt(n++,m4.compose(v1,q4.identity(),s4)); }
+        for (let k = 0; k < 50; k++) { v1.set(-L/2+1.3+k*(L-2.6)/49,.85+.25*hash(k,rz+30,3),rz/10+(hash(k,7,rz+30)-.5)*.5); s4.set(1,.7+1.1*hash(k,9,rz+30),1); pl.setColorAt(n,new THREE.Color().setHSL(.22+.1*hash(k,11,rz+30),.38,.3+.14*hash(k,12,rz+30))); pl.setMatrixAt(n++,m4.compose(v1,q4.identity(),s4)); }
       }
       g.add(pl);
       for (const rz of [-1,1]) glow(new THREE.BoxGeometry(L-2,.07,.22),M.pink,0,2.95,rz,g);
@@ -235,7 +280,7 @@ MB = (function(){
     // Solarfeld: zur Sonne geneigte Module auf Pfosten
     const pt = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#14275c'; x.fillRect(0,0,128,64); x.strokeStyle = '#3d5aa3'; x.lineWidth = 1; for (let i = 0; i <= 128; i += 16) { x.beginPath(); x.moveTo(i+.5,0); x.lineTo(i+.5,64); x.stroke(); } for (let i = 0; i <= 64; i += 16) { x.beginPath(); x.moveTo(0,i+.5); x.lineTo(128,i+.5); x.stroke(); } const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })();
     const pq = new THREE.Quaternion().setFromUnitVectors(up,v2.set(sunDir.x*.55,1,sunDir.z*.55).normalize());
-    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, roughness:.2, metalness:.55, envMapIntensity:1.4}),48);
+    const panels = new THREE.InstancedMesh(new THREE.BoxGeometry(5.6,.12,2.9), new THREE.MeshStandardMaterial({map:pt, color:lin(0x9aa0b0), roughness:.16, metalness:.05, envMapIntensity:1.6}),48);
     const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(.09,.09,2.2,6),M.metal,48);
     for (let r = 0, n = 0; r < 6; r++) for (let c = 0; c < 8; c++, n++) {
       const x = -10+(c-3.5)*7.6, z = 95+(r-2.5)*6.2, y = hgt(x,z);
@@ -337,7 +382,7 @@ MB = (function(){
       const S = 360, cx = cam.position.x, cz = cam.position.z;
       for (let i = 0; i < (DESKTOP ? 42 : 26); i++) {
         const x = cx+((hash(i,1,93)*S-clk*7-cx)%S+S)%S-S/2, z = cz+((hash(i,2,93)*S+clk*4.5-cz)%S+S)%S-S/2, d = Math.hypot(x-cx,z-cz);
-        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.05+.06*hash(i,5,93))*ss(18,70,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
+        puffs.put(x,hgt(x,z)+1+2*hash(i,3,93),z,34+40*hash(i,4,93),(.025+.035*hash(i,5,93))*ss(18,70,d)*(1-ss(S*.36,S*.5,d)),DUST,.2);
       }
     });
     // Staubteufel in der Ferne: schlanker, sich wiegender Schlauch aus wirbelndem Staub
@@ -366,7 +411,7 @@ MB = (function(){
     // Landefähre: sie sinkt zum Stichwort des Sprechers auf den Platz, das Triebwerk wirbelt Staub auf
     { const cv = document.createElement('canvas'); cv.width = 8; cv.height = 64; const cx = cv.getContext('2d'), gr = cx.createLinearGradient(0,0,0,64);
       gr.addColorStop(0,'rgba(255,246,228,.95)'); gr.addColorStop(.16,'rgba(255,214,150,.6)'); gr.addColorStop(.5,'rgba(255,150,80,.22)'); gr.addColorStop(1,'rgba(255,110,40,0)'); cx.fillStyle = gr; cx.fillRect(0,0,8,64);
-      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false}));
+      const fl = new THREE.Mesh(new THREE.ConeGeometry(1.9,11,20,1,true), new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false})); fl.material.color.setRGB(3.2,2.7,2.2);
       fl.position.y = 1.4-5.5; ln.add(fl);
       const light = new THREE.PointLight(0xffb070,0,170,1.5); light.position.y = -2; ln.add(light);
       const pc = VOICE.mars_base.cues.pad, ta = pc-1.6, tb = pc+5.6, px = 430, pz = -40, py = hgt(px,pz);
@@ -388,7 +433,7 @@ MB = (function(){
       }; }
     // Tankwagen pendelt auf der Piste zwischen Treibstoffanlage und Landeplatz
     { const tk = new THREE.Group(); sc.add(tk);
-      add(new THREE.BoxGeometry(6.6,.45,2.3),M.dark,0,1.05,0,tk);
+      add(new THREE.BoxGeometry(6.6,.45,2.3),M.dark,0,1.05,0,tk); blob(0,0,5.2,2.6,.5,tk);
       add(new THREE.CylinderGeometry(1.12,1.12,3.6,20),M.frost,-1,2.42,0,tk).rotation.z = Math.PI/2;
       for (const x of [-2.8,.8]) add(new THREE.SphereGeometry(1.12,20,12),M.frost,x,2.42,0,tk);
       for (const x of [-2.2,.2]) add(new THREE.TorusGeometry(1.15,.07,6,20),M.metal,x,2.42,0,tk).rotation.y = Math.PI/2;
@@ -426,6 +471,14 @@ MB = (function(){
     add(new THREE.CylinderGeometry(.05,.07,5.2,6),M.metal,5.4,3,-5.4,hub); add(new THREE.CylinderGeometry(.03,.03,3.4,6),M.metal,6.3,2.2,-4.4,hub);
     add(new THREE.SphereGeometry(.75,18,8,0,TAU,0,1.05),M.white,5.4,5.1,-5.4,hub).rotation.set(2.2,0,.5);
     blink.push(glow(new THREE.SphereGeometry(.12,8,6),M.red,5.4,5.75,-5.4,hub));
+    // Kontaktverdunklung unter Bauten (x, z, Halbachsen, Stärke, Drehung)
+    [[0,0,11.5,11.5,.6],[42,12,15,5.2,.45],[42,22,15,5.2,.45],[266,-91,5.4,5.4,.55],[275,-91,5.4,5.4,.55],[271,-77,4.6,4.6,.5],[281,-77,4.6,4.6,.5],
+     [-46,38,9,7.5,.45,.5],[12,-30,4,3,.4,.5],[30,-58,8,8,.4],[416,-77,5,6,.4],[56,4,3,3,.35]].forEach(b => blob(b[0],b[1],b[2],b[3],b[4],null,b[5]));
+    HAB.forEach(h => blob(h[0],h[1],7.5,5.5,.5,null,h[2]));
+    [-1.5,-.5,.5,1.5].forEach(k => blob(300+k*18.4,-250+k*18.4,3.5,3.5,.45));
+    // Luftperspektive an alle Materialien, Staub auf nach oben weisende Flächen der Bauten
+    const dusty = new Map([[M.white,.32],[M.worn,.35],[M.metal,.22],[M.frost,.28],[M.paint,.3],[M.orange,.28],[M.dark,.3],[M.gold,.15],[M.print,.15],[M.pad,.2],[rad,.3],[rockMat,.55]]);
+    sc.traverse(o => { if (o.material) [].concat(o.material).forEach(m => haze(m,dusty.get(m))); });
     for (const l of labels) l.v.y += hgt(l.v.x,l.v.z);
     roverLabel = labels.find(l => l.cue === 'rover');
     // Kamerafahrt: je Station eine Ankunft und eine Abfahrt, dazwischen driftet die Kamera langsam; Zeiten hängen an den Stichworten des Sprechers.
@@ -464,9 +517,9 @@ MB = (function(){
   }
   function addModel(n,o){
     if (!ready) return;
-    o.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
+    o.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; [].concat(m.material).forEach(x => haze(x,.18)); } });
     if (n === 'hdu1') HAB.forEach(h => putModel(o,h[0],h[1],h[2],.03));
-    else if (n === 'sev') { putModel(o,66,54,-.9,1); movers.push(putModel(o,8,38,Math.PI/2,1)); }
+    else if (n === 'sev') { putModel(o,66,54,-.9,1); blob(66,54,4.6,3,.5,null,-.9); const g = putModel(o,8,38,Math.PI/2,1); blob(0,0,4.6,3,.5,g); movers.push(g); }
     else if (n === 'astronaut') {
       [[70,57,-2],[412,-70,-1],[36,-52,2.4]].forEach(a => putModel(o,a[0],a[1],a[2],.0245));
       // Astronauten unterwegs: Kuppel–Gewächshaus, am Fahrzeugplatz, im Solarfeld, an der Treibstoffanlage
@@ -505,6 +558,18 @@ MB = (function(){
       });
     }
     sunL.shadow.needsUpdate = true;
+  }
+  // Schattenbereich folgt der Kamera: dicht vor ihr, je höher sie fliegt, desto größer; auf ganze Texel gerastert, damit Kanten nicht flimmern
+  const shX = new THREE.Vector3(), shY = new THREE.Vector3(), shC = new THREE.Vector3();
+  function fitShadow(){
+    const p = cam.position, R = clamp(62+(p.y-hgt(p.x,p.z))*2.4,62,330), sca = sunL.shadow.camera;
+    cam.getWorldDirection(shC); shC.y = 0; if (shC.lengthSq() < 1e-6) shC.set(0,0,-1); shC.normalize().multiplyScalar(R*.72).add(p);
+    shX.crossVectors(up,sunDir).normalize(); shY.crossVectors(sunDir,shX);
+    const tx = 2*R/sunL.shadow.mapSize.x, a = Math.round(shC.dot(shX)/tx)*tx, b = Math.round(shC.dot(shY)/tx)*tx, c = shC.dot(sunDir);
+    shC.copy(shX).multiplyScalar(a).addScaledVector(shY,b).addScaledVector(sunDir,c);
+    sunL.target.position.copy(shC); sunL.position.copy(shC).addScaledVector(sunDir,700);
+    sunL.target.updateMatrixWorld(); sunL.updateMatrixWorld();
+    if (sca.right !== R) { sca.left = sca.bottom = -R; sca.right = sca.top = R; sca.updateProjectionMatrix(); }
   }
   const roverX = t => clamp(215+3.2*(t-VOICE.mars_base.cues.rover-1.7),8,250);      // der Druckrover fährt auf der Piste nach Osten und ist zu seinem Stichwort im Bild
   // Steigungen an den Stützpunkten nach Fritsch und Carlson: kein Überschwingen, an den Haltepunkten läuft die Fahrt weich aus
@@ -553,14 +618,11 @@ MB = (function(){
       lander(t);
       for (const f of anim) f(t,dt,clk);
       puffs.end();
-      if (frameN++%shadowEvery === 0) sunL.shadow.needsUpdate = true;
+      if (frameN++%shadowEvery === 0) { fitShadow(); sunL.shadow.needsUpdate = true; }
     },
     render(shiftY){
       cam.aspect = S.W/S.H; cam.fov = 46-11*ss(1,1.7,S.W/S.H); cam.setViewOffset(S.W,S.H,0,shiftY,S.W,S.H);
-      const tm = renderer.toneMapping, oe = renderer.outputEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .95; renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.render(sc,cam);
-      renderer.toneMapping = tm; renderer.outputEncoding = oe;
+      POST.render(sc,cam,{lin:1, exposure:.95, bloom:.35, thr:1.6, knee:.8, vig:.18});
     },
     project(v,out){ v2.copy(v).project(cam); out.x = (v2.x*.5+.5)*S.W; out.y = (-v2.y*.5+.5)*S.H; out.z = v2.z; return out; }
   };

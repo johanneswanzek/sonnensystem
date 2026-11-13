@@ -1,6 +1,6 @@
 // app/loop – Schleife frame(): Kamera, Szenenwechsel mit Staubschleier, Rendern.
 // Exporte: frame; initLoop
-// Hängt ab von: app/camera.js, app/governor.js, app/tour.js, audio/engine.js, core/util.js, data/bodies.js, hud/index.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/renderer.js, render/scene.js, ui/controls.js, ui/dom.js, ui/layout.js, core/state.js
+// Hängt ab von: app/camera.js, app/governor.js, app/tour.js, audio/engine.js, core/util.js, data/bodies.js, hud/index.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/post.js, render/scene.js, render/scene/minor.js, ui/controls.js, ui/dom.js, ui/layout.js, core/state.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { S } from '../core/state.js';
@@ -14,8 +14,9 @@ import { drawHUD } from '../hud/index.js';
 import { LOC, tr } from '../i18n/index.js';
 import { MB } from '../mars/base.js';
 import { place, solve } from '../orbit/kepler.js';
-import { renderer } from '../render/renderer.js';
-import { belt, camera, flightRocks, halleyTail, kuiper, pulse, rays, scene, sunMat } from '../render/scene.js';
+import { POST } from '../render/post.js';
+import { camera, rays, scene } from '../render/scene.js';
+import { flightRocks } from '../render/scene/minor.js';
 import { ptrs } from '../ui/controls.js';
 import { app, elDate, elEff } from '../ui/dom.js';
 import { shiftTarget } from '../ui/layout.js';
@@ -107,21 +108,21 @@ function frame(now){
     }
   }
   if (moving) BODIES[1].mesh.rotation.y += .01*dt;
-  sunMat.uniforms.time.value = S.clock;
+  S.sunMat.uniforms.time.value = S.clock;
   rays[1].material.rotation = S.clock*.012; rays[2].material.rotation = -S.clock*.008;
   const glare = ss(14,40,camP.length());                      // nah an der Sonne würden die Strahlen das Bild verschleiern
   for (const r of rays) r.material.opacity = r.userData.op*glare;
   AU.rumble(.5*(1-ss(10,70,camP.length())));
-  belt.rotation.y = S.simDays/1680*TAU; kuiper.rotation.y = S.simDays/100000*TAU;
+  S.belt.rotation.y = S.simDays/1680*TAU; S.kuiper.rotation.y = S.simDays/100000*TAU;
 
   // Halley: Schweif zeigt von der Sonne weg und wächst in Sonnennähe
   place(HALLEY, solve(HALLEY,S.simDays), HALLEY.pos);
   HALLEY.orbit.material.uniforms.head.value = ((HALLEY.E/TAU)%1+1)%1;
   HALLEY.dot.position.copy(HALLEY.pos);
-  const tl = HALLEY.r < 4.5 ? 7*(1-HALLEY.r/4.5) : 0, tp = halleyTail.geometry.attributes.position;
+  const tl = HALLEY.r < 4.5 ? 7*(1-HALLEY.r/4.5) : 0, tp = S.halleyTail.geometry.attributes.position;
   tmp.copy(HALLEY.pos).normalize().multiplyScalar(tl).add(HALLEY.pos);
   tp.setXYZ(0,HALLEY.pos.x,HALLEY.pos.y,HALLEY.pos.z); tp.setXYZ(1,tmp.x,tmp.y,tmp.z); tp.needsUpdate = true;
-  halleyTail.visible = tl > 0;
+  S.halleyTail.visible = tl > 0;
 
   // Lichtring in der Übersicht
   const ov = cur === 0 && S.trans > .6 ? 1 : 0;
@@ -130,7 +131,7 @@ function frame(now){
   const pr0 = S.pulseR;
   S.pulseR = 3+54*clamp(S.pulseT/9.5,0,1);
   S.pulseA += ((ov ? ss(0,.6,S.pulseT)*(1-ss(8.6,9.5,S.pulseT)) : 0)-S.pulseA)*Math.min(1,dt*5);
-  pulse.scale.set(S.pulseR,1,S.pulseR); pulse.material.opacity = S.pulseA*.75; pulse.visible = S.pulseA > .01;
+  S.pulse.scale.set(S.pulseR,1,S.pulseR); S.pulse.material.opacity = S.pulseA*.75; S.pulse.visible = S.pulseA > .01;
   S.pulseHitT += dt;
   if (S.pulseA > .2) for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
@@ -167,7 +168,7 @@ function frame(now){
   S.shiftCur += (shiftTarget-S.shiftCur)*Math.min(1,dt*4);
   S.shiftX += (S.shiftXT-S.shiftX)*Math.min(1,dt*3);
   if (S.surfOn) { MB.update(S.mbT,dt,import.meta.env.MODE === 'test' && window.__clk != null ? window.__clk : S.clock,reduced); MB.render(S.shiftCur); }
-  else { camera.setViewOffset(S.W,S.H,S.shiftX,S.shiftCur,S.W,S.H); renderer.render(scene,camera); }
+  else { camera.setViewOffset(S.W,S.H,S.shiftX,S.shiftCur,S.W,S.H); POST.render(scene,camera,{exposure:1, bloom:.9, thr:1.05, knee:.45, vig:.24}); }
   drawHUD(dt);
 }
 

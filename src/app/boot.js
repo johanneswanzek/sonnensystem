@@ -1,6 +1,6 @@
 // app/boot – Start: Karten und Oberflächen vorbereiten, Szene bauen, Modelle nachladen.
 // Exporte: initBoot
-// Hängt ab von: app/camera.js, app/loop.js, app/tour.js, core/device.js, core/target.js, data/bodies.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/bake.js, render/renderer.js, render/scene.js, render/surfaces.js, testing/hooks.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
+// Hängt ab von: app/camera.js, app/loop.js, app/tour.js, core/device.js, core/target.js, data/bodies.js, i18n/index.js, mars/base.js, orbit/kepler.js, render/bake.js, render/renderer.js, render/scene.js, render/scene/backdrop.js, render/scene/extras.js, render/scene/minor.js, render/scene/planets.js, render/scene/sun.js, render/surfaces.js, testing/hooks.js, ui/dom.js, ui/layout.js, ui/sound.js, core/state.js
 // Erzeugt von tools/refactor/split.mjs aus src/sonnensystem.html – bis zum Ende des Umbaus nicht von Hand ändern.
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -17,7 +17,12 @@ import { MB } from '../mars/base.js';
 import { place, solve } from '../orbit/kepler.js';
 import { bake, bakeFlat, nextFrame } from '../render/bake.js';
 import { fail, renderer } from '../render/renderer.js';
-import { buildBackdrop, buildExtras, buildMinor, buildPlanet, buildSun, camera, setVesta } from '../render/scene.js';
+import { camera } from '../render/scene.js';
+import { buildBackdrop } from '../render/scene/backdrop.js';
+import { buildExtras } from '../render/scene/extras.js';
+import { buildMinor, setVesta } from '../render/scene/minor.js';
+import { buildPlanet } from '../render/scene/planets.js';
+import { buildSun } from '../render/scene/sun.js';
 import { SURF } from '../render/surfaces.js';
 import { installTestHooks } from '../testing/hooks.js';
 import { elSr, loader, startEl } from '../ui/dom.js';
@@ -51,6 +56,7 @@ async function boot(){
   const real = maps[0] && maps[1] && maps[2] ? maps : null;
   loader.textContent = tr('Oberflächen werden berechnet …');
   S.moonTex = await bake(512,SURF.moon);
+  try { S.milkyTex = await bake(DESKTOP ? 2048 : 1024,SURF.milky); } catch (e) { S.milkyTex = null; }
   for (let i = 2; i < BODIES.length; i++) {
     const b = BODIES[i];
     if (b.minor) continue;

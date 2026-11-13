@@ -6,7 +6,13 @@
 
 /** @type {Record<string, any>} */
 export const S = {
+  sunMat: undefined,
+  belt: undefined,
+  kuiper: undefined,
+  pulse: undefined,
+  halleyTail: undefined,
   moonTex: undefined,
+  milkyTex: null,
   W: 1,
   H: 1,
   topH: 0,

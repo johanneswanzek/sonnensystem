@@ -42,7 +42,7 @@ export const decls = {
   BAKE_VS: 'render/shaders/bake.js', BAKE_LIB: 'render/shaders/bake.js', BAKE_MAIN: 'render/shaders/bake.js', EARTH_GEO: 'render/shaders/bake.js',
   nextFrame: 'render/bake.js', bakeScene: 'render/bake.js', bakeQuad: 'render/bake.js', bake: 'render/bake.js', bakeFlat: 'render/bake.js',
   // Mars-Basis
-  SKY_FS: 'mars/sky-shader.js', DESKTOP: 'core/device.js',
+  MB_GLSL: 'mars/shaders.js', SKY_FS: 'mars/shaders.js', DESKTOP: 'core/device.js',
   // Zustand
   W: 'ui/layout.js', ui: 'ui/layout.js', guard: 'ui/layout.js', measure: 'ui/layout.js',
   PR: 'app/governor.js', setPR: 'app/governor.js', prLimits: 'app/governor.js', govern: 'app/governor.js',
@@ -60,12 +60,26 @@ export const decls = {
   beltHUD: 'hud/belt.js', baseHUD: 'hud/base.js', drawHUD: 'hud/index.js',
   // Start
   installTestHooks: 'testing/hooks.js',
-  // Erwartet aus den anderen Zweigen: Nachbearbeitung
+  // Nachbearbeitung (aus Zweig v9-space, Abschnitt Szene)
   POST: 'render/post.js',
+  // Szene nach Körpern
+  buildBackdrop: 'render/scene/backdrop.js', buildSun: 'render/scene/sun.js', buildPlanet: 'render/scene/planets.js',
+  rockGeo: 'render/scene/minor.js', flightRocks: 'render/scene/minor.js', FLIGHT_N: 'render/scene/minor.js', _m4: 'render/scene/minor.js',
+  buildMinor: 'render/scene/minor.js', setVesta: 'render/scene/minor.js', scatterFlight: 'render/scene/minor.js',
+  buildExtras: 'render/scene/extras.js',
+};
+
+// Konstanten, die aus einer IIFE (AU, MB, POST) in ein eigenes Modul wandern: { Besitzer: { Zielmodul: [Namen] } }.
+// Nur reine Tabellen und GLSL ohne Bezug auf Variablen der IIFE (split.mjs prüft das und bricht sonst ab).
+export const inner = {
+  AU: { 'audio/tracks.js': ['MUSIC', 'BEAT', 'TRACKS', 'SFX'] },
+  MB: { 'mars/layout.js': ['FLAT', 'OBST', 'HAB', 'AST_YAW', 'ROVER_YAW', 'CRATERS', 'DUST', 'STEAM'] },
+  POST: { 'render/shaders/post.js': ['VSQ'] },
 };
 
 // Gemeinsamer veränderlicher Zustand: von mehreren Modulen geschrieben (mit --auto-state ermittelt, dann hier festgehalten)
 export const state = [
+  'milkyTex', 'sunMat', 'belt', 'kuiper', 'pulse', 'halleyTail',
   'H', 'W', 'begun', 'blipI', 'botH', 'camLen', 'clock', 'cloudOp', 'effSpeed', 'grp', 'grpA', 'grpT',
   'hudKey', 'hudT', 'hudVis', 'last', 'lastDay', 'loops', 'mbT', 'moonTex', 'narStart', 'plate', 'pulseA',
   'pulseHit', 'pulseHitT', 'pulseR', 'pulseT', 'roll', 'shiftCur', 'shiftX', 'shiftXT', 'simDays',
@@ -89,6 +103,10 @@ export const extract = [
 // Sie ersetzen die Zeichenketten-Ersetzungen aus tools/build.py: Prüfhaken nur im Testmodus, Ziel als Bauzeit-Konstante.
 const TEST = "import.meta.env.MODE === 'test'";
 export const swaps = [
+  // Ton: lesender Zustand von AU für die Prüfung der Überblendungen (window.__au.st), nur im Testmodus
+  ['  const ease = s => s*s*(3-2*s);', '  const ease = s => s*s*(3-2*s);\n  if (' + TEST + ') window.__au = {get st(){ const n = ctx ? ctx.currentTime : 0; return {shown, want, live:live.length, liveNames:live.map(h => h.grp), ' +
+    "lv:{main:lvl('main',n), earth:lvl('earth',n), mars:lvl('mars',n)}, src:{earth:!!tk.earth.src, mars:!!tk.mars.src}, " +
+    "buf:{main:!!track, earth:!!tk.earth.buf, mars:!!tk.mars.buf}, raw:{earth:!!tk.earth.raw, mars:!!tk.mars.raw}, smp:Object.keys(smp).length, loops:Object.keys(loops), started, playing}; }};"],
   // Prüfhaken (bisher build.py hooks): window.__t wird in testing/hooks.js gesetzt
   ['boot().catch(err => { console.error(err); fail(); });\n})();\n', 'boot().catch(err => { console.error(err); fail(); });\n' +
     '// Prüfhaken für die Tests (window.__t), nur im Testmodus aufgerufen\n' +
@@ -149,9 +167,17 @@ export const purpose = {
   'render/canvas-textures.js': 'Kleine Canvas-Texturen: Ringe, Lichtpunkte, Strahlen; Wertrauschen.',
   'orbit/kepler.js': 'Bahnmechanik: Kepler-Bahnen aus Bahnelementen für ein Datum (reine Funktionen).',
   'render/shaders/space.js': 'GLSL der Weltraumszene: Planeten, Wolken, Schnitt, Halo, Sonne, Ringe, Bahnen.',
-  'render/post.js': 'Nachbearbeitung (POST).',
-  'render/scene.js': 'Weltraumszene: Kamera, Sterne, Sonne, Planeten, Ringe, Monde, Asteroiden, Komet.',
-  'mars/sky-shader.js': 'GLSL des Marshimmels.',
+  'render/post.js': 'Nachbearbeitung (POST): HDR-Ziel mit MSAA, Bloom in Stufen, Belichtung, Tonemapping, Vignette, Korn.',
+  'render/scene.js': 'Weltraumszene: Szene, Kamera, gemeinsame Hilfen (Punktwolken, Halo, Bahnlinien, Marker), geteilte Texturen.',
+  'mars/shaders.js': 'GLSL der Marsszene: Luftperspektive und Bodendetail (MB_GLSL), Himmel (SKY_FS).',
+  'mars/layout.js': 'Feste Daten der Marsbasis: ebene Flächen, Hindernisse der Kamera, Wohnmodule, Dunst (HZ), Krater, Teilchenfarben.',
+  'audio/tracks.js': 'Tondaten: Hauptstück (MUSIC, BEAT), Zusatzstücke je Halt (TRACKS), Effekt-Samples (SFX).',
+  'render/shaders/post.js': 'GLSL der Nachbearbeitung: Vertex-Shader des Vollbild-Rechtecks.',
+  'render/scene/backdrop.js': 'Hintergrund: Sterne und Milchstraße.',
+  'render/scene/sun.js': 'Sonne mit Korona, Halo und Strahlen.',
+  'render/scene/planets.js': 'Planeten mit Atmosphäre, Wolken, Ringen, Monden und Bahnen.',
+  'render/scene/minor.js': 'Kleinkörper: Vesta, Asteroiden des Gürtels und Felsbrocken beim Durchflug.',
+  'render/scene/extras.js': 'Zusätze der Szene: Komet Halley, Kuipergürtel, Lichtpuls.',
   'mars/base.js': 'Marsbasis (MB): eigene Szene auf der Oberfläche in Metern – Gelände, Bauten, Fahrzeuge, Kamerafahrt, Teilchen.',
   'app/tour.js': 'Tour: Erzählzeit (narT, cue), focus, setStage, narrate, showInfo, Schritte, Zeitraffer, Beginn.',
   'ui/layout.js': 'Layout: measure() setzt Maßstab ui, Querformat wide, freie Flächen und Schutzzonen.',

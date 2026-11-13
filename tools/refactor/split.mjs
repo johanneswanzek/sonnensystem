@@ -242,6 +242,57 @@ for (const st of stmts) {
   });
 }
 
+
+// ---------- Konstanten aus IIFE-Modulen (AU, MB, POST …) herauslösen ----------
+// map.mjs `inner`: { Besitzer: { Zielmodul: [Namen] } }. Herausgelöst wird nur eine const-Anweisung der obersten Ebene
+// der IIFE, deren Anfangswert nichts aus der IIFE braucht außer anderen herausgelösten Namen (Literale, Tabellen, GLSL).
+// Der Name bleibt gleich und wird ins Besitzer-Modul importiert; die IIFE sieht ihn wie vorher.
+const innerMoves = [];
+for (const [ownerName, targets] of Object.entries(MAP.inner || {})) {
+  const ost = owner.get(ownerName);
+  if (!ost) { console.warn(`split: Hinweis – inner: ${ownerName} nicht gefunden`); continue; }
+  const d = ost.node.declarations.find(x => x.id.name === ownerName);
+  const fn = d && d.init && d.init.type === 'CallExpression' && /Function/.test(d.init.callee.type) ? d.init.callee : null;
+  if (!fn) die(`inner: ${ownerName} ist keine IIFE`);
+  const iscope = sm.acquire(fn);
+  const want = new Map();
+  for (const [to, names] of Object.entries(targets)) for (const n of names) want.set(n, to);
+  const moved = new Set();
+  let prev = fn.body.start + 1;
+  for (const t of fn.body.body) {
+    const tStart = prev; prev = t.end;
+    { const nl = js.indexOf('\n', t.end); if (/^\s*(\/\/.*)?$/.test(js.slice(t.end, nl))) prev = nl; }
+    if (t.type !== 'VariableDeclaration') continue;
+    const ns = t.declarations.map(x => x.id.name);
+    const hit = ns.filter(n => want.has(n));
+    if (!hit.length) continue;
+    if (hit.length !== ns.length) die(`inner: ${ownerName} Zeile ${t.loc.start.line}: ${ns.join(', ')} nur teilweise in map.mjs inner`);
+    const to = want.get(ns[0]);
+    if (ns.some(n => want.get(n) !== to)) die(`inner: ${ns.join(', ')} sollen in verschiedene Module`);
+    if (t.kind !== 'const') die(`inner: ${ns.join(', ')} ist nicht const`);
+    for (const n of ns) {
+      if (topVars.has(n)) die(`inner: ${n} kollidiert mit einem Namen auf oberster Ebene`);
+      const v = iscope.set.get(n);
+      if (v.references.some(r => r.isWrite() && !r.init)) die(`inner: ${n} wird neu zugewiesen`);
+    }
+    // Anfangswerte dürfen nur Globale (Math …) und bereits herausgelöste Namen nennen
+    for (const x of t.declarations) walk.full(x.init, n => {
+      if (n.type !== 'Identifier') return;
+      const p = parent.get(n);
+      if (p && p.type === 'MemberExpression' && p.property === n && !p.computed) return;
+      if (p && p.type === 'Property' && p.key === n && !p.computed && !p.shorthand) return;
+      if (moved.has(n.name) || ns.includes(n.name) || SAFE_GLOBALS.has(n.name)) return;
+      if (topVars.has(n.name) && owner.get(n.name) && staticNames.has(n.name)) { innerMoves.push({ dep: n.name, to }); return; }
+      die(`inner: ${ns.join(', ')} (${ownerName} Zeile ${t.loc.start.line}) braucht ${n.name} – nicht herauslösbar`);
+    });
+    ns.forEach(n => moved.add(n));
+    const text = ms.slice(tStart, prev).replace(/^\n+/, '').replace(/^ {2}/gm, '');
+    ms.remove(tStart, prev);
+    innerMoves.push({ owner: ost.module, to, names: ns, text });
+  }
+  for (const n of want.keys()) if (!moved.has(n)) console.warn(`split: Hinweis – inner: ${n} in ${ownerName} nicht gefunden`);
+}
+
 // ---------- Module zusammenstellen ----------
 const modules = new Map();
 const M = name => { if (!modules.has(name)) modules.set(name, { name, top: [], hoist: [], inits: [], imports: new Map(), exports: new Set(), usesS: false, ext: new Set() }); return modules.get(name); };
@@ -286,6 +337,13 @@ for (const seg of segments) {
   m.inits.push(seg);
 }
 
+// Herausgelöste IIFE-Konstanten einhängen
+for (const mv of innerMoves) {
+  if (mv.dep) { const o = owner.get(mv.dep); if (o.module !== mv.to) { M(mv.to).imports.set(mv.dep, o.module); M(o.module).exports.add(mv.dep); } continue; }
+  const t = M(mv.to);
+  t.top.push('\n' + mv.text);
+  mv.names.forEach(n => { t.exports.add(n); M(mv.owner).imports.set(n, mv.to); });
+}
 // Verweise: Importe und Exporte
 for (const [name, v] of topVars) {
   const own = owner.get(name); if (!own || stateSet.has(name)) continue;
@@ -298,7 +356,7 @@ for (const [name, v] of topVars) {
 for (const st of stmts) {
   const m = M(st.module);
   walk.full(st.node, n => {
-    if (n.type === 'Identifier' && stateSet.has(n.name) && topVars.get(n.name).references.some(r => r.identifier === n)) m.usesS = true;
+    if (n.type === 'Identifier' && stateSet.has(n.name) && topVars.get(n.name).references.some(r => r.identifier === n && !r.init)) m.usesS = true;
   });
 }
 // Bezeichner von außen (three.js, Ziel-Konstanten): nach dem Umschreiben im Ergebnistext suchen wäre unsauber –

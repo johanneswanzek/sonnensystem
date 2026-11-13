@@ -94,6 +94,15 @@ SURF = {
     col=mix(col,vec3(dot(col,vec3(0.33))),0.18);
     col=mix(col,vec3(0.46,0.40,0.36),smoothstep(1.05,1.45,abs(lat))*0.8);
     return vec4(clamp(col,0.0,1.0),0.5); }`,
+  // Milchstraße als Himmelshintergrund (Breite 0 = galaktische Ebene): diffuses Band, helleres Zentrum, dunkle Staubbahnen
+  milky: `vec4 surf(vec3 p,float lat,float lon){
+    float w=fbm(p*3.0+1.0,5);
+    float band=exp(-pow(lat/(0.11+0.05*w),2.0));
+    float core=exp(-pow(lat/0.28,2.0))*pow(max(cos(lon-3.14159),0.0),3.0);
+    float cl=fbm(p*9.0+w*1.5,7); float dust=smoothstep(0.48,0.64,fbm(p*6.0+vec3(3.0,w,1.0),6))*exp(-pow(lat/0.07,2.0));
+    float I=(band*smoothstep(0.25,0.85,cl)*1.2+core*0.9*(0.5+cl))*(1.0-0.85*dust);
+    vec3 col=mix(vec3(0.62,0.70,0.95),vec3(1.0,0.86,0.68),clamp(core*1.4+0.2*cl,0.0,1.0))*I;
+    return vec4(col,1.0); }`,
   // Marsboden aus der Nähe: Staub, dunklere Flecken, Kiesel
   ground: `vec4 surf2(vec2 uv){
     vec3 p=vec3(uv*7.0,1.7);

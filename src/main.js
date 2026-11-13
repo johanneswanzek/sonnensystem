@@ -24,6 +24,7 @@ import { initEngine } from './audio/engine.js';
 import { initSurfaces } from './render/surfaces.js';
 import { initBake } from './render/bake.js';
 import { initScene } from './render/scene.js';
+import { initPost } from './render/post.js';
 import { initDevice } from './core/device.js';
 import { initBase } from './mars/base.js';
 import { initTour } from './app/tour.js';
@@ -49,6 +50,7 @@ function start(){
   initSurfaces();
   initBake();
   initScene();
+  initPost();
   initDevice();
   initBase();
   initTour();
